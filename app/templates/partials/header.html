@@ -1,0 +1,142 @@
+{#  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  — 
+   ОРТАҚ ХЕДЕР — үш бетте де бірдей.
+   Бұрын әр бетте өз хедері болатын: index-те 8 тіл, booking-те 4 тіл,
+   логотип бірде .jpg, бірде .png. Енді бір ғана жер.
+
+   Күтетін айнымалылар: settings, tr, language (context_processor береді).
+   tour бар болса — 'Book' сілтемесі сол турға бағытталады.
+ —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  —  #}
+
+{% set home = url_for('site.index') %}
+{% set book_url = url_for('site.booking', tour=tour.id) if tour is defined and tour else url_for('site.booking') %}
+
+<a class="skip-link" href="#main">{{ tr.get('skip', 'Skip to content') }}</a>
+
+<header class="header">
+
+    <a class="logo" href="{{ home }}">
+        <img
+            src="{{ media_url(settings.logo, 'logo-icon.png') }}"
+            alt="{{ settings.brand_name }}"
+            class="logo-image"
+            width="96" height="96"
+        >
+        <span class="logo-text">
+            <strong>{{ settings.brand_name }}</strong>
+            <small>{{ settings.brand_subtitle }}</small>
+        </span>
+    </a>
+
+    <button
+        type="button"
+        class="nav-toggle"
+        aria-expanded="false"
+        aria-controls="primary-nav"
+        aria-label="{{ tr.get('menu', 'Menu') }}"
+    >
+        <span></span><span></span><span></span>
+    </button>
+
+    <nav class="nav" id="primary-nav">
+        <a href="{{ home }}#tours">{{ tr.tours }}</a>
+        <a href="{{ home }}#about">{{ tr.about }}</a>
+        <a href="{{ home }}#gallery">{{ tr.gallery }}</a>
+        <a href="{{ home }}#reviews">{{ tr.reviews }}</a>
+        <a href="{{ book_url }}" class="nav-book">{{ tr.book }}</a>
+
+        {# Тіл таңдау — телефонда мәзірдің ішінде #}
+        <div class="nav-langs">
+            {% for item in LANGUAGES %}
+            <a
+                href="{{ url_for('site.set_language', lang=item.code, next=request.path) }}"
+                hreflang="{{ item.html }}"
+                lang="{{ item.html }}"
+                class="nav-lang{% if item.code == language %} is-active{% endif %}"
+            >{{ item.label }}</a>
+            {% endfor %}
+        </div>
+    </nav>
+
+    <div class="header-actions">
+
+        {# --- ТІЛ: барлық бетте бірдей тізім, hover-ге ғана сенбейді --- #}
+        <div class="language-switcher">
+
+            <button
+                type="button"
+                class="language-btn"
+                aria-expanded="false"
+                aria-haspopup="true"
+                aria-label="{{ tr.get('language', 'Language') }}"
+            >
+                {% for item in LANGUAGES %}{% if item.code == language %}{{ item.label }}{% endif %}{% endfor %}
+            </button>
+
+            <div class="language-menu" role="menu">
+                {% for item in LANGUAGES %}
+                    <a
+                        role="menuitem"
+                        href="{{ url_for('site.set_language', lang=item.code, next=request.path) }}"
+                        hreflang="{{ item.html }}"
+                        lang="{{ item.html }}"
+                        {% if item.code == language %}aria-current="true"{% endif %}
+                    >{{ item.name }}</a>
+                {% endfor %}
+            </div>
+
+        </div>
+
+        <a class="btn btn-outline header-book" href="{{ book_url }}" data-mobile-book>
+            {{ tr.book }}
+        </a>
+
+    </div>
+
+</header>
+
+<script>
+/* Тіл мәзірі мен мобиль навигация.
+   Бұрын booking бетінде мәзір тек CSS :hover арқылы ашылатын —
+   телефонда hover болмағандықтан мүлдем ашылмайтын. */
+(function () {
+    var langBtn  = document.querySelector(".language-btn");
+    var langMenu = document.querySelector(".language-menu");
+    var navBtn   = document.querySelector(".nav-toggle");
+    var nav      = document.getElementById("primary-nav");
+
+    function close(menu, button) {
+        if (!menu) return;
+        menu.classList.remove("open");
+        if (button) button.setAttribute("aria-expanded", "false");
+    }
+
+    if (langBtn && langMenu) {
+        langBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var open = langMenu.classList.toggle("open");
+            langBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+        langMenu.addEventListener("click", function (e) { e.stopPropagation(); });
+    }
+
+    if (navBtn && nav) {
+        navBtn.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var open = nav.classList.toggle("open");
+            navBtn.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+    }
+
+    document.addEventListener("click", function () {
+        close(langMenu, langBtn);
+        close(nav, navBtn);
+    });
+
+    document.addEventListener("keydown", function (e) {
+        if (e.key === "Escape") {
+            close(langMenu, langBtn);
+            close(nav, navBtn);
+        }
+    });
+})();
+</script>

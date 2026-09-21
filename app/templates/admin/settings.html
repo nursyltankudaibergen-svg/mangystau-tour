@@ -1,0 +1,141 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Настройки{% endblock %}
+{% block heading %}Настройки{% endblock %}
+
+{% block subheading %}
+    <p>Название сайта, логотип, контакты и курс валют</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('site.index') }}" target="_blank" rel="noopener">
+        Открыть сайт ↗
+    </a>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" action="{{ url_for('admin.update_settings') }}" enctype="multipart/form-data">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="settings-grid">
+
+        {% for group in groups %}
+        <section class="admin-card">
+
+            <div class="admin-card-head">
+                <h2>{{ group.group }}</h2>
+            </div>
+
+            {% for item in group['items'] %}
+            {% set value = values.get(item.key, '') %}
+
+            <div class="form-field">
+                <span>{{ item.label }}</span>
+
+                <!-- ---------- СУРЕТ ---------- -->
+                {% if item.type == 'image' %}
+
+                    {% if value %}
+                    <div class="image-preview">
+                        <img src="{{ media_url(value) }}" alt="">
+                        <small>{{ value }}</small>
+                    </div>
+                    {% endif %}
+
+                    <input type="file" name="{{ item.key }}_file" accept="image/*" class="file-input">
+
+                    <input
+                        type="text"
+                        name="{{ item.key }}"
+                        value="{{ value }}"
+                        placeholder="logo.png"
+                        class="mt"
+                    >
+
+                <!-- ---------- ВИДЕО ---------- -->
+                {% elif item.type == 'video' %}
+
+                    {% if value %}
+                    <div class="image-preview">
+                        <video src="{{ media_url(value) }}" muted playsinline preload="metadata"></video>
+                        <small>{{ value }}</small>
+                    </div>
+                    {% endif %}
+
+                    <input type="file" name="{{ item.key }}_file" accept="video/*" class="file-input">
+
+                    <input
+                        type="text"
+                        name="{{ item.key }}"
+                        value="{{ value }}"
+                        placeholder="img_3077.mp4"
+                        class="mt"
+                    >
+
+                <!-- ---------- ҚАРАПАЙЫМ ӨРІС ---------- -->
+                {% else %}
+
+                    <input
+                        type="text"
+                        name="{{ item.key }}"
+                        value="{{ value }}"
+                        placeholder="{{ item.hint }}"
+                    >
+
+                {% endif %}
+
+                <small>{{ item.hint }}</small>
+
+                {% if item.key == 'usd_rate' %}
+                <small class="hint-accent">
+                    Текущий курс: <strong>{{ usd_rate | round | int }} ₸</strong> = $1
+                </small>
+                {% endif %}
+            </div>
+            {% endfor %}
+
+        </section>
+        {% endfor %}
+
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="admin-btn">Сохранить</button>
+        <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.dashboard') }}">Отмена</a>
+    </div>
+
+</form>
+
+
+<!-- ===================== КӨМЕК ===================== -->
+<section class="admin-card help-card">
+
+    <div class="admin-card-head"><h2>Коротко о разделе</h2></div>
+
+    <ul class="help-list">
+        <li>
+            <strong>Загрузка файлов</strong>
+            Выбранный файл сохранится в <code>static/</code>, а путь запишется
+            в поле ниже. Копировать вручную не нужно.
+        </li>
+        <li>
+            <strong>Если поле пустое</strong>
+            Сайт возьмёт файл по умолчанию: логотип — <code>logo-icon.png</code>,
+            видео — <code>img_3077.mp4</code>.
+        </li>
+        <li>
+            <strong>Размер видео</strong>
+            До 64 МБ. Длинное видео лучше заранее сжать — иначе
+            страница будет долго грузиться на телефоне.
+        </li>
+        <li>
+            <strong>Курс доллара</strong>
+            Переключатель ₸ / $ берёт это число. Проверяйте раз в месяц —
+            курс меняется.
+        </li>
+    </ul>
+
+</section>
+
+{% endblock %}

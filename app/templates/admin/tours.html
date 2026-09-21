@@ -1,0 +1,102 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Туры{% endblock %}
+{% block heading %}Туры{% endblock %}
+
+{% block subheading %}
+    <p>Всего {{ items | length }} · порядок здесь = порядок на сайте</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn" href="{{ url_for('admin.new_tour') }}">+ Добавить тур</a>
+{% endblock %}
+
+{% block content %}
+
+{% if items %}
+
+<div class="tour-list-admin">
+    {% for v in items %}
+    {% set t = v.tour %}
+
+    <article class="admin-card tour-item{% if not t.active %} is-off{% endif %}">
+
+        <!-- фото -->
+        <a class="tour-item-cover" href="{{ url_for('admin.edit_tour', id=t.id) }}"
+           style="background-image: url('{{ media_url(t.image) }}');">
+            <span class="tour-item-days">{{ v.days or '?' }} д.</span>
+        </a>
+
+        <!-- основное -->
+        <div class="tour-item-main">
+            <h3>{{ t.title }}</h3>
+            <p class="tour-item-meta">
+                {{ t.duration or '—' }}
+                · {{ v.routes }} маршрут(ов)
+                {% if t.code %}· <code>{{ t.code }}</code>{% endif %}
+            </p>
+
+            <!-- цены -->
+            {% if v.one_day %}
+            <p class="tour-item-prices">
+                <span class="price-chip">
+                    <em>Цена</em>
+                    <strong>{{ t.price or '—' }}</strong>
+                </span>
+                <small class="price-hint">у маршрутов свои цены — в разделе «Маршруты»</small>
+            </p>
+            {% else %}
+            <p class="tour-item-prices">
+                {% for p in packages %}
+                <span class="price-chip">
+                    <em>{{ p.name }}</em>
+                    <strong>{{ money(v.prices[p.code]) }} ₸</strong>
+                </span>
+                {% endfor %}
+
+                {% if not v.custom_prices %}
+                <small class="price-hint">цены из кода — можно изменить в туре</small>
+                {% endif %}
+            </p>
+            {% endif %}
+        </div>
+
+        <!-- действия -->
+        <div class="tour-item-tools">
+
+            <form method="POST" action="{{ url_for('admin.toggle_tour', id=t.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="toggle-pill{% if t.active %} is-on{% endif %}">
+                    <span class="toggle-dot"></span>
+                    {{ 'На сайте' if t.active else 'Скрыт' }}
+                </button>
+            </form>
+
+            <span class="tour-item-order">
+                <form method="POST" action="{{ url_for('admin.move_tour', id=t.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="dir" value="up">
+                    <button type="submit" title="Выше" {% if loop.first %}disabled{% endif %}>↑</button>
+                </form>
+                <form method="POST" action="{{ url_for('admin.move_tour', id=t.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="dir" value="down">
+                    <button type="submit" title="Ниже" {% if loop.last %}disabled{% endif %}>↓</button>
+                </form>
+            </span>
+
+            <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.edit_tour', id=t.id) }}">Изменить</a>
+
+        </div>
+
+    </article>
+    {% endfor %}
+</div>
+
+{% else %}
+<section class="admin-card">
+    <p class="admin-empty">Туров пока нет.</p>
+</section>
+{% endif %}
+
+{% endblock %}

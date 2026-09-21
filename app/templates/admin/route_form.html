@@ -1,0 +1,196 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Редактировать маршрут' if route else 'Новый маршрут' }}{% endblock %}
+{% block heading %}{{ 'Редактировать маршрут' if route else 'Новый маршрут' }}{% endblock %}
+
+{% block subheading %}
+    <p>{{ route.title if route else 'День тура или отдельный маршрут' }}</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.routes_page') }}">← Назад</a>
+{% endblock %}
+
+{% block content %}
+
+<form
+    method="POST"
+    enctype="multipart/form-data"
+    action="{{ url_for('admin.edit_route', id=route.id) if route else url_for('admin.new_route') }}"
+>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-columns">
+
+        <!-- ===================== НЕГІЗГІ ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Основное</h2></div>
+
+            <label class="form-field">
+                <span>Тур <em>*</em></span>
+                <select name="tour_id" required>
+                    <option value="">Выберите тур</option>
+                    {% for t in tours %}
+                    <option
+                        value="{{ t.id }}"
+                        {% if route and route.tour_id == t.id %}selected{% endif %}
+                        {% if not route and request.args.get('tour') == t.id | string %}selected{% endif %}
+                    >{{ t.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <label class="form-field">
+                <span>Название <em>*</em></span>
+                <input
+                    type="text"
+                    name="title"
+                    value="{{ route.title if route else '' }}"
+                    placeholder="AKTAU • KARAMSAI • SHAKPAK-ATA"
+                    required
+                >
+                <small>Этот текст показывается на карточке маршрута</small>
+            </label>
+
+            <label class="form-field">
+                <span>Описание</span>
+                <textarea
+                    name="description"
+                    rows="6"
+                    placeholder="Как проходит день: куда едем, что смотрим, где ночуем"
+                >{{ route.description if route else '' }}</textarea>
+                <small>Показывается в окне, которое открывается по клику</small>
+            </label>
+
+            <label class="form-field">
+                <span>Примечание</span>
+                <input
+                    type="text"
+                    name="note"
+                    value="{{ route.note if route else '' }}"
+                    placeholder="В дождь в Тузбаир не спускаемся"
+                >
+                <small>Короткая пометка под названием</small>
+            </label>
+
+        </section>
+
+        <!-- ===================== ҚОСЫМША ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Дополнительно</h2></div>
+
+            <div class="form-row">
+                <label class="form-field">
+                    <span>Номер дня</span>
+                    <input
+                        type="number"
+                        name="day_number"
+                        min="1"
+                        value="{{ route.day_number if route else 1 }}"
+                    >
+                    <small>В однодневном туре — номер маршрута</small>
+                </label>
+
+                <label class="form-field">
+                    <span>Порядок</span>
+                    <input
+                        type="number"
+                        name="sort_order"
+                        value="{{ route.sort_order if route else 0 }}"
+                    >
+                    <small>Меньшее число — выше в списке</small>
+                </label>
+            </div>
+
+            <label class="form-field">
+                <span>Цена</span>
+                <input
+                    type="text"
+                    name="price"
+                    value="{{ route.price if route else '' }}"
+                    placeholder="165000"
+                    inputmode="numeric"
+                >
+                <small>В однодневном туре у каждого маршрута своя цена.
+                       Если пусто — берётся общая цена тура</small>
+            </label>
+
+            <label class="form-field">
+                <span>Километраж</span>
+                <input
+                    type="text"
+                    name="km"
+                    value="{{ route.km if route and route.km else '' }}"
+                    placeholder="420"
+                    inputmode="numeric"
+                >
+                <small>Если 0 или пусто — на сайте не показывается</small>
+            </label>
+
+            <!-- ---------- СУРЕТ ---------- -->
+            <div class="form-field">
+                <span>Фото</span>
+
+                {% if route and route.image %}
+                <div class="image-preview">
+                    <img src="{{ url_for('static', filename=route.image) }}" alt="">
+                    <small>{{ route.image }}</small>
+                </div>
+                {% endif %}
+
+                <input type="file" name="image_file" accept="image/*" class="file-input">
+                <small>Выбранный файл сохранится в static/routes/ автоматически</small>
+
+                <input
+                    type="text"
+                    name="image"
+                    value="{{ route.image if route else '' }}"
+                    placeholder="routes/day2-01.jpg"
+                    class="mt"
+                >
+                <small>Или впишите путь вручную. Если пусто — код сам ищет
+                       static/routes/day{день}-{номер}.jpg</small>
+            </div>
+
+            <label class="form-check">
+                <input
+                    type="checkbox"
+                    name="active"
+                    {% if not route or route.active %}checked{% endif %}
+                >
+                <span>Показывать на сайте</span>
+            </label>
+
+        </section>
+
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="admin-btn">
+            {{ 'Сохранить' if route else 'Добавить' }}
+        </button>
+
+        <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.routes_page') }}">Отмена</a>
+
+        {% if route %}
+        <span class="form-spacer"></span>
+        {% endif %}
+    </div>
+
+</form>
+
+{% if route %}
+<form
+    method="POST"
+    action="{{ url_for('admin.delete_route', id=route.id) }}"
+    onsubmit="return confirm('Удалить маршрут? Это действие необратимо.');"
+    class="danger-zone"
+>
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="admin-btn-danger">Удалить маршрут</button>
+</form>
+{% endif %}
+
+{% endblock %}

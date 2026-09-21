@@ -1,0 +1,192 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Главная{% endblock %}
+{% block heading %}Главная{% endblock %}
+
+{% block subheading %}
+    <p>Краткая сводка по сайту</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn" href="{{ url_for('admin.new_tour') }}">+ Добавить тур</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================== САНДАР ===================== -->
+<section class="stat-grid">
+
+    <div class="stat stat-accent">
+        <span class="stat-label">Новые заявки</span>
+        <strong class="stat-value">{{ stats.new }}</strong>
+        <small class="stat-note">ждут обработки</small>
+    </div>
+
+    <div class="stat">
+        <span class="stat-label">За этот месяц</span>
+        <strong class="stat-value">{{ stats.month_total }} ₸</strong>
+        <small class="stat-note">{{ stats.month_count }} заявок</small>
+    </div>
+
+    <div class="stat">
+        <span class="stat-label">За 7 дней</span>
+        <strong class="stat-value">{{ stats.week }}</strong>
+        <small class="stat-note">новых заявок</small>
+    </div>
+
+    <div class="stat">
+        <span class="stat-label">Ближайшие туры</span>
+        <strong class="stat-value">{{ stats.upcoming }}</strong>
+        <small class="stat-note">подтверждённые даты</small>
+    </div>
+
+</section>
+
+
+<div class="admin-columns">
+
+    <!-- ===================== СОҢҒЫ ӨТІНІМДЕР ===================== -->
+    <section class="admin-card">
+
+        <div class="admin-card-head">
+            <h2>Последние заявки</h2>
+            {% if admin_menu | selectattr('endpoint', 'equalto', 'admin.bookings') | list %}
+            <a href="{{ url_for('admin.bookings') }}">Все →</a>
+            {% endif %}
+        </div>
+
+        {% if latest %}
+        <div class="admin-table-wrap">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Клиент</th>
+                        <th>Тур</th>
+                        <th>Дата</th>
+                        <th class="ta-right">Сумма</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for b in latest %}
+                    <tr>
+                        <td>
+                            <strong>{{ b.name }}</strong>
+                            <small>{{ b.phone }}</small>
+                        </td>
+                        <td>
+                            {{ b.tour or '—' }}
+                            {% if b.package %}
+                            <small class="tag">{{ b.package | upper }}</small>
+                            {% endif %}
+                        </td>
+                        <td>{{ b.tour_date.strftime('%d.%m.%Y') if b.tour_date else '—' }}</td>
+                        <td class="ta-right nums">
+                            {{ money(b.total_price) if b.total_price else '—' }}
+                        </td>
+                        <td>
+                            <span class="status status-{{ (b.status or 'Новая') | lower | replace(' ', '-') }}">
+                                {{ b.status or 'Новая' }}
+                            </span>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <p class="admin-empty">Заявок пока нет.</p>
+        {% endif %}
+
+    </section>
+
+
+    <!-- ===================== АЛДАҒЫ САПАРЛАР ===================== -->
+    <section class="admin-card">
+
+        <div class="admin-card-head">
+            <h2>Ближайшие туры</h2>
+        </div>
+
+        {% if upcoming %}
+        <ul class="trip-list">
+            {% for b in upcoming %}
+            <li class="trip">
+                <span class="trip-date">
+                    <strong>{{ b.tour_date.strftime('%d') }}</strong>
+                    <small>{{ b.tour_date.strftime('%m.%Y') }}</small>
+                </span>
+
+                <span class="trip-info">
+                    <strong>{{ b.tour or '—' }}</strong>
+                    <small>
+                        {{ b.name }}
+                        {% if b.guests %} · {{ b.guests }} гостей{% endif %}
+                        {% if b.groups and b.groups > 1 %} · {{ b.groups }} машин{% endif %}
+                    </small>
+                </span>
+
+                {% if b.phone %}
+                <a
+                    class="trip-wa"
+                    href="https://wa.me/{{ b.phone | replace('+', '') | replace(' ', '') }}"
+                    target="_blank" rel="noopener"
+                    title="WhatsApp"
+                >WA</a>
+                {% endif %}
+            </li>
+            {% endfor %}
+        </ul>
+        {% else %}
+        <p class="admin-empty">Запланированных туров нет.</p>
+        {% endif %}
+
+    </section>
+
+</div>
+
+
+<!-- ===================== ТУРЛАР ===================== -->
+<section class="admin-card">
+
+    <div class="admin-card-head">
+        <h2>Туры <em class="count">{{ tours | length }}</em></h2>
+        <a href="{{ url_for('admin.new_tour') }}">+ Добавить</a>
+    </div>
+
+    <div class="admin-table-wrap">
+        <table class="admin-table">
+            <thead>
+                <tr>
+                    <th>Название</th>
+                    <th>Длительность</th>
+                    <th class="ta-right">Цена</th>
+                    <th>Маршрут</th>
+                    <th>Состояние</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for t in tours %}
+                <tr>
+                    <td><strong>{{ t.title }}</strong></td>
+                    <td>{{ t.duration or '—' }}</td>
+                    <td class="ta-right nums">{{ t.price or '—' }}</td>
+                    <td>{{ t.routes | length if t.routes else 0 }}</td>
+                    <td>
+                        <span class="status {{ 'status-подтверждена' if t.active else 'status-отменена' }}">
+                            {{ 'Активен' if t.active else 'Скрыт' }}
+                        </span>
+                    </td>
+                    <td class="ta-right">
+                        <a class="admin-link" href="{{ url_for('admin.edit_tour', id=t.id) }}">Изменить</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+</section>
+
+{% endblock %}

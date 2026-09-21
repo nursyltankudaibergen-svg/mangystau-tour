@@ -1,0 +1,290 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Заявки{% endblock %}
+{% block heading %}Заявки{% endblock %}
+
+{% block subheading %}
+    <p>{{ items | length }} заявок · {{ total_sum }} ₸</p>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================== СҮЗГІ ===================== -->
+<section class="filters">
+
+    <div class="filter-chips">
+        <a
+            class="chip{% if not current_status %} is-active{% endif %}"
+            href="{{ url_for('admin.bookings', q=query or None) }}"
+        >Все <em>{{ counts[''] }}</em></a>
+
+        {% for name in statuses %}
+        <a
+            class="chip chip-{{ name | lower | replace(' ', '-') }}{% if current_status == name %} is-active{% endif %}"
+            href="{{ url_for('admin.bookings', status=name, q=query or None) }}"
+        >{{ name }} <em>{{ counts.get(name, 0) }}</em></a>
+        {% endfor %}
+    </div>
+
+    <form class="filter-search" method="GET" action="{{ url_for('admin.bookings') }}">
+        {% if current_status %}
+        <input type="hidden" name="status" value="{{ current_status }}">
+        {% endif %}
+
+        <input
+            type="search"
+            name="q"
+            value="{{ query }}"
+            placeholder="Имя, телефон, email, тур..."
+            autocomplete="off"
+        >
+
+        <button type="submit" class="admin-btn admin-btn-ghost">Поиск</button>
+
+        {% if query %}
+        <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.bookings', status=current_status or None) }}">
+            Очистить
+        </a>
+        {% endif %}
+    </form>
+
+</section>
+
+
+<!-- ===================== ӨТІНІМДЕР ===================== -->
+{% if items %}
+
+<div class="booking-list">
+    {% for b in items %}
+
+    <article class="admin-card booking" id="booking-{{ b.id }}">
+
+        <!-- ---------- ҮСТІҢГІ ЖОЛ ---------- -->
+        <div class="booking-head">
+
+            <div class="booking-when">
+                <strong>{{ b.created_at.strftime('%d.%m') if b.created_at else '—' }}</strong>
+                <small>{{ b.created_at.strftime('%H:%M') if b.created_at else '' }}</small>
+            </div>
+
+            <div class="booking-who">
+                <strong>{{ b.name }}</strong>
+                <small>{{ b.phone }}</small>
+            </div>
+
+            <div class="booking-people">
+                <span class="field-label">Тур</span>
+                <strong>{{ b.tour or '—' }}</strong>
+                {% if b.package %}
+                <small class="tag">{{ b.package | upper }}</small>
+                {% endif %}
+            </div>
+
+            <div class="booking-people">
+                <span class="field-label">Дата тура</span>
+                <strong class="nums">
+                    {% if b.tour_date %}
+                        {{ b.tour_date.strftime('%d.%m.%Y') }}
+                    {% else %}—{% endif %}
+                </strong>
+                {% if b.tour_date and b.tour_date < today %}
+                <small class="past">прошла</small>
+                {% endif %}
+            </div>
+
+            <div class="booking-people">
+                <span class="field-label">Машин / гостей</span>
+                <strong class="nums">{{ b.groups or 1 }} · {{ b.guests or 1 }}</strong>
+            </div>
+
+            <div class="booking-sum">
+                <span class="field-label">Сумма</span>
+                <strong class="nums">
+                    {% if b.total_price %}{{ money(b.total_price) }} ₸{% else %}—{% endif %}
+                </strong>
+            </div>
+
+            <div class="booking-status">
+                <form method="POST" action="{{ url_for('admin.booking_status', id=b.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <select
+                        name="status"
+                        class="status-select status-{{ (b.status or 'Новая') | lower | replace(' ', '-') }}"
+                        onchange="this.form.submit()"
+                    >
+                        {% for name in statuses %}
+                        <option value="{{ name }}" {% if (b.status or 'Новая') == name %}selected{% endif %}>
+                            {{ name }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                </form>
+            </div>
+
+            <button type="button" class="booking-toggle" data-toggle="{{ b.id }}" aria-expanded="false">
+                Подробнее
+            </button>
+
+        </div>
+
+        <!-- ---------- ТОЛЫҚ МӘЛІМЕТ ---------- -->
+        <div class="booking-body" id="body-{{ b.id }}" hidden>
+
+            <div class="booking-grid">
+
+                <!-- байланыс -->
+                <div>
+                    <h3>Контакты</h3>
+
+                    <p class="field">
+                        <span>Телефон</span>
+                        <strong>{{ b.phone }}</strong>
+                    </p>
+
+                    {% if b.email %}
+                    <p class="field">
+                        <span>Email</span>
+                        <strong>{{ b.email }}</strong>
+                    </p>
+                    {% endif %}
+
+                    <div class="booking-actions">
+                        <a
+                            class="admin-btn admin-btn-ghost"
+                            href="https://wa.me/{{ b.phone | replace('+','') | replace(' ','') | replace('-','') }}"
+                            target="_blank" rel="noopener"
+                        >WhatsApp</a>
+
+                        <a class="admin-btn admin-btn-ghost" href="tel:{{ b.phone }}">Позвонить</a>
+
+                        {% if b.email %}
+                        <a class="admin-btn admin-btn-ghost" href="mailto:{{ b.email }}">Email</a>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- сапар -->
+                <div>
+                    <h3>Поездка</h3>
+
+                    <p class="field">
+                        <span>Тур</span>
+                        <strong>{{ b.tour or '—' }}</strong>
+                    </p>
+
+                    {% if b.package %}
+                    <p class="field">
+                        <span>Пакет</span>
+                        <strong>{{ b.package | upper }}</strong>
+                    </p>
+                    {% endif %}
+
+                    {% if b.route %}
+                    <p class="field field-wide">
+                        <span>Маршрут</span>
+                        <strong>{{ b.route }}</strong>
+                    </p>
+                    {% endif %}
+
+                    <p class="field">
+                        <span>Машин / гостей</span>
+                        <strong>{{ b.groups or 1 }} машин · {{ b.guests or 1 }} чел.</strong>
+                    </p>
+
+                    {% if b.services %}
+                    <p class="field field-wide">
+                        <span>Услуги</span>
+                        <strong>
+                            {%- for code in b.services.split(',') if code.strip() -%}
+                                {{ services_map.get(code.strip(), code.strip()) }}{% if not loop.last %}, {% endif %}
+                            {%- endfor -%}
+                        </strong>
+                    </p>
+                    {% endif %}
+
+                    {% if b.total_price %}
+                    <p class="field field-total">
+                        <span>Итого</span>
+                        <strong>{{ money(b.total_price) }} ₸</strong>
+                    </p>
+                    {% endif %}
+                </div>
+
+                <!-- жазбалар -->
+                <div>
+                    <h3>Заметки</h3>
+
+                    {% if b.message %}
+                    <pre class="pre">{{ b.message }}</pre>
+                    {% endif %}
+
+                    <form method="POST" action="{{ url_for('admin.booking_note', id=b.id) }}" class="note-row">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+                        <textarea
+                            class="booking-note"
+                            name="admin_note"
+                            rows="3"
+                            placeholder="Моя заметка — клиент не видит"
+                        >{{ b.admin_note or '' }}</textarea>
+
+                        <button type="submit" class="admin-btn">Сохранить</button>
+                    </form>
+
+                    <form
+                        method="POST"
+                        action="{{ url_for('admin.delete_booking', id=b.id) }}"
+                        onsubmit="return confirm('Удалить заявку? Это действие необратимо.');"
+                    >
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <button type="submit" class="admin-btn-danger">Удалить заявку</button>
+                    </form>
+                </div>
+
+            </div>
+
+        </div>
+
+    </article>
+
+    {% endfor %}
+</div>
+
+{% else %}
+
+<section class="admin-card">
+    <p class="admin-empty">
+        {% if query or current_status %}
+            Заявок по фильтру не найдено.
+        {% else %}
+            Заявок пока нет. Первая заявка с сайта появится здесь.
+        {% endif %}
+    </p>
+</section>
+
+{% endif %}
+
+{% endblock %}
+
+
+{% block scripts %}
+<script>
+/* Өтінімнің толық мәліметін ашу-жабу */
+(function () {
+    document.addEventListener("click", function (event) {
+        var button = event.target.closest("[data-toggle]");
+        if (!button) return;
+
+        var body = document.getElementById("body-" + button.getAttribute("data-toggle"));
+        if (!body) return;
+
+        var open = body.hidden;
+
+        body.hidden = !open;
+        button.textContent = open ? "Свернуть" : "Подробнее";
+        button.setAttribute("aria-expanded", open ? "true" : "false");
+        button.closest(".booking").classList.toggle("is-open", open);
+    });
+})();
+</script>
+{% endblock %}

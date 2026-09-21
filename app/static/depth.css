@@ -1,0 +1,273 @@
+/* ===========================================================================
+   DEPTH.CSS — тереңдік, шыны беттер, тығыз типографика
+
+   Бұл файл site.css-тен КЕЙІН жүктеледі және оның үстінен жазады.
+   Ештеңе өшірілмейді: ұнамаса, <link> жолын алып тастасаң болғаны —
+   сайт бұрынғы қалпына қайтады.
+=========================================================================== */
+
+:root {
+    --bg: #07090c;
+    --bg-raise: #0b0f14;
+    --line: rgba(255, 255, 255, .075);
+    --line-strong: rgba(255, 255, 255, .14);
+    --text: #ffffff;
+    --text-dim: #8b939e;
+    --accent: #FF5A00;
+    --accent-soft: rgba(255, 90, 0, .10);
+}
+
+/* ===========================================================================
+   1. ТЕРЕҢДІК
+   Бір түсті фонның орнына — үлкен жұмсақ жарық дақтар.
+   Олар қозғалмайды (fixed), сондықтан скроллда бет "тереңдей" түседі.
+=========================================================================== */
+
+body {
+    background-color: var(--bg);
+}
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    pointer-events: none;
+
+    background:
+        radial-gradient(60vw 60vw at 12% 8%,  rgba(255, 90, 0, .09), transparent 60%),
+        radial-gradient(50vw 50vw at 88% 32%, rgba(255, 140, 40, .05), transparent 62%),
+        radial-gradient(70vw 55vw at 50% 100%, rgba(120, 90, 255, .045), transparent 65%);
+}
+
+/* Өте жеңіл "түйіршік" — градиенттер жолақ болып көрінбеуі үшін */
+body::after {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    opacity: .022;
+
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* Бөлімдер арасында жіңішке жарық шекара — қабаттар сезілсін */
+.section + .section,
+.benefits-section,
+.tour-ticker {
+    position: relative;
+}
+
+.section + .section::before,
+.benefits-section::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 8%;
+    right: 8%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, .10) 30%,
+        rgba(255, 255, 255, .10) 70%,
+        transparent
+    );
+}
+
+/* ===========================================================================
+   2. ШЫНЫ БЕТТЕР
+   Қатты фонның орнына мөлдір қабат + blur + жіңішке жарық шекара.
+=========================================================================== */
+
+.tour-card,
+.benefit,
+.review-card,
+.route-card,
+.tour-notice,
+.package-card,
+.package-tabs,
+.booking-card {
+    background: linear-gradient(
+        180deg,
+        rgba(255, 255, 255, .045),
+        rgba(255, 255, 255, .015)
+    ) !important;
+
+    border: 1px solid var(--line) !important;
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+.tour-card,
+.benefit,
+.review-card,
+.package-card,
+.booking-card {
+    border-radius: 18px;
+}
+
+/* Жоғарғы жиегінде жұқа жарық сызық — "шыны" әсерін береді */
+.tour-card,
+.benefit,
+.package-card,
+.booking-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.tour-card::after,
+.benefit::after,
+.package-card::after,
+.booking-card::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 12%;
+    right: 12%;
+    height: 1px;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 255, 255, .35),
+        transparent
+    );
+    pointer-events: none;
+}
+
+/* Тінтуір тигенде жиегі жанады */
+.tour-card:hover,
+.benefit:hover,
+.route-card:hover {
+    border-color: rgba(255, 90, 0, .38) !important;
+    box-shadow:
+        0 18px 50px rgba(0, 0, 0, .35),
+        0 0 0 1px rgba(255, 90, 0, .10);
+}
+
+.benefit {
+    padding: 24px 22px;
+    transition: border-color .25s, box-shadow .25s, transform .25s;
+}
+
+.benefit:hover {
+    transform: translateY(-3px);
+}
+
+/* Белсенді пакет карточкасы сәл жарқырайды */
+.packages-aside .package-card {
+    box-shadow: 0 20px 60px rgba(0, 0, 0, .32);
+}
+
+/* ===========================================================================
+   3. ТИПОГРАФИКА
+   Ірі, тығыз, теріс әріп аралығы — тақырыптар "мықты" көрінеді.
+=========================================================================== */
+
+h1, h2, h3,
+.routes-title,
+.packages-aside-title,
+.tour-detail-card-title {
+    letter-spacing: -.04em;
+    text-wrap: balance;
+}
+
+.hero-content h1 {
+    font-size: clamp(42px, 7vw, 92px);
+    line-height: .92;
+    letter-spacing: -.05em;
+    font-weight: 800;
+}
+
+.section-top h2,
+.benefits-section h2 {
+    font-size: clamp(30px, 3.4vw, 52px);
+    line-height: .98;
+}
+
+/* Бөлім белгісі — кіші, әріптері ажыратылған, алдында нүкте */
+.section-label {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    color: var(--accent);
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.section-label::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent);
+    box-shadow: 0 0 10px rgba(255, 90, 0, .8);
+}
+
+/* Дене мәтіні — оқуға ыңғайлы ұзындық */
+.section-top p,
+.tour-description,
+.benefit p {
+    max-width: 62ch;
+    color: var(--text-dim);
+    line-height: 1.75;
+}
+
+/* Сандар бірдей енде тұрсын — бағалар "секірмейді" */
+.tour-price strong,
+.package-price strong,
+.booking-price-box strong,
+.benefit-icon {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.benefit-icon {
+    color: rgba(255, 255, 255, .18);
+    font-size: 13px;
+    font-weight: 800;
+    letter-spacing: .1em;
+}
+
+/* ===========================================================================
+   ХЕДЕР — фонмен үндесетін шыны жолақ
+=========================================================================== */
+
+.header {
+    background: rgba(7, 9, 12, .72) !important;
+    border-bottom: 1px solid var(--line) !important;
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+}
+
+.footer {
+    border-top: 1px solid var(--line);
+    background: transparent;
+}
+
+/* ===========================================================================
+   ЕСКЕРТУЛЕР
+=========================================================================== */
+
+/* backdrop-filter қолдамайтын браузерде мөлдір фон тым ашық көрінбесін */
+@supports not (backdrop-filter: blur(1px)) {
+    .tour-card,
+    .benefit,
+    .review-card,
+    .route-card,
+    .package-card,
+    .booking-card,
+    .package-tabs {
+        background: var(--bg-raise) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .benefit:hover {
+        transform: none;
+    }
+}

@@ -1,0 +1,148 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Галерея{% endblock %}
+{% block heading %}Галерея{% endblock %}
+
+{% block subheading %}
+    <p>Три блока на главной — у каждого свои фото, они не смешиваются</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('site.index') }}#gallery" target="_blank" rel="noopener">
+        Посмотреть на сайте ↗
+    </a>
+{% endblock %}
+
+{% block content %}
+
+{% if using_fallback %}
+<section class="admin-card notice-card">
+    <p>
+        <strong>Блоки пока пустые.</strong>
+        Сейчас на сайте показываются общие фото из папки <code>static/gallery/</code>,
+        разложенные по трём блокам автоматически. Как только загрузите фото хотя бы
+        в один блок, сайт начнёт показывать фото по блокам.
+    </p>
+</section>
+{% endif %}
+
+
+<!-- ===================== ТРИ БЛОКА ===================== -->
+<div class="gallery-admin">
+
+    {% for slot in slots %}
+    <section class="admin-card gallery-block" id="slot-{{ slot.n }}">
+
+        <div class="gallery-block-head">
+            <!-- схема: где этот блок стоит на сайте -->
+            <span class="slot-map" aria-hidden="true">
+                <i class="{{ 'on' if slot.n == 1 }}"></i>
+                <i class="{{ 'on' if slot.n == 2 }}"></i>
+                <i class="{{ 'on' if slot.n == 3 }}"></i>
+            </span>
+
+            <span>
+                <h2>{{ slot.title }}</h2>
+                <small>{{ slot.images | length }} фото · меняются каждые 5 секунд</small>
+            </span>
+        </div>
+
+        <!-- ---------- загрузка ---------- -->
+        <form
+            class="drop-zone"
+            method="POST"
+            enctype="multipart/form-data"
+            action="{{ url_for('admin.gallery_upload', slot=slot.n) }}"
+        >
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            <label class="drop-label">
+                <input type="file" name="photos" accept="image/*" multiple
+                       onchange="this.form.querySelector('.drop-count').textContent =
+                                 this.files.length ? 'Выбрано: ' + this.files.length : '';">
+                <strong>+ Выбрать фото</strong>
+                <small>Можно сразу несколько · JPG, PNG, WEBP · до 8 МБ</small>
+                <em class="drop-count"></em>
+            </label>
+
+            <button type="submit" class="admin-btn">Загрузить в блок {{ slot.n }}</button>
+        </form>
+
+        <!-- ---------- фото блока ---------- -->
+        {% if slot.images %}
+        <div class="thumb-grid">
+            {% for img in slot.images %}
+            <figure class="thumb">
+                <img src="{{ img.url }}" alt="" loading="lazy">
+
+                <figcaption class="thumb-tools">
+                    <form method="POST" action="{{ url_for('admin.gallery_move', slot=slot.n) }}">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="name" value="{{ img.name }}">
+                        <select name="to" onchange="if (this.value) this.form.submit()" title="Перенести">
+                            <option value="">↔</option>
+                            {% for other in slots if other.n != slot.n %}
+                            <option value="{{ other.n }}">В блок {{ other.n }}</option>
+                            {% endfor %}
+                        </select>
+                    </form>
+
+                    <form method="POST" action="{{ url_for('admin.gallery_delete', slot=slot.n) }}"
+                          onsubmit="return confirm('Удалить фото?');">
+                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                        <input type="hidden" name="name" value="{{ img.name }}">
+                        <button type="submit" class="thumb-delete" title="Удалить">✕</button>
+                    </form>
+                </figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+        {% else %}
+        <p class="admin-empty">В этом блоке пока нет фото.</p>
+        {% endif %}
+
+    </section>
+    {% endfor %}
+
+</div>
+
+
+<!-- ===================== СТАРЫЕ ФОТО ===================== -->
+{% if legacy %}
+<section class="admin-card">
+
+    <div class="admin-card-head">
+        <h2>Общие фото <em class="count">{{ legacy | length }}</em></h2>
+    </div>
+
+    <p class="muted-text">
+        Фото из папки <code>static/gallery/</code>. Их можно разложить по блокам —
+        оригинал останется на месте.
+    </p>
+
+    <div class="thumb-grid thumb-grid-legacy">
+        {% for img in legacy %}
+        {% set fname = img.url.split('/')[-1] %}
+        <figure class="thumb">
+            <img src="{{ img.url }}" alt="" loading="lazy">
+
+            <figcaption class="thumb-tools">
+                <form method="POST" action="{{ url_for('admin.gallery_assign_legacy') }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="name" value="{{ fname }}">
+                    <select name="to" onchange="if (this.value) this.form.submit()">
+                        <option value="">+ В блок</option>
+                        <option value="1">Блок 1</option>
+                        <option value="2">Блок 2</option>
+                        <option value="3">Блок 3</option>
+                    </select>
+                </form>
+            </figcaption>
+        </figure>
+        {% endfor %}
+    </div>
+
+</section>
+{% endif %}
+
+{% endblock %}

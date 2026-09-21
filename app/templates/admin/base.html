@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="{{ html_lang(language) if html_lang is defined else 'kk' }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="robots" content="noindex, nofollow">
+
+    <title>{% block title %}Управление{% endblock %} — {{ settings.brand_name or 'Mangystau Tour' }}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <meta name="theme-color" content="#0b0f14">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@700;800;900&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="{{ asset('admin.css') if asset is defined else url_for('static', filename='admin.css') }}">
+
+    {% block head %}{% endblock %}
+</head>
+
+<body class="admin">
+
+<!-- ===================== СОЛ ЖАҚ МӘЗІР ===================== -->
+<aside class="admin-sidebar" id="adminSidebar">
+
+    <a class="admin-logo" href="{{ url_for('site.index') }}" target="_blank" rel="noopener">
+        <img src="{{ url_for('static', filename=settings.logo or 'logo-icon.png') }}" alt="">
+        <span>
+            <strong>{{ settings.brand_name or 'Mangystau Tour' }}</strong>
+            <small>Панель управления</small>
+        </span>
+    </a>
+
+    <nav class="admin-nav">
+        {% for item in admin_menu %}
+        <a
+            href="{{ url_for(item.endpoint) }}"
+            class="admin-nav-item{% if request.endpoint == item.endpoint %} is-active{% endif %}"
+        >
+            <span class="admin-icon admin-icon-{{ item.icon }}" aria-hidden="true"></span>
+            {{ item.label }}
+
+            {% if item.endpoint == 'admin.bookings' and stats and stats.new %}
+            <em class="admin-badge">{{ stats.new }}</em>
+            {% endif %}
+        </a>
+        {% endfor %}
+    </nav>
+
+    <div class="admin-sidebar-foot">
+        <a class="admin-site-link" href="{{ url_for('site.index') }}" target="_blank" rel="noopener">
+            Открыть сайт ↗
+        </a>
+        <a class="admin-logout" href="{{ url_for('admin.logout') }}">Выход</a>
+    </div>
+
+</aside>
+
+<!-- ===================== МАЗМҰН ===================== -->
+<main class="admin-main">
+
+    <header class="admin-top">
+        <button type="button" class="admin-burger" id="adminBurger" aria-label="Меню">
+            <span></span><span></span><span></span>
+        </button>
+
+        <div class="admin-top-text">
+            <h1>{% block heading %}Главная{% endblock %}</h1>
+            {% block subheading %}{% endblock %}
+        </div>
+
+        <div class="admin-top-actions">
+            {% block actions %}{% endblock %}
+        </div>
+    </header>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="admin-flashes">
+            {% for category, message in messages %}
+            <p class="admin-flash admin-flash-{{ category }}">{{ message }}</p>
+            {% endfor %}
+        </div>
+        {% endif %}
+    {% endwith %}
+
+    <div class="admin-content">
+        {% block content %}{% endblock %}
+    </div>
+
+</main>
+
+<div class="admin-overlay" id="adminOverlay"></div>
+
+<script>
+/* Телефонда мәзір ашылуы */
+(function () {
+    var burger = document.getElementById("adminBurger");
+    var sidebar = document.getElementById("adminSidebar");
+    var overlay = document.getElementById("adminOverlay");
+
+    if (!burger || !sidebar) return;
+
+    function toggle(open) {
+        sidebar.classList.toggle("is-open", open);
+        if (overlay) overlay.classList.toggle("is-visible", open);
+        burger.setAttribute("aria-expanded", open ? "true" : "false");
+    }
+
+    burger.addEventListener("click", function () {
+        toggle(!sidebar.classList.contains("is-open"));
+    });
+
+    if (overlay) overlay.addEventListener("click", function () { toggle(false); });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key === "Escape") toggle(false);
+    });
+})();
+</script>
+
+{% block scripts %}{% endblock %}
+
+</body>
+</html>

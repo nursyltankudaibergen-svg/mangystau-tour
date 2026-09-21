@@ -1,0 +1,114 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Редактировать отзыв' if review else 'Новый отзыв' }}{% endblock %}
+{% block heading %}{{ 'Редактировать отзыв' if review else 'Новый отзыв' }}{% endblock %}
+
+{% block subheading %}
+    <p>{{ review.name if review else 'Отзыв появится в ленте на главной странице' }}</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.reviews') }}">← Назад</a>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data"
+      action="{{ url_for('admin.edit_review', id=review.id) if review else url_for('admin.new_review') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-columns">
+
+        <!-- ===================== ОТЗЫВ ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Отзыв</h2></div>
+
+            <label class="form-field">
+                <span>Имя <em>*</em></span>
+                <input type="text" name="name" value="{{ review.name if review else '' }}"
+                       placeholder="Айгерим" required>
+            </label>
+
+            <label class="form-field">
+                <span>Текст отзыва <em>*</em></span>
+                <textarea name="text" rows="7" required
+                          placeholder="Что понравилось в поездке">{{ review.text if review else '' }}</textarea>
+                <small>Показывается на сайте на всех языках без перевода</small>
+            </label>
+
+            <!-- ---------- оценка звёздами ---------- -->
+            <div class="form-field">
+                <span>Оценка</span>
+
+                {% set current = (review.rating if review and review.rating else 5) | int %}
+
+                <div class="star-input">
+                    {% for n in range(5, 0, -1) %}
+                    <input type="radio" name="rating" id="star{{ n }}" value="{{ n }}"
+                           {% if current == n %}checked{% endif %}>
+                    <label for="star{{ n }}" title="{{ n }}">★</label>
+                    {% endfor %}
+                </div>
+            </div>
+
+        </section>
+
+        <!-- ===================== ДОПОЛНИТЕЛЬНО ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Дополнительно</h2></div>
+
+            <label class="form-field">
+                <span>Страна</span>
+                <input type="text" name="country" value="{{ review.country if review else '' }}"
+                       placeholder="Kazakhstan">
+                <small>Пишется под именем</small>
+            </label>
+
+            <label class="form-field">
+                <span>Тур</span>
+                <select name="tour">
+                    <option value="">Не указан</option>
+                    {% for t in tours %}
+                    <option value="{{ t.title }}"
+                        {% if review and review.tour == t.title %}selected{% endif %}>{{ t.title }}</option>
+                    {% endfor %}
+                </select>
+            </label>
+
+            <div class="form-field">
+                <span>Фото</span>
+
+                {% if review and review.photo %}
+                <div class="image-preview image-preview-round">
+                    <img src="{{ media_url(review.photo) }}" alt="">
+                    <small>{{ review.photo }}</small>
+                </div>
+                {% endif %}
+
+                <input type="file" name="photo_file" accept="image/*" class="file-input">
+
+                <input type="text" name="photo" value="{{ review.photo if review else '' }}"
+                       placeholder="reviews/aigerim.jpg" class="mt">
+                <small>Необязательно. Небольшое круглое фото рядом с именем</small>
+            </div>
+
+            <label class="form-check">
+                <input type="checkbox" name="active"
+                       {% if not review or review.active %}checked{% endif %}>
+                <span>Показывать на сайте</span>
+            </label>
+
+        </section>
+
+    </div>
+
+    <div class="form-actions">
+        <button type="submit" class="admin-btn">{{ 'Сохранить' if review else 'Добавить' }}</button>
+        <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.reviews') }}">Отмена</a>
+    </div>
+
+</form>
+
+{% endblock %}

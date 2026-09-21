@@ -1,0 +1,664 @@
+<!doctype html>
+<html lang="{{ html_lang(language) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ tour.title }} — {{ settings.brand_name }}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <meta name="theme-color" content="#0b0f14">
+
+    {# Бұрын бұл бетте мүлдем meta description жоқ еді #}
+    <meta name="description" content="{{ tour.description or tr.discover_text }}">
+    <link rel="canonical" href="{{ request.base_url }}">
+    <meta property="og:title" content="{{ tour.title }} — {{ settings.brand_name }}">
+    <meta property="og:description" content="{{ tour.description or tr.discover_text }}">
+    <meta property="og:image" content="{{ tour.image }}">
+    <meta property="og:type" content="article">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('site.css') }}">
+    {# ~800 жол inline CSS бөлек файлға шығарылды — енді кэштеледі #}
+    <link rel="stylesheet" href="{{ asset('tour-detail.css') }}">
+    <link rel="stylesheet" href="{{ asset('depth.css') }}">
+    <link rel="stylesheet" href="{{ asset('mobile.css') }}">
+</head>
+
+<body>
+
+{% include 'partials/header.html' %}
+
+{# ------------------------------------------------------------------
+   Маршруттар енді tours_data.py-дан келеді.
+   Бұрын әр тур үшін HTML-де қолмен жазылған ~1500 жол болатын, әрі
+   логика тур АТАУЫНА байланған: атауды өзгертсең — маршрут жоғалатын.
+------------------------------------------------------------------ #}
+{% set meta = route_meta(tour) %}
+{% set routes = routes_for(tour) %}
+{% set unit_word = tr.day if meta.unit == 'day' else tr.route %}
+{% set current = get_package(selected_package) %}
+
+<main class="tour-detail" id="main">
+<div class="tour-detail-container">
+
+    <a class="tour-back" href="{{ url_for('site.index') }}#tours">← {{ tr.back }}</a>
+
+    <!-- ================= HERO ================= -->
+    <section
+        class="tour-detail-hero"
+        style="background-image:
+            linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,.20)),
+            url('{{ tour.image }}');"
+    >
+        <div>
+            <h1>{{ tour.title }}</h1>
+            <p class="tour-detail-hero-meta">
+                {{ translate_duration(tour.duration, language) }}
+            </p>
+        </div>
+    </section>
+
+
+    <section class="tour-detail-body">
+
+        <!-- ================= LEFT ================= -->
+        <div class="tour-detail-content">
+
+            <h2>{{ tour.title }}</h2>
+
+            {% if tour.description %}
+            <p class="tour-description">{{ tour.description }}</p>
+            {% endif %}
+
+
+            <!-- ---------- TOUR OVERVIEW ---------- -->
+            <div class="overview-strip">
+                {% for item in OVERVIEW_HIGHLIGHTS %}
+                <div class="overview-item">
+                    <span class="overview-label">{{ L(item.label, language) }}</span>
+                    <p>{{ L(item.text, language) }}</p>
+                </div>
+                {% endfor %}
+            </div>
+
+
+            <!-- ---------- ITINERARY ---------- -->
+            {% if routes %}
+            <div class="routes-section">
+
+                <div class="routes-header">
+                    <h2 class="routes-title">{{ tr.itinerary }}</h2>
+                    <span class="routes-count">
+                        {{ routes|length }}
+                        {{ tr.days if meta.unit == 'day' else tr.routes }}
+
+                        {% set total_km = routes | sum(attribute='km') %}
+                        {% if total_km and meta.unit == 'day' %}
+                        · ≈ {{ total_km }} км
+                        {% endif %}
+                    </span>
+                </div>
+
+                <ul class="routes-list">
+                    {% for route in routes %}
+                    <li>
+                        <button
+                            type="button"
+                            class="route-card"
+                            data-route-open="{{ route.key }}"
+                        >
+                            {# Сурет тек модалда көрсетіледі — карточкада нөмір ғана #}
+                            <span class="route-number" aria-hidden="true">
+                                {{ "%02d"|format(route.n) }}
+                            </span>
+                            <span class="route-info">
+                                <span class="tour-day-label">
+                                    {{ unit_word }} {{ "%02d"|format(route.n) }}
+                                </span>
+                                <span class="route-title">{{ L(route.title, language) }}</span>
+
+                                {% if route.km %}
+                                <span class="route-km">
+                                    ≈ {{ route.km }} км
+                                </span>
+                                {% endif %}
+
+                                {% if route.note %}
+                                <span class="route-note">{{ L(route.note, language) }}</span>
+                                {% endif %}
+
+                                <span class="route-tags">
+                                    {% if route.rain %}
+                                    <span class="tag tag-rain">{{ tr.rain_short }}</span>
+                                    {% endif %}
+                                    {% if route.dress_code %}
+                                    <span class="tag tag-dress">{{ tr.dress_short }}</span>
+                                    {% endif %}
+                                </span>
+                            </span>
+                        </button>
+                    </li>
+                    {% endfor %}
+                </ul>
+
+            </div>
+            {% endif %}
+
+
+            <!-- ---------- ITINERARY INTRO + INCLUDED ---------- -->
+            <div class="detail-columns">
+
+                <section class="detail-block">
+
+                    <p class="section-label">{{ tr.itinerary }}</p>
+                    <h3>{{ L(ITINERARY_INTRO.title, language) }}</h3>
+
+                    <ol class="meeting-list">
+                        {% for step in ITINERARY_INTRO.steps %}
+                        <li>
+                            <span class="meeting-head">
+                                {% if step.time %}
+                                <em class="meeting-time">{{ step.time }}</em>
+                                {% endif %}
+                                <strong>{{ L(step.place, language) }}</strong>
+                            </span>
+                            <p>{{ L(step.text, language) }}</p>
+                        </li>
+                        {% endfor %}
+                    </ol>
+
+                </section>
+
+                <section class="detail-block detail-block-included">
+
+                    <p class="section-label">{{ tr.what_included }}</p>
+                    <h3>{{ tr.included_title }}</h3>
+
+                    <div class="included-text">
+                        {% for paragraph in INCLUDED_TEXT %}
+                        <p>{{ L(paragraph, language) }}</p>
+                        {% endfor %}
+                    </div>
+
+                </section>
+
+            </div>
+
+
+
+            <!-- ---------- PACKAGES: BASIC / PLUS / DELUXE ---------- -->
+
+        </div>
+
+        <!-- ================= RIGHT: БАҒЫТ НЕМЕСЕ ПАКЕТ ================= -->
+        {% set options = route_options(tour) %}
+
+        {% if options %}
+        {# --- Бір күндік тур: пакет жоқ, 5 бағыттың бірін таңдайды.
+               Қосқыш пакеттердікімен бірдей — сол JS, сол анимация. --- #}
+        {% set active_route = selected_route or options[0].n %}
+
+        <aside class="packages-aside" id="packages">
+
+            <div class="aside-head">
+                <h2 class="packages-aside-title">{{ tr.choose_route }}</h2>
+            <div class="currency-switch" role="group" aria-label="{{ tr.currency }}">
+                <span class="currency-indicator" aria-hidden="true"></span>
+                <button type="button" data-currency="KZT" aria-pressed="true">₸</button>
+                <button type="button" data-currency="USD" aria-pressed="false">$</button>
+            </div>
+            </div>
+            <p class="packages-intro">{{ tr.choose_route_text }}</p>
+
+            <div class="package-tabs package-tabs-routes" role="tablist">
+
+                <span class="package-tab-indicator" aria-hidden="true"></span>
+
+                {% for option in options %}
+                <button
+                    type="button"
+                    role="tab"
+                    class="package-tab{% if option.n == active_route %} is-active{% endif %}"
+                    data-package-tab="route{{ option.n }}"
+                    aria-selected="{{ 'true' if option.n == active_route else 'false' }}"
+                    aria-controls="route-panel-{{ option.n }}"
+                >
+                    {{ "%02d"|format(option.n) }}
+                </button>
+                {% endfor %}
+
+            </div>
+
+            {% for option in options %}
+            <article
+                class="package-card"
+                id="route-panel-{{ option.n }}"
+                data-package-panel="route{{ option.n }}"
+                data-price="{{ option.price or price_number(tour.price) }}"
+                {% if option.n != active_route %}hidden{% endif %}
+            >
+
+                <p class="package-tagline">{{ L(option.title, language) }}</p>
+
+                <p class="package-price">
+                    {% if tour.price %}
+                        {% set option_price = option.price or price_number(tour.price) %}
+                        <strong data-kzt="{{ option_price }}">{{ option_price|money }} ₸</strong>
+                        <small>{{ tr.per_tour }}</small>
+                    {% else %}
+                        <strong>{{ tr.price_on_request }}</strong>
+                    {% endif %}
+                </p>
+
+                {% if option.desc %}
+                <p class="package-includes-label">{{ tr.route_label }}</p>
+                <p class="route-panel-desc">{{ L(option.desc, language) }}</p>
+                {% endif %}
+
+                {% if option.note %}
+                <p class="route-panel-note">{{ L(option.note, language) }}</p>
+                {% endif %}
+
+                <a
+                    class="package-button is-current"
+                    href="{{ url_for('site.booking', tour=tour.id, route=option.n) }}"
+                >
+                    {{ tr.book_this_route }}
+                </a>
+
+            </article>
+            {% endfor %}
+
+        </aside>
+
+        {% else %}
+        <!-- ================= RIGHT: ПАКЕТТЕР ================= -->
+        <aside class="packages-aside" id="packages">
+
+            <div class="aside-head">
+                <h2 class="packages-aside-title">{{ tr.packages_title }}</h2>
+            <div class="currency-switch" role="group" aria-label="{{ tr.currency }}">
+                <span class="currency-indicator" aria-hidden="true"></span>
+                <button type="button" data-currency="KZT" aria-pressed="true">₸</button>
+                <button type="button" data-currency="USD" aria-pressed="false">$</button>
+            </div>
+            </div>
+            <p class="packages-intro">{{ tr.packages_text }}</p>
+
+            <!-- BASIC / PLUS / DELUXE қосқышы -->
+            <div class="package-tabs" role="tablist">
+
+                <span class="package-tab-indicator" aria-hidden="true"></span>
+
+                {% for package in PACKAGES %}
+                <button
+                    type="button"
+                    role="tab"
+                    class="package-tab{% if package.code == current.code %} is-active{% endif %}"
+                    data-package-tab="{{ package.code }}"
+                    aria-selected="{{ 'true' if package.code == current.code else 'false' }}"
+                    aria-controls="package-{{ package.code }}"
+                >
+                    {{ package.name }}
+                </button>
+                {% endfor %}
+            </div>
+
+            <!-- Бір мезгілде тек біреуі көрінеді -->
+            {% for package in PACKAGES %}
+            {% set price = tour_package_price(tour, package.code) %}
+            <article
+                class="package-card"
+                id="package-{{ package.code }}"
+                data-package-panel="{{ package.code }}"
+                data-price="{{ price }}"
+                {% if package.code != current.code %}hidden{% endif %}
+            >
+
+                {% if package.popular %}
+                <span class="package-flag">{{ tr.most_popular }}</span>
+                {% endif %}
+
+                <p class="package-tagline">{{ L(package.tagline, language) }}</p>
+
+                <p class="package-price">
+                    {% if price %}
+                        <strong data-kzt="{{ price }}">{{ price|money }} ₸</strong>
+                        <small>{{ tr.per_tour }}</small>
+                    {% else %}
+                        <strong>{{ tr.price_on_request }}</strong>
+                    {% endif %}
+                </p>
+
+                <p class="package-includes-label">{{ tr.package_includes }}</p>
+                <ul class="package-features">
+                    {% for feature in package.features %}
+                    <li>{{ L(feature, language) }}</li>
+                    {% endfor %}
+                </ul>
+
+                <a
+                    class="package-button is-current"
+                    href="{{ url_for('site.booking', tour=tour.id, package=package.code) }}"
+                >
+                    {{ tr.select_package }} {{ package.name }}
+                </a>
+
+            </article>
+            {% endfor %}
+
+        </aside>
+        {% endif %}
+
+    </section>
+
+</div>
+</main>
+
+
+<!-- =========================================================
+     ROUTE MODALS — деректерден циклмен құралады
+========================================================= -->
+{% for route in routes %}
+<div
+    class="route-modal"
+    id="{{ route.key }}"
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="{{ route.key }}-title"
+    hidden
+>
+    <div class="route-modal-box">
+
+        <button
+            class="route-close"
+            type="button"
+            data-route-close
+            aria-label="{{ tr.get('close', 'Close') }}"
+        >×</button>
+
+        {% if route.image %}
+        <img
+            class="route-modal-image"
+            src="{{ route.image }}"
+            alt="{{ L(route.title, language) }}"
+            loading="lazy" decoding="async"
+        >
+        {% endif %}
+
+        <div class="route-modal-content">
+
+            <p class="route-modal-label">
+                {{ tour.title }} · {{ unit_word }} {{ "%02d"|format(route.n) }}
+            </p>
+
+            <h2 id="{{ route.key }}-title">{{ L(route.title, language) }}</h2>
+
+            <p class="route-description">{{ L(route.desc, language) }}</p>
+
+            {% if route.km %}
+            <p class="route-modal-distance">
+                {{ tr.distance }}: ≈ {{ route.km }} км
+                <small>({{ tr.distance_note }})</small>
+            </p>
+            {% endif %}
+
+            {% if route.note %}
+            <p class="route-modal-note">{{ L(route.note, language) }}</p>
+            {% endif %}
+
+            {% if route.rain %}
+            <p class="notice notice-rain">
+                <strong>{{ tr.rain_title }}</strong>
+                {{ tr.rain_text }}
+            </p>
+            {% endif %}
+
+            {% if route.dress_code %}
+            <p class="notice notice-dress">
+                <strong>{{ tr.dress_title }}</strong>
+                {{ tr.dress_text }}
+            </p>
+            {% endif %}
+
+            <div class="route-modal-book">
+                <span class="route-modal-book-text">{{ tr.discover_mangystau }}</span>
+                <a
+                    href="{{ url_for('site.booking', tour=tour.id, package=current.code) }}"
+                    class="route-modal-book-button"
+                >{{ tr.book }}</a>
+            </div>
+
+        </div>
+
+    </div>
+</div>
+{% endfor %}
+
+
+<script>
+/* Модалдар: onclick атрибуттарының орнына бір ғана делегацияланған тыңдаушы.
+   Қосымша: фокус модалға көшеді және жабылғанда бұрынғы түймеге қайтады. */
+(function () {
+    var lastFocused = null;
+
+    function openModal(id) {
+        var modal = document.getElementById(id);
+        if (!modal) return;
+        lastFocused = document.activeElement;
+        modal.hidden = false;
+        requestAnimationFrame(function () { modal.classList.add("active"); });
+        document.body.style.overflow = "hidden";
+        var closeBtn = modal.querySelector("[data-route-close]");
+        if (closeBtn) closeBtn.focus();
+    }
+
+    function closeModal(modal) {
+        if (!modal) return;
+        modal.classList.remove("active");
+        document.body.style.overflow = "";
+        window.setTimeout(function () { modal.hidden = true; }, 250);
+        if (lastFocused) lastFocused.focus();
+    }
+
+    document.addEventListener("click", function (event) {
+        var opener = event.target.closest("[data-route-open]");
+        if (opener) {
+            openModal(opener.getAttribute("data-route-open"));
+            return;
+        }
+        if (event.target.closest("[data-route-close]")) {
+            closeModal(event.target.closest(".route-modal"));
+            return;
+        }
+        if (event.target.classList.contains("route-modal")) {
+            closeModal(event.target);
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (event.key !== "Escape") return;
+        var open = document.querySelector(".route-modal.active");
+        if (open) closeModal(open);
+    });
+})();
+</script>
+
+{% include 'partials/footer.html' %}
+
+<script>
+/* BASIC / PLUS / DELUXE қосқышы: бір мезгілде бір пакет көрінеді */
+(function () {
+    var tabs = document.querySelectorAll("[data-package-tab]");
+    var panels = document.querySelectorAll("[data-package-panel]");
+
+    var current = null;
+
+    /* Пайдаланушы анимацияны өшірген болса — құрметтейміз */
+    var reduced = window.matchMedia
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    function format(value) {
+        /* 238000 -> "238 000" */
+        return Math.round(value)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, " ");
+    }
+
+    function countTo(el, from, to) {
+        if (!el) return;
+
+        if (reduced || from === to) {
+            el.textContent = format(to);
+            return;
+        }
+
+        var duration = 520;
+        var started = null;
+
+        function step(now) {
+            if (started === null) started = now;
+
+            var progress = Math.min((now - started) / duration, 1);
+
+            /* easeOutCubic — соңына қарай баяулайды */
+            var eased = 1 - Math.pow(1 - progress, 3);
+
+            el.textContent = format(from + (to - from) * eased);
+
+            if (progress < 1) {
+                requestAnimationFrame(step);
+            }
+        }
+
+        requestAnimationFrame(step);
+    }
+
+    var indicator = document.querySelector(".package-tab-indicator");
+
+    function moveIndicator(tab) {
+        if (!indicator || !tab) return;
+
+        /* Түйменің дәл орны мен ені — контейнерге қатысты */
+        indicator.classList.add("is-ready");
+        indicator.style.width = tab.offsetWidth + "px";
+        indicator.style.transform = "translateX(" + tab.offsetLeft + "px)";
+    }
+
+    function show(code) {
+        var from = 0;
+        var to = 0;
+        var target = null;
+
+        for (var i = 0; i < panels.length; i++) {
+            var panel = panels[i];
+            var price = parseFloat(panel.getAttribute("data-price")) || 0;
+
+            var panelCode = panel.getAttribute("data-package-panel");
+
+            if (panelCode === current) from = price;
+
+            if (panelCode === code) {
+                to = price;
+                target = panel;
+                panel.hidden = false;
+                /* қайта іске қосу үшін класты алып, қайта саламыз */
+                panel.classList.remove("is-switching");
+                void panel.offsetWidth;
+                panel.classList.add("is-switching");
+            } else {
+                panel.hidden = true;
+            }
+        }
+
+        for (var j = 0; j < tabs.length; j++) {
+            var active = tabs[j].getAttribute("data-package-tab") === code;
+            tabs[j].classList.toggle("is-active", active);
+            tabs[j].setAttribute("aria-selected", active ? "true" : "false");
+
+            if (active) moveIndicator(tabs[j]);
+        }
+
+        if (target && current !== null && current !== code) {
+            /* Валюта модулі домалатады — қай валюта тұрса, сонымен */
+            if (window.Currency && window.Currency.roll) {
+                window.Currency.roll(target.querySelector("[data-kzt]"), from, to);
+            }
+        }
+
+        current = code;
+    }
+
+    /* бастапқы таңдалған пакетті есте сақтаймыз */
+    for (var n = 0; n < tabs.length; n++) {
+        if (tabs[n].classList.contains("is-active")) {
+            current = tabs[n].getAttribute("data-package-tab");
+        }
+    }
+
+    function placeIndicator() {
+        for (var m = 0; m < tabs.length; m++) {
+            if (tabs[m].classList.contains("is-active")) {
+                moveIndicator(tabs[m]);
+                return;
+            }
+        }
+    }
+
+    /* Шрифт жүктелген соң ені өзгеруі мүмкін — сондықтан кейінірек те */
+    placeIndicator();
+    window.addEventListener("load", placeIndicator);
+    window.addEventListener("resize", placeIndicator);
+
+    /* Басқанда сәл созылады — Apple-дегідей серпін */
+    document.addEventListener("pointerdown", function (event) {
+        var tab = event.target.closest && event.target.closest("[data-package-tab]");
+        if (tab && indicator) indicator.classList.add("is-pressed");
+    });
+
+    document.addEventListener("pointerup", function () {
+        if (indicator) indicator.classList.remove("is-pressed");
+    });
+
+    document.addEventListener("pointercancel", function () {
+        if (indicator) indicator.classList.remove("is-pressed");
+    });
+
+    /* Делегация: түймелер қайта салынса да жұмыс істей береді */
+    document.addEventListener("click", function (event) {
+        var tab = event.target.closest && event.target.closest("[data-package-tab]");
+        if (!tab) return;
+        event.preventDefault();
+        show(tab.getAttribute("data-package-tab"));
+    });
+})();
+</script>
+
+<script src="{{ asset('currency.js') }}"></script>
+<script type="application/json" id="currencyData">
+{{ {"rate": usd_rate()}|tojson }}
+</script>
+<script>
+(function () {
+    var data = {};
+    try {
+        data = JSON.parse(document.getElementById("currencyData").textContent);
+    } catch (error) {
+        data = {};
+    }
+    window.Currency.init({ rate: data.rate });
+})();
+</script>
+
+<script src="{{ asset('reveal.js') }}" defer></script>
+
+</body>
+</html>

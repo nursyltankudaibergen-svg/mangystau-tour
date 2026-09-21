@@ -1,0 +1,3789 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    scroll-behavior: smooth;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background: hsl(216, 33%, 3%);
+    color: #ffffff;
+    line-height: 1.5;
+}
+
+a {
+    color: inherit;
+    text-decoration: none;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+/* =========================
+   HEADER
+========================= */
+
+.header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 78px;
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    z-index: 100;
+    background: rgba(5, 7, 10, 0.75);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.logo-mark {
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.2);
+    border-radius: 12px;
+    font-weight: 800;
+    background: rgba(255,255,255,.04);
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+}
+
+.logo-text strong {
+    color: #FF5A00;
+    font-size: 22px;
+}
+
+.logo-text small {
+    font-size: 9px;
+    color: #FFC400;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+.nav {
+    display: flex;
+    gap: 32px;
+}
+
+.nav a {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    color: #b5bbc5;
+    transition: .25s;
+}
+
+.nav a:hover {
+    color: white;
+}
+
+/* =========================
+   BUTTONS
+========================= */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    min-height: 48px;
+    padding: 0 22px;
+    border-radius: 10px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    transition: .25s;
+}
+
+.btn-primary {
+    color: #fff;
+    background: #FF5A00;
+    box-shadow: 0 15px 40px rgba(255,90,0,.25);
+}
+
+.btn-primary:hover {
+    background: #e64f00;
+}
+.btn-outline {
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(255,255,255,.04);
+}
+
+.btn-outline:hover {
+    background: #FF5A00;
+    color: #fff;
+    border-color: #FF5A00;
+}
+/* =========================
+   HERO
+========================= */
+
+.hero {
+    min-height: 900px;
+    padding: 180px 5% 80px;
+    position: relative;
+    display: flex;
+    align-items: center;
+    background-position: center;
+    background-size: cover;
+    overflow: hidden;
+}
+
+.hero::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 200px;
+    z-index: 2;
+    pointer-events: none;
+    background: linear-gradient(
+        to bottom,
+        rgba(5, 7, 10, 0) 0%,
+        rgba(5, 7, 10, 0.75) 55%,
+        rgba(5, 7, 10, 1) 100%
+    );
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    -webkit-mask-image: linear-gradient(to bottom, transparent 0%, #000 60%);
+    mask-image: linear-gradient(to bottom, transparent 0%, #000 60%);
+}
+
+.hero-content {
+    position: relative;
+    z-index: 2;
+    max-width: 850px;
+}
+
+.eyebrow,
+.section-label {
+    margin-bottom: 22px;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .16em;
+}
+
+.eyebrow span {
+    display: inline-block;
+    width: 7px;
+    height: 7px;
+    margin-right: 8px;
+    border-radius: 50%;
+    background: #FF5A00;    
+    box-shadow: 0 0 15px rgba(255,90,0,.7);
+}
+
+.hero h1 {
+    max-width: 1000px;
+    font-size: clamp(52px, 7vw, 104px);
+    line-height: .94;
+    letter-spacing: -.06em;
+    font-weight: 800;
+}
+
+.hero p {
+    max-width: 600px;
+    margin-top: 30px;
+    color: #b0b7c1;
+    font-size: 17px;
+    line-height: 1.7;
+}
+
+.hero-actions {
+    display: flex;
+    align-items: center;
+    gap: 25px;
+    margin-top: 38px;
+}
+
+.hero-link {
+    color: #d8dce3;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+.hero-link:hover {
+    color: #FF5A00;
+}
+
+.hero {
+    position: relative !important;
+}
+
+.hero-bottom {
+    position: absolute !important;
+
+    top: auto !important;
+    bottom: 25px !important;
+
+    left: 0 !important;
+    right: 0 !important;
+
+    width: 100% !important;
+
+    display: flex !important;
+    flex-direction: column !important;
+
+    align-items: center !important;
+    justify-content: center !important;
+
+    gap: 6px !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    text-align: center !important;
+
+    color: rgba(255,255,255,.65) !important;
+    font-size: 10px !important;
+    letter-spacing: .12em !important;
+}/* =========================
+   SECTIONS
+========================= */
+
+.section {
+    padding: 125px 5%;
+}
+
+.section-top {
+    max-width: 1250px;
+    margin: 0 auto 60px;
+    display: grid;
+    grid-template-columns: 1.3fr .7fr;
+    gap: 70px;
+    align-items: end;
+}
+
+.section h2 {
+    font-size: clamp(42px, 5vw, 72px);
+    line-height: .98;
+    letter-spacing: -.05em;
+}
+
+.section-top p {
+    color: #929aa6;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* =========================
+   TOURS
+========================= */
+
+.tours-section {
+    background: #05070a;
+}
+
+.cards {
+    max-width: 1400px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+}
+
+.tour-card {
+    overflow: hidden;
+    background: #0b0f14;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 20px;
+    transition: .35s;
+    cursor: pointer;
+}
+
+.tour-card:hover {
+    transform: translateY(-6px);
+    border-color: rgba(255,90,0,.5);
+    box-shadow: 0 18px 45px rgba(0,0,0,.30);
+}
+.tour-image {
+    height: 360px;
+    position: relative;
+    background-size: cover;
+    background-position: center;
+    transition: transform 0.6s ease, filter 0.6s ease;
+}
+
+.tour-card:hover .tour-image {
+    transform: scale(1.035);
+    filter: brightness(1.05);
+}
+
+.tour-overlay {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(
+            180deg,
+            transparent 40%,
+            rgba(0,0,0,.88)
+        );
+    transition: opacity 0.4s ease;
+}
+
+.tour-card:hover .tour-overlay {
+    opacity: 0.75;
+}
+
+.tour-badge {
+    position: absolute;
+    top: 18px;
+    left: 18px;
+    padding: 8px 12px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.45);
+    border: 1px solid rgba(255,255,255,.12);
+    backdrop-filter: blur(10px);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.tour-number {
+    position: absolute;
+    right: 20px;
+    bottom: 18px;
+    color: rgba(255,255,255,.7);
+    font-size: 12px;
+}
+
+.tour-content {
+    padding: 25px;
+}
+
+.tour-meta {
+    display: flex;
+    justify-content: space-between;
+    color: #858e9b;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.tour-content h3 {
+    margin-top: 15px;
+    font-size: 25px;
+    letter-spacing: -.03em;
+    transition: color 0.25s ease;
+}
+
+.tour-card:hover h3 {
+    color: #FF5A00;
+}
+
+.tour-content p {
+    min-height: 55px;
+    margin-top: 12px;
+    color: #8d96a3;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.tour-link {
+    display: inline-flex;
+    gap: 10px;
+    margin-top: 20px;
+    color: #fff;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    transition: color 0.25s ease, gap 0.25s ease;
+}
+
+.tour-card:hover .tour-link {
+    color: #FF5A00;
+    gap: 12px;
+}
+
+.tour-link span {
+    display: inline-block;
+    transition: transform 0.3s ease;
+}
+
+.tour-card:hover .tour-link span {
+    transform: translate(4px, -4px);
+}
+
+@media (max-width: 650px) {
+    .tour-card:hover {
+        transform: none;
+        box-shadow: none;
+    }
+    .tour-card:hover .tour-image {
+        transform: none;
+    }
+}
+
+/* =========================
+   BENEFITS
+========================= */
+
+.benefits-section {
+    padding: 110px 5%;
+    background: #080b10;
+    border-top: 1px solid rgba(255,255,255,.07);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.benefits-section > .section-label {
+    max-width: 1400px;
+    margin: 0 auto 45px;
+}
+
+.benefits-grid {
+    max-width: 1400px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.benefit {
+    min-height: 250px;
+    padding: 30px;
+    border-left: 1px solid rgba(255,255,255,.08);
+    transition: .25s;
+}
+
+.benefit:last-child {
+    border-right: 1px solid rgba(255,255,255,.08);
+}
+
+.benefit:hover {
+    background: rgba(255,255,255,.025);
+}
+
+.benefit-icon {
+    display: block;
+    margin-bottom: 60px;
+    color: #FF5A00;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.benefit h3 {
+    font-size: 20px;
+}
+
+.benefit p {
+    margin-top: 12px;
+    color: #8c95a2;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* =========================
+   GALLERY
+========================= */
+
+.gallery-section {
+    background: #07090d;
+}
+
+.gallery {
+    max-width: 1400px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: 1.4fr .8fr;
+    grid-template-rows: 320px 320px;
+    gap: 16px;
+}
+
+.gallery-item {
+    position: relative;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: #10141a;
+    background-size: cover;
+    background-position: center;
+    overflow: hidden;
+}
+
+.gallery-item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+        180deg,
+        transparent,
+        rgba(0,0,0,.4)
+    );
+}
+
+.gallery-large:first-child {
+    grid-row: span 2;
+}
+
+/* =========================
+   BOOKING
+========================= */
+
+.booking-section {
+    padding: 130px 5%;
+    background:
+        radial-gradient(
+            circle at 80% 30%,
+            rgba(255,90,0,.14),
+            transparent 35%
+        ),
+        #07090d;
+}
+
+.booking-wrapper {
+    max-width: 1300px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: .85fr 1.15fr;
+    gap: 80px;
+}
+
+.booking-info h2 {
+    font-size: clamp(46px, 5vw, 75px);
+    line-height: .98;
+    letter-spacing: -.05em;
+}
+
+.booking-info p {
+    max-width: 480px;
+    margin-top: 28px;
+    color: #929aa6;
+    line-height: 1.8;
+}
+
+.booking-form {
+    padding: 35px;
+    border-radius: 22px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.025);
+    backdrop-filter: blur(18px);
+    box-shadow: 0 25px 70px rgba(0,0,0,.25);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+.field {
+    margin-bottom: 20px;
+}
+
+.field label {
+    display: block;
+    margin-bottom: 9px;
+    color: #8c95a1;
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .1em;
+}
+
+.field input,
+.field select,
+.field textarea {
+    width: 100%;
+    padding: 15px;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    outline: none;
+    color: white;
+    background: #0b0f15;
+    font: inherit;
+    transition: .25s;
+}
+
+.field input::placeholder,
+.field textarea::placeholder {
+    color: #666f7b;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+   border-color: #FF5A00;
+    box-shadow: 0 0 0 3px rgba(255,90,0,.12);
+}
+
+.field textarea {
+    min-height: 120px;
+    resize: vertical;
+}
+
+.form-button {
+    width: 100%;
+    border: none;
+    cursor: pointer;
+}
+
+/* =========================
+   FOOTER
+========================= */
+
+.footer {
+    padding: 55px 5% 25px;
+    background: #040509;
+    border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.footer-main,
+.footer-bottom {
+    max-width: 1400px;
+    margin: auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.footer-main {
+    padding-bottom: 40px;
+}
+
+.footer-brand {
+    display: flex;
+    flex-direction: column;
+}
+
+.footer-brand strong {
+    font-size: 25px;
+    letter-spacing: -.03em;
+}
+
+.footer-brand span {
+    margin-top: 4px;
+    color: #747c88;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .12em;
+}
+
+.footer-nav {
+    display: flex;
+    gap: 30px;
+}
+
+.footer-nav a {
+    color: #9299a4;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    transition: .2s;
+}
+
+.footer-nav a:hover {
+    color: #fff;
+}
+
+.footer-bottom {
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+    color: #5f6670;
+    font-size: 10px;
+}
+
+/* =========================
+   MOBILE
+========================= */
+
+@media (max-width: 1000px) {
+
+    .nav {
+        display: none;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .benefits-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .booking-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 700px) {
+
+    .header {
+        padding: 0 20px;
+    }
+
+    .header .btn {
+        display: none;
+    }
+
+    .hero {
+        min-height: 760px;
+        padding: 140px 20px 60px;
+    }
+
+    .hero h1 {
+        font-size: 50px;
+    }
+
+    .hero p {
+        font-size: 15px;
+    }
+
+    .hero-actions {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .hero-bottom {
+        left: 20px;
+        right: 20px;
+    }
+
+    .section {
+        padding: 90px 20px;
+    }
+
+    .section-top {
+        grid-template-columns: 1fr;
+        gap: 25px;
+    }
+
+    .cards {
+        grid-template-columns: 1fr;
+    }
+
+    .benefits-section {
+        padding: 90px 20px;
+    }
+
+    .benefits-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .benefit {
+        border-left: none;
+        border-right: none !important;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+    }
+
+    .gallery {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(4, 260px);
+    }
+
+    .gallery-large:first-child {
+        grid-row: auto;
+    }
+
+    .booking-section {
+        padding: 90px 20px;
+    }
+
+    .booking-form {
+        padding: 22px;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+    .footer-main,
+    .footer-bottom {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 25px;
+    }
+
+    .footer-nav {
+        flex-wrap: wrap;
+    }
+}       
+.hero {
+    position: relative;
+    overflow: hidden;
+}
+
+.hero-video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    z-index: 0;
+}
+
+.hero-overlay {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 7, 18, .55);
+    z-index: 1;
+}
+
+.hero-content,
+.hero-bottom {
+    position: relative;
+    z-index: 2;
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+
+.language-switcher {
+    position: relative;
+}
+
+.language-btn {
+    border: none;
+    background: transparent;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    padding: 8px 10px;
+}
+
+.language-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 90px;
+    background: #0b0f14;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 10px;
+    padding: 6px;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+    transition: .2s ease;
+    z-index: 1000;
+}
+
+.language-menu a {
+    display: block;
+    padding: 8px 10px;
+    color: #fff;
+    text-decoration: none;
+    border-radius: 7px;
+    font-size: 13px;
+}
+
+.language-menu a:hover {
+    background: #FF5A00;
+    color: #fff;
+}
+
+.language-switcher:hover .language-menu {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.phone-simple {
+    display: flex;
+    align-items: stretch;
+    width: 100%;
+    gap: 8px;
+}
+
+.phone-simple > input[type="tel"] {
+    flex: 1;
+    min-width: 0;
+}
+
+.country-picker {
+    position: relative;
+    width: 88px;
+    flex: 0 0 88px;
+}
+
+.country-button {
+    width: 100%;
+    height: 100%;
+    min-height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 10px;
+
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 10px;
+
+    background: rgba(255,255,255,.04);
+    color: #fff;
+
+    font-size: 14px;
+    font-weight: 600;
+
+    cursor: pointer;
+}
+
+.country-button:hover {
+    border-color: #FF5A00;
+}
+
+.country-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+
+    width: 240px;
+    max-height: 280px;
+    overflow-y: auto;
+
+    padding: 6px;
+
+    background: #0b0f14;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 12px;
+
+    box-shadow: 0 15px 40px rgba(0,0,0,.35);
+
+    display: none;
+    z-index: 1000;
+}
+
+.country-menu.open {
+    display: block;
+}
+
+.country-menu button {
+    width: 100%;
+
+    padding: 10px 12px;
+
+    border: 0;
+    border-radius: 8px;
+
+    background: transparent;
+    color: #fff;
+
+    text-align: left;
+    font-size: 13px;
+
+    cursor: pointer;
+}
+
+.country-menu button:hover {
+    background: #FF5A00;
+    color: #fff;
+}
+
+/* =====================================================
+   MAP SECTION — single consolidated block
+   (matches the site's dark background: hsl(216, 33%, 3%))
+===================================================== */
+
+.map-section {
+    background: hsl(216, 33%, 3%);
+    color: #fff;
+    position: relative;
+}
+
+.map-section .section-label {
+    color: #FF5A00;
+}
+
+.map-section h2 {
+    color: #fff;
+}
+
+.map-section p {
+    color: rgba(255,255,255,.65);
+}
+
+.map-container {
+    width: 100%;
+    height: 600px;
+    margin-top: 35px;
+    position: relative;
+    overflow: hidden;
+    border-radius: 20px;
+    border: 1px solid rgba(255,255,255,.08);
+    background: hsl(216, 33%, 3%);
+    box-shadow: 0 25px 80px rgba(0,0,0,.35);
+}
+
+#mangystau-map {
+    width: 100%;
+    height: 100%;
+    min-height: 600px;
+    background: hsl(216, 33%, 3%);
+}
+
+.leaflet-container {
+    font-family: inherit;
+    background: hsl(216, 33%, 3%);
+}
+
+.map-popup {
+    min-width: 180px;
+    padding: 4px;
+}
+
+.map-popup h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+}
+
+.map-popup p {
+    margin: 0;
+    color: #aeb5bf;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+.leaflet-popup-content-wrapper,
+.leaflet-popup-tip {
+    background: #0b0f14;
+    color: #fff;
+}
+
+.leaflet-popup-content-wrapper {
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+}
+
+.leaflet-popup-content {
+    margin: 14px 16px;
+}
+
+.map-marker,
+.map-point {
+    width: 14px;
+    height: 14px;
+    background: #FF5A00;
+    border: 3px solid #fff;
+    border-radius: 50%;
+    box-shadow:
+        0 0 0 4px rgba(255,90,0,.25),
+        0 0 15px rgba(255,90,0,.35);
+}
+
+.leaflet-control-attribution {
+    background: rgba(5,7,10,.75) !important;
+    color: #777 !important;
+}
+
+.leaflet-control-attribution a {
+    color: #999 !important;
+}
+
+@media (max-width: 700px) {
+
+    .map-container {
+        height: 450px;
+        border-radius: 15px;
+    }
+
+    #mangystau-map {
+        height: 450px;
+        min-height: 450px;
+    }
+
+}
+
+/* =========================
+   REVIEWS
+========================= */
+
+.reviews-section {
+    padding-top: 40px;
+    padding-bottom: 70px;
+}
+.reviews-marquee {
+    margin-top: 20px;
+}
+
+.reviews-track {
+    display: flex;
+    gap: 20px;
+    width: max-content;
+    animation: reviews-scroll 28s linear infinite;
+}
+
+.review-card {
+    flex: 0 0 360px;
+    box-sizing: border-box;
+
+    padding: 28px;
+
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+
+    background: rgba(255,255,255,.025);
+
+    transition: border-color .25s ease,
+                transform .25s ease;
+}
+
+.review-card:hover {
+    transform: translateY(-5px);
+    border-color: rgba(255,90,0,.5);
+}
+
+.review-stars {
+    color: #FF5A00;
+    font-size: 18px;
+    letter-spacing: 2px;
+    margin-bottom: 18px;
+}
+
+.review-card p {
+    margin: 0;
+    color: #d8dce3;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.review-author {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    margin-top: 24px;
+}
+
+.review-author strong {
+    color: #fff;
+    font-size: 15px;
+}
+
+.review-author span {
+    color: #89919d;
+    font-size: 13px;
+}
+
+@keyframes reviews-scroll {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(calc(-50% - 10px));
+    }
+}
+
+.reviews-marquee:hover .reviews-track {
+    animation-play-state: paused;
+}
+
+@media (max-width: 700px) {
+    .review-card {
+        flex-basis: 290px;
+    }
+
+    .reviews-track {
+        gap: 14px;
+        animation-duration: 22s;
+    }
+}
+
+/* Remove unwanted list dots */
+ul,
+ol {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.nav,
+.nav *,
+.language-menu,
+.language-menu *,
+.country-menu,
+.country-menu *,
+.footer-nav,
+.footer-nav *,
+.cards,
+.cards *,
+.benefits-grid,
+.benefits-grid * {
+    list-style: none !important;
+}
+
+.nav li::before,
+.nav li::after,
+.language-menu li::before,
+.language-menu li::after,
+.country-menu li::before,
+.country-menu li::after,
+.footer-nav li::before,
+.footer-nav li::after,
+.cards li::before,
+.cards li::after,
+.benefits-grid li::before,
+.benefits-grid li::after {
+    content: none !important;
+    display: none !important;
+}
+.booking-price {
+    margin: 18px 0;
+    padding: 14px 15px;
+
+    border-radius: 12px;
+
+    background: rgba(255, 90, 0, .08);
+    border: 1px solid rgba(255, 90, 0, .22);
+}
+
+.booking-price-label {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: #89919d;
+
+    font-size: 8px;
+    font-weight: 800;
+
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.booking-price-value {
+    color: #fff;
+
+    font-size: 23px;
+    font-weight: 800;
+
+    letter-spacing: -.03em;
+}
+
+.booking-price-value small {
+    color: #ff5a00;
+
+    font-size: 12px;
+    font-weight: 700;
+}
+/* =========================================================
+   MANGYSTAU TOUR — BOOKING PAGE
+   ========================================================= */
+
+.booking-page {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    background: #ffffff;
+    color: #111111;
+}
+
+
+/* MAIN LAYOUT */
+
+.booking-wrapper {
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+}
+
+
+/* =========================================================
+   LEFT — VISUAL
+   ========================================================= */
+
+.booking-visual {
+    position: relative;
+    min-height: 100vh;
+
+    background-image:
+        url("/static/images/booking.jpg");
+
+    background-size: cover;
+    background-position: center;
+
+    display: flex;
+    align-items: center;
+    padding: 70px;
+    overflow: hidden;
+}
+
+
+/* DARK IMAGE OVERLAY */
+
+.booking-overlay {
+    position: absolute;
+    inset: 0;
+
+    background:
+        linear-gradient(
+            90deg,
+            rgba(0, 0, 0, 0.78),
+            rgba(0, 0, 0, 0.30)
+        );
+}
+
+
+/* LEFT CONTENT */
+
+.booking-brand {
+    position: relative;
+    z-index: 2;
+    max-width: 500px;
+    color: #ffffff;
+}
+
+
+/* LOGO */
+
+.booking-logo {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 3px;
+}
+
+.booking-logo span {
+    color: #FFC400;
+}
+
+
+/* LINE */
+
+.booking-line {
+    width: 70px;
+    height: 3px;
+    background: #FFC400;
+
+    margin: 28px 0;
+}
+
+
+/* TITLE */
+
+.booking-brand h1 {
+    margin: 0;
+
+    font-size: clamp(48px, 5vw, 82px);
+    line-height: 0.95;
+
+    font-weight: 800;
+    letter-spacing: -2px;
+}
+
+
+/* DESCRIPTION */
+
+.booking-brand p {
+    max-width: 430px;
+
+    margin-top: 30px;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 16px;
+    line-height: 1.7;
+}
+
+
+/* LOCATION */
+
+.booking-location {
+    position: absolute;
+
+    left: 70px;
+    bottom: 40px;
+
+    z-index: 3;
+
+    color: rgba(255, 255, 255, 0.75);
+
+    font-size: 11px;
+    font-weight: 700;
+
+    letter-spacing: 3px;
+}
+
+
+/* =========================================================
+   RIGHT — FORM
+   ========================================================= */
+
+.booking-form-section {
+    min-height: 100vh;
+
+    background: #ffffff;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 60px 70px;
+}
+
+
+.booking-form-container {
+    width: 100%;
+    max-width: 620px;
+}
+
+
+/* BACK */
+
+.booking-back {
+    display: inline-block;
+
+    margin-bottom: 50px;
+
+    color: #111111;
+
+    text-decoration: none;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+
+    transition: 0.25s;
+}
+
+
+.booking-back:hover {
+    color: #FFC400;
+    transform: translateX(-4px);
+}
+
+
+/* HEADING */
+
+.booking-heading span {
+    display: block;
+
+    margin-bottom: 10px;
+
+    color: #999999;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+
+.booking-heading h2 {
+    margin: 0;
+
+    font-size: clamp(38px, 4vw, 58px);
+
+    line-height: 1;
+
+    letter-spacing: -2px;
+
+    font-weight: 800;
+}
+
+
+.booking-heading p {
+    margin-top: 18px;
+
+    color: #777777;
+
+    font-size: 14px;
+
+    line-height: 1.6;
+}
+
+
+/* FORM */
+
+.booking-form {
+    margin-top: 38px;
+}
+
+
+/* ROW */
+
+.booking-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 18px;
+}
+
+
+/* FIELD */
+
+.booking-field {
+    margin-bottom: 22px;
+}
+
+
+.booking-field label {
+    display: block;
+
+    margin-bottom: 8px;
+
+    color: #555555;
+
+    font-size: 9px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+/* INPUTS */
+
+.booking-field input,
+.booking-field select,
+.booking-field textarea {
+
+    width: 100%;
+
+    border: 1px solid #dddddd;
+
+    border-radius: 0;
+
+    background: #ffffff;
+
+    color: #111111;
+
+    padding: 14px 15px;
+
+    font-family: inherit;
+
+    font-size: 14px;
+
+    outline: none;
+
+    transition:
+        border-color 0.25s,
+        box-shadow 0.25s;
+}
+
+
+.booking-field input,
+.booking-field select {
+    height: 48px;
+}
+
+
+.booking-field textarea {
+    min-height: 100px;
+
+    resize: vertical;
+}
+
+
+/* PLACEHOLDER */
+
+.booking-field input::placeholder,
+.booking-field textarea::placeholder {
+    color: #aaaaaa;
+}
+
+
+/* FOCUS */
+
+.booking-field input:focus,
+.booking-field select:focus,
+.booking-field textarea:focus {
+
+    border-color: #111111;
+
+    box-shadow:
+        3px 3px 0 #FFC400;
+}
+
+
+/* =========================================================
+   PRICE BOX
+   ========================================================= */
+
+.booking-price-box {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 17px 18px;
+
+    margin-bottom: 22px;
+
+    background: #f7f7f7;
+
+    border-left: 4px solid #FFC400;
+}
+
+
+.booking-price-box span {
+    display: block;
+
+    font-size: 10px;
+    font-weight: 800;
+
+    letter-spacing: 2px;
+}
+
+
+.booking-price-box small {
+    display: block;
+
+    margin-top: 4px;
+
+    color: #999999;
+
+    font-size: 8px;
+
+    letter-spacing: 1px;
+}
+
+
+.booking-price-box strong {
+    font-size: 22px;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   TOTAL
+   ========================================================= */
+
+.booking-total {
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 20px 0;
+
+    margin-top: 4px;
+
+    border-top: 1px solid #dddddd;
+}
+
+
+.booking-total span {
+
+    font-size: 11px;
+    font-weight: 800;
+
+    letter-spacing: 3px;
+}
+
+
+.booking-total strong {
+
+    font-size: 30px;
+
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   BOOK NOW BUTTON
+   ========================================================= */
+
+.booking-submit {
+
+    width: 100%;
+
+    height: 62px;
+
+    margin-top: 8px;
+
+    border: none;
+
+    background: #111111;
+
+    color: #ffffff;
+
+    cursor: pointer;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: space-between;
+
+    padding: 0 24px;
+
+    font-family: inherit;
+
+    font-size: 11px;
+
+    font-weight: 800;
+
+    letter-spacing: 3px;
+
+    transition:
+        background 0.25s,
+        color 0.25s,
+        transform 0.25s;
+}
+
+
+.booking-submit:hover {
+
+    background: #FFC400;
+
+    color: #111111;
+
+    transform: translateY(-2px);
+}
+
+
+.booking-arrow {
+
+    font-size: 24px;
+
+    letter-spacing: 0;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .booking-wrapper {
+        grid-template-columns: 1fr;
+    }
+
+
+    .booking-visual {
+        min-height: 430px;
+
+        padding: 40px;
+    }
+
+
+    .booking-brand h1 {
+        font-size: 52px;
+    }
+
+
+    .booking-location {
+        left: 40px;
+        bottom: 25px;
+    }
+
+
+    .booking-form-section {
+        min-height: auto;
+
+        padding: 50px 30px;
+    }
+
+
+    .booking-back {
+        margin-bottom: 35px;
+    }
+
+}
+
+
+@media (max-width: 600px) {
+
+    .booking-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+
+
+    .booking-visual {
+        min-height: 380px;
+
+        padding: 30px;
+    }
+
+
+    .booking-brand h1 {
+        font-size: 44px;
+    }
+
+
+    .booking-brand p {
+        font-size: 14px;
+    }
+
+
+    .booking-location {
+        left: 30px;
+    }
+
+
+    .booking-form-section {
+        padding: 40px 22px;
+    }
+
+
+    .booking-heading h2 {
+        font-size: 40px;
+    }
+
+}
+/* =========================================
+   MANGYSTAU TOUR — MOVING TICKER
+========================================= */
+
+.tour-ticker {
+    width: 100%;
+    overflow: hidden;
+    background: #FF5A00;
+    color: #050505;
+    border-top: 1px solid rgba(0, 0, 0, 0.15);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.15);
+    padding: 18px 0;
+    position: relative;
+}
+
+.ticker-track {
+    display: flex;
+    width: max-content;
+    align-items: center;
+    animation: tickerMove 35s linear infinite;
+}
+
+.ticker-item {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    white-space: nowrap;
+    padding-right: 70px;
+    font-size: 15px;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+}
+
+.ticker-item strong {
+    font-size: 17px;
+    font-weight: 900;
+}
+
+.ticker-star {
+    font-size: 20px;
+    line-height: 1;
+}
+
+.ticker-item span:last-child {
+    font-weight: 600;
+}
+
+@keyframes tickerMove {
+    from {
+        transform: translateX(0);
+    }
+
+    to {
+        transform: translateX(-50%);
+    }
+}
+
+/* Hover кезінде тоқтайды */
+.tour-ticker:hover .ticker-track {
+    animation-play-state: paused;
+}
+
+
+/* =========================================
+   MOBILE
+========================================= */
+
+@media (max-width: 768px) {
+
+    .tour-ticker {
+        padding: 14px 0;
+    }
+
+    .ticker-item {
+        gap: 12px;
+        padding-right: 45px;
+        font-size: 11px;
+        letter-spacing: 1px;
+    }
+
+    .ticker-item strong {
+        font-size: 13px;
+    }
+
+    .ticker-star {
+        font-size: 15px;
+    }
+}
+/* =========================================================
+   SOCIAL BUTTONS
+========================================================= */
+
+.social-btn {
+    width: 28px;
+    height: 28px;
+
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    background: transparent;
+    color: #ffffff;
+
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    border-radius: 3px;
+
+    padding: 0;
+    margin: 0;
+
+    text-decoration: none;
+    flex-shrink: 0;
+
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background 0.2s ease;
+}
+
+/* ICON */
+
+.social-btn svg {
+    width: 15px;
+    height: 15px;
+
+    display: block;
+
+    fill: currentColor;
+}
+
+
+/* INSTAGRAM */
+
+.social-btn .instagram-dot {
+    fill: currentColor;
+    stroke: none;
+}
+
+.social-btn svg rect,
+.social-btn svg circle:not(.instagram-dot) {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+}
+
+
+/* HOVER */
+
+.social-btn:hover {
+    color: #FF5A00;
+    border-color: #FF5A00;
+    background: rgba(255, 90, 0, 0.08);
+
+    transform: none;
+}
+
+
+/* =========================================================
+   HEADER SPACING
+========================================================= */
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+
+/* MOBILE */
+
+@media (max-width: 768px) {
+
+    .social-btn {
+        width: 27px;
+        height: 27px;
+    }
+
+    .social-btn svg {
+        width: 14px;
+        height: 14px;
+    }
+
+    .header-actions {
+        gap: 6px;
+    }
+
+}
+/* =========================================================
+   MANGYSTAU TOUR — HERO VIDEO
+========================================================= */
+
+.hero {
+    position: relative !important;
+
+    width: 100% !important;
+    min-height: 100vh !important;
+
+    overflow: hidden !important;
+
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+
+    background: #000 !important;
+}
+
+/* =========================================================
+   VIDEO BACKGROUND
+========================================================= */
+
+.hero-video {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    min-width: 100% !important;
+    min-height: 100% !important;
+
+    object-fit: cover !important;
+    object-position: center center !important;
+
+    display: block !important;
+
+    margin: 0 !important;
+    padding: 0 !important;
+
+    border: 0 !important;
+
+    z-index: 0 !important;
+
+    pointer-events: none !important;
+}
+
+/* =========================================================
+   DARK OVERLAY
+========================================================= */
+
+.hero-overlay {
+    position: absolute !important;
+
+    top: 0 !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    left: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    background: rgba(0, 0, 0, 0.48) !important;
+
+    z-index: 1 !important;
+
+    pointer-events: none !important;
+}
+
+/* =========================================================
+   HERO CONTENT
+========================================================= */
+
+.hero-content {
+    position: relative !important;
+
+    z-index: 5 !important;
+
+    width: 100% !important;
+    max-width: 1200px !important;
+
+    margin: 0 auto !important;
+
+    padding: 140px 40px 100px !important;
+
+    text-align: center !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   LOCATION
+========================================================= */
+
+.hero-location {
+    position: relative;
+
+    margin-bottom: 22px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    letter-spacing: 4px;
+
+    color: #fff;
+
+    text-transform: uppercase;
+}
+
+/* =========================================================
+   TITLE
+========================================================= */
+
+.hero-content h1 {
+    position: relative;
+
+    margin: 0 auto 24px;
+
+    max-width: 1000px;
+
+    font-size: clamp(48px, 7vw, 96px);
+
+    line-height: 0.95;
+
+    font-weight: 800;
+
+    letter-spacing: -2px;
+
+    text-transform: uppercase;
+
+    color: #fff;
+}
+
+/* =========================================================
+   TEXT
+========================================================= */
+
+.hero-content p {
+    position: relative;
+
+    max-width: 650px;
+
+    margin: 0 auto 35px;
+
+    font-size: 17px;
+
+    line-height: 1.7;
+
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+.hero-buttons {
+    position: relative;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    gap: 12px;
+}
+
+/* ORANGE BUTTON */
+
+.hero-btn {
+    background: #FF5A00 !important;
+
+    border: 1px solid #FF5A00 !important;
+
+    color: #fff !important;
+
+    padding: 14px 28px !important;
+}
+
+.hero-btn:hover {
+    background: #fff !important;
+
+    border-color: #fff !important;
+
+    color: #000 !important;
+}
+
+/* BOOK BUTTON */
+
+.hero-book-btn {
+    padding: 14px 28px !important;
+
+    border: 1px solid rgba(255, 255, 255, 0.8) !important;
+
+    color: #fff !important;
+
+    background: transparent !important;
+}
+
+.hero-book-btn:hover {
+    background: #FF5A00 !important;
+
+    border-color: #FF5A00 !important;
+
+    color: #fff !important;
+}
+
+/* =========================================================
+   SCROLL
+========================================================= */
+
+.hero-scroll {
+    position: absolute !important;
+
+    left: 50% !important;
+    bottom: 30px !important;
+
+    transform: translateX(-50%) !important;
+
+    z-index: 5 !important;
+
+    display: flex;
+
+    align-items: center;
+
+    gap: 10px;
+
+    font-size: 10px;
+
+    letter-spacing: 3px;
+
+    color: rgba(255, 255, 255, 0.8);
+
+    white-space: nowrap;
+}
+
+.hero-scroll span {
+    display: block;
+
+    width: 35px;
+
+    height: 1px;
+
+    background: #FF5A00;
+}
+/* ===== HERO VIDEO ===== */
+
+.hero {
+    position: relative !important;
+    width: 100% !important;
+    min-height: 100vh !important;
+    overflow: hidden !important;
+    background: #000 !important;
+}
+
+.hero-video {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+
+    width: 100% !important;
+    height: 100% !important;
+
+    object-fit: cover !important;
+    object-position: center !important;
+
+    display: block !important;
+
+    z-index: 0 !important;
+}
+
+.hero-overlay {
+    position: absolute !important;
+    inset: 0 !important;
+
+    background: rgba(0, 0, 0, 0.45) !important;
+
+    z-index: 1 !important;
+}
+
+.hero-content {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+.hero .eyebrow,
+.hero h1,
+.hero p,
+.hero-buttons {
+    position: relative;
+    z-index: 3;
+}
+/* ===========================================================================
+   ЕКІНШІ БӨЛІК — 2026
+   Хедер, мобиль мәзір, тіл ауыстырғыш, футердегі желілер,
+   валюта қосқышы, карта.
+
+   МАҢЫЗДЫ: бұл блок site.css ішінде ТЕК БІР РЕТ тұруы керек.
+   Бұрын жеті рет қайталанып жазылған да, ережелер бір-бірін
+   жауып, картадағы нүктелер көрінбей қалған.
+=========================================================================== */
+
+/* ---------- УТИЛИТАЛАР ---------- */
+
+.visually-hidden {
+    position: absolute !important;
+    width: 1px; height: 1px;
+    margin: -1px; padding: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+}
+
+.skip-link {
+    position: absolute;
+    left: -9999px;
+    top: 0;
+    z-index: 2000;
+    padding: 10px 16px;
+    background: #FF5A00;
+    color: #fff;
+    font-size: 13px;
+}
+
+.skip-link:focus { left: 0; }
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+    outline: 2px solid #FF5A00;
+    outline-offset: 2px;
+    border-radius: 4px;
+}
+
+/* ---------- ХЕДЕР ---------- */
+
+.header {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%;
+    height: 76px;
+    padding: 0 5%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    z-index: 1000;
+    background: rgba(8,10,13,.82);
+    backdrop-filter: blur(18px);
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.logo { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+
+.logo-image {
+    display: block;
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+}
+
+.logo-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    line-height: 1.05;
+}
+
+.logo-text strong {
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: #FF5C03;
+    font-size: 22px;
+    font-weight: 900;
+    letter-spacing: -.01em;
+    text-transform: uppercase;
+}
+
+.logo-text small {
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: #FFD207;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.nav { display: flex; align-items: center; gap: 26px; }
+
+.nav a {
+    color: #c3c9d1;
+    font-size: 13px;
+    transition: color .2s;
+}
+
+.nav a:hover { color: #fff; }
+.nav .nav-book { display: none; }
+
+.header-actions { display: flex; align-items: center; gap: 10px; }
+
+/* ---------- ТІЛ ---------- */
+
+.language-switcher { position: relative; }
+
+.language-btn {
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 8px;
+    background: transparent;
+    color: #fff;
+    padding: 8px 12px;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.language-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 150px;
+    padding: 5px;
+    background: #101318;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.45);
+    display: none;
+    opacity: 1;
+    visibility: visible;
+    transform: none;
+    z-index: 1100;
+}
+
+.language-menu.open { display: block; }
+
+.language-menu a {
+    display: block;
+    padding: 9px 11px;
+    border-radius: 7px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.language-menu a:hover { background: #FF5A00; }
+.language-menu a[aria-current="true"] { color: #FF5A00; }
+.language-menu a[aria-current="true"]:hover { color: #fff; }
+
+/* ---------- МОБИЛЬ МӘЗІР ---------- */
+
+.nav-toggle {
+    display: none;
+    width: 42px; height: 42px;
+    padding: 11px 9px;
+    border: 1px solid rgba(255,255,255,.12);
+    border-radius: 9px;
+    background: transparent;
+    cursor: pointer;
+}
+
+.nav-toggle span {
+    display: block;
+    height: 2px;
+    margin: 3px 0;
+    background: #fff;
+    border-radius: 2px;
+}
+
+@media (max-width: 1100px) {
+    .logo-text strong { font-size: 18px; }
+    .logo-text small  { font-size: 9px; letter-spacing: .09em; }
+}
+
+@media (max-width: 900px) {
+    .header { height: 68px; padding: 0 18px; }
+    .nav-toggle { display: block; order: 3; }
+    .logo-image { width: 36px; height: 36px; }
+
+    .nav {
+        position: absolute;
+        top: 100%; left: 0;
+        width: 100%;
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0;
+        padding: 8px 18px 18px;
+        background: #0b0e12;
+        border-bottom: 1px solid rgba(255,255,255,.08);
+        display: none;
+    }
+
+    .nav.open { display: flex; }
+    .nav a { padding: 13px 0; border-bottom: 1px solid rgba(255,255,255,.05); }
+    .nav .nav-book { display: block; color: #FF5A00; font-weight: 700; }
+
+    .header-actions { order: 2; }
+    .header-actions .header-book { display: none; }
+    .logo-text small { display: none; }
+}
+
+@media (max-width: 480px) {
+    .logo-text { display: none; }
+    .header .social-btn { display: none; }
+}
+
+/* ---------- ТУР КАРТОЧКАСЫ ---------- */
+
+.tour-card { position: relative; }
+
+.tour-card-link {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+}
+
+.tour-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin: 12px 0 0;
+}
+
+.tour-price span { color: #6e7681; font-size: 11px; }
+.tour-price strong { color: #FF5A00; font-size: 16px; font-weight: 800; }
+
+.gallery-item { position: relative; margin: 0; overflow: hidden; }
+
+.gallery-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* ---------- ФУТЕРДЕГІ ЖЕЛІЛЕР ---------- */
+
+.footer-brand { display: flex; flex-direction: column; gap: 6px; }
+
+.footer-social {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.footer-social .social-btn {
+    display: inline-flex;
+    width: auto;
+    height: 38px;
+    padding: 0 14px;
+    gap: 8px;
+    border-radius: 19px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.footer-phone {
+    color: #8a929c;
+    font-size: 13px;
+}
+
+.footer-phone:hover { color: #FF5A00; }
+
+/* ---------- ВАЛЮТА ҚОСҚЫШЫ ---------- */
+
+.currency-switch {
+    position: relative;
+    isolation: isolate;
+
+    display: inline-grid;
+    grid-template-columns: repeat(2, 34px);
+    gap: 2px;
+
+    padding: 3px;
+
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 10px;
+    background: rgba(0, 0, 0, .3);
+}
+
+.currency-switch button {
+    position: relative;
+    z-index: 1;
+
+    padding: 5px 0;
+
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+
+    color: #79818c;
+    font: inherit;
+    font-size: 13px;
+    font-weight: 800;
+
+    cursor: pointer;
+    transition: color .25s ease, transform .12s ease;
+}
+
+.currency-switch button:hover,
+.currency-switch button.is-active { color: #fff; }
+.currency-switch button:active { transform: scale(.94); }
+
+.currency-indicator {
+    position: absolute;
+    top: 3px;
+    bottom: 3px;
+    left: 0;
+    z-index: 0;
+
+    width: 0;
+    border-radius: 7px;
+    background: #FF5A00;
+
+    opacity: 0;
+
+    transition:
+        transform .4s cubic-bezier(.32, .72, 0, 1),
+        width .4s cubic-bezier(.32, .72, 0, 1),
+        opacity .2s ease;
+}
+
+.currency-indicator.is-ready { opacity: 1; }
+
+.aside-head,
+.price-label-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 14px;
+    margin-bottom: 8px;
+}
+
+.aside-head .packages-aside-title,
+.price-label-row label { margin: 0; }
+
+.price-and-currency {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+[data-kzt] {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+/* ===========================================================================
+   КАРТА
+   Ескерту: бұрын .map-container::after көлеңкесі z-index: 400 болатын да,
+   Leaflet маркерлерін (z-index 600) жауып тұ��атын. Енді ол 0-ге түсті
+   және маркерлер әрқашан үстінде.
+=========================================================================== */
+
+.map-container {
+    position: relative;
+    width: 100%;
+    height: 560px;
+    margin-top: 35px;
+
+    border-radius: 18px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: #0b0f14;
+}
+
+#mangystau-map {
+    width: 100%;
+    height: 100%;
+    min-height: 560px;
+    background: #0b0f14;
+}
+
+.leaflet-container {
+    font-family: inherit;
+    background: #0b0f14;
+}
+
+/* Спутник суреті сайттың реңкіне келсін */
+.leaflet-tile-pane {
+    filter: brightness(.85) saturate(.9) contrast(1.03);
+}
+
+/* Маркерлер, сызық, popup сүзгіге ілінбейді */
+.leaflet-marker-pane,
+.leaflet-popup-pane,
+.leaflet-overlay-pane,
+.leaflet-control-container {
+    filter: none;
+}
+
+/* Картаның жиегіндегі көлеңке — ЕҢ ТӨМЕНГІ қабатта */
+.map-container::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+
+    border-radius: 18px;
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06);
+}
+
+/* ---------- МАРКЕРЛЕР ---------- */
+
+.map-pin {
+    display: flex !important;
+    align-items: center;
+    justify-content: center;
+    background: transparent !important;
+    border: 0 !important;
+}
+
+.map-pin-dot {
+    display: block;
+    width: 11px;
+    height: 11px;
+
+    border-radius: 50%;
+    background: #FF5A00;
+
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .95),
+        0 2px 8px rgba(0, 0, 0, .65);
+
+    transition: transform .18s cubic-bezier(.32, .72, 0, 1);
+}
+
+.map-pin:hover .map-pin-dot { transform: scale(1.4); }
+
+/* Егер index.html-дің ескі нұсқасы нөмірлі маркер жасаса, ол да көрінсін.
+   Бұрын мұнда display:none тұрған да, нүктелер жоғалып кеткен. */
+.map-pin-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 24px;
+    height: 24px;
+
+    border-radius: 50%;
+    background: #FF5A00;
+
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, .95),
+        0 3px 10px rgba(0, 0, 0, .65);
+
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+}
+
+/* ---------- POPUP ---------- */
+
+.leaflet-popup-content-wrapper {
+    padding: 0;
+    overflow: hidden;
+    border-radius: 14px;
+    border: 1px solid rgba(255, 255, 255, .1);
+    background: #0b0f14;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, .5);
+}
+
+.leaflet-popup-tip { background: #0b0f14; }
+.leaflet-popup-content { margin: 0; }
+
+.map-popup-photo {
+    display: block;
+    width: 100%;
+    height: 140px;
+    object-fit: cover;
+}
+
+.map-popup-body { padding: 14px 16px; }
+
+.map-popup h3 {
+    margin: 0 0 6px;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+}
+
+.map-popup p {
+    margin: 0;
+    color: #8b939e;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.leaflet-container a.leaflet-popup-close-button { color: #79818c; }
+
+.leaflet-bar a,
+.leaflet-bar a:hover {
+    background: #0b0f14;
+    color: #cfd5dd;
+    border-color: rgba(255, 255, 255, .1);
+}
+
+.leaflet-control-attribution {
+    background: rgba(8, 10, 13, .75) !important;
+    color: #68717c !important;
+}
+
+.leaflet-control-attribution a { color: #8b939e !important; }
+
+@media (max-width: 650px) {
+    .map-container { height: 400px; }
+    #mangystau-map { min-height: 400px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .currency-indicator,
+    .currency-switch button,
+    .map-pin-dot {
+        transition: none;
+    }
+}
+/* ===========================================================================
+   КАРТАДАҒЫ POPUP — СОҢҒЫ НҰСҚА
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+
+   Мәселе: Leaflet-тің әдепкі терезесі АҚ түсті болатын да, атауы
+   ақ әріппен жазылып, көрінбей қалатын. Сондықтан астында бос орын
+   қалып тұрған. Мұнда бәрі қараңғы реңкке келтірілді.
+=========================================================================== */
+
+/* --- сыртқы жақтау --- */
+
+.leaflet-popup-content-wrapper {
+    padding: 0 !important;
+    overflow: hidden !important;
+
+    border-radius: 16px !important;
+    border: 1px solid rgba(255, 255, 255, .1) !important;
+
+    background: #0b0f14 !important;
+    color: #cfd5dd !important;
+
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .55) !important;
+}
+
+.leaflet-popup-tip {
+    background: #0b0f14 !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Бос орын осы жерден шығатын: Leaflet әдепкі шегініс қоятын */
+.leaflet-popup-content {
+    margin: 0 !important;
+    width: 250px !important;
+    line-height: 1.5;
+}
+
+/* --- сурет --- */
+
+.map-popup-photo {
+    display: block;
+    width: 100%;
+    height: 132px;
+    object-fit: cover;
+
+    /* Жұмсақ жақтау: төменгі жағы мәтінге жалғасады */
+    border-radius: 15px 15px 0 0;
+}
+
+/* Суреттің астыңғы шеті мәтінге біртіндеп сіңсін */
+.map-popup.has-photo {
+    position: relative;
+}
+
+.map-popup.has-photo::after {
+    content: "";
+    position: absolute;
+    top: 92px;
+    left: 0;
+    right: 0;
+    height: 40px;
+    pointer-events: none;
+
+    background: linear-gradient(180deg, transparent, #0b0f14);
+}
+
+/* --- мәтін --- */
+
+.map-popup-body {
+    position: relative;
+    z-index: 1;
+    padding: 12px 15px 14px !important;
+}
+
+.map-popup h3 {
+    margin: 0 0 4px !important;
+
+    /* Бұрын ақ фонда ақ әріппен жазылып, көрінбей тұрған */
+    color: #ffffff !important;
+
+    font-size: 15px !important;
+    font-weight: 800 !important;
+    letter-spacing: .02em;
+    text-transform: uppercase;
+}
+
+.map-popup p {
+    margin: 0 !important;
+    color: #8b939e !important;
+    font-size: 12px !important;
+    line-height: 1.5 !important;
+}
+
+/* --- жабу түймесі --- */
+
+.leaflet-container a.leaflet-popup-close-button {
+    top: 8px;
+    right: 8px;
+
+    width: 24px;
+    height: 24px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .55);
+
+    color: #fff !important;
+    font-size: 16px;
+    line-height: 1;
+
+    transition: background .2s ease;
+}
+
+.leaflet-container a.leaflet-popup-close-button:hover {
+    background: #FF5A00;
+}
+
+/* Суретсіз нүктелерде жоғарғы шегініс сәл молырақ */
+.map-popup:not(.has-photo) .map-popup-body {
+    padding: 15px 16px !important;
+}
+
+@media (max-width: 650px) {
+    .leaflet-popup-content { width: 220px !important; }
+    .map-popup-photo { height: 112px; }
+    .map-popup.has-photo::after { top: 76px; }
+}
+/* ===========================================================================
+   POPUP: суреттің астындағы сызықты алу
+   Градиент қабаттың шеті көрініп қалған — өшіреміз.
+=========================================================================== */
+
+.map-popup.has-photo::after {
+    display: none !important;
+}
+
+.map-popup-photo {
+    display: block;
+    border-radius: 15px 15px 0 0;
+
+    /* Сурет пен мәтін арасында ешқандай жік қалмасын */
+    margin-bottom: 0;
+    border-bottom: 0;
+}
+
+.map-popup-body {
+    margin-top: 0;
+    border-top: 0;
+}
+/* ===========================================================================
+   ГАЛЕРЕЯ + ЛАЙТБОКС
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+.gallery {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-auto-rows: 210px;
+    gap: 12px;
+}
+
+.gallery-item {
+    position: relative;
+    margin: 0;
+
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: #0b0f14;
+}
+
+/* Әр бесінші сурет үлкенірек — тор біркелкі болып жалықтырмайды */
+.gallery-large { grid-column: span 2; grid-row: span 2; }
+.gallery-small { grid-column: span 2; }
+
+/* Суретті ашатын түйме — бүкіл ұяшықты алады */
+.gallery-open {
+    display: block;
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+    cursor: zoom-in;
+}
+
+.gallery-item img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+
+    transition: transform .5s cubic-bezier(.32, .72, 0, 1);
+}
+
+.gallery-item:hover img { transform: scale(1.05); }
+
+/* Астындағы атауы — тек тінтуір тигенде */
+.gallery-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 26px 16px 14px;
+
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .8));
+
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-align: left;
+    text-transform: uppercase;
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.gallery-item:hover .gallery-caption,
+.gallery-open:focus-visible .gallery-caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* ---------- ЛАЙТБОКС ---------- */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    background: rgba(5, 7, 10, .94);
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.lightbox[hidden] { display: none; }
+.lightbox.is-open { opacity: 1; }
+
+.lightbox-figure {
+    margin: 0;
+    max-width: min(1100px, 100%);
+    max-height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    transform: scale(.97);
+    transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+.lightbox.is-open .lightbox-figure { transform: scale(1); }
+
+.lightbox-figure img {
+    max-width: 100%;
+    max-height: calc(100vh - 140px);
+
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+}
+
+.lightbox-figure figcaption {
+    color: #9aa2ad;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+/* ---------- түймелер ---------- */
+
+.lightbox-close,
+.lightbox-nav {
+    position: absolute;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .45);
+
+    color: #fff;
+    cursor: pointer;
+
+    transition: background .2s ease, transform .15s ease;
+}
+
+.lightbox-close {
+    top: 22px;
+    right: 22px;
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.lightbox-nav {
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    margin-top: -26px;
+    font-size: 30px;
+    line-height: 1;
+}
+
+.lightbox-prev { left: 22px; }
+.lightbox-next { right: 22px; }
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+    background: #FF5A00;
+    border-color: #FF5A00;
+}
+
+.lightbox-close:active,
+.lightbox-nav:active { transform: scale(.94); }
+
+/* ---------- БЕЙІМДЕЛУ ---------- */
+
+@media (max-width: 900px) {
+    .gallery {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        grid-auto-rows: 170px;
+    }
+
+    .gallery-large,
+    .gallery-small {
+        grid-column: span 1;
+        grid-row: span 1;
+    }
+
+    .gallery-large:first-child {
+        grid-column: span 2;
+    }
+}
+
+@media (max-width: 650px) {
+    .lightbox { padding: 16px; }
+    .lightbox-nav { width: 44px; height: 44px; margin-top: -22px; font-size: 26px; }
+    .lightbox-prev { left: 10px; }
+    .lightbox-next { right: 10px; }
+    .lightbox-close { top: 14px; right: 14px; width: 38px; height: 38px; }
+
+    /* Телефонда атауы әрқашан көрінеді — hover жоқ */
+    .gallery-caption { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gallery-item img,
+    .gallery-caption,
+    .lightbox,
+    .lightbox-figure {
+        transition: none;
+    }
+
+    .gallery-item:hover img { transform: none; }
+}
+/* ===========================================================================
+   ГАЛЕРЕЯ + ЛАЙТБОКС
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+.gallery {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+    grid-template-rows: repeat(2, 220px);
+    gap: 12px;
+}
+
+/* Бірінші блок — биік, сол жақта. Қалған екеуі оң жақта. */
+.gallery-slot-1 { grid-row: span 2; }
+
+.gallery-slot {
+    position: relative;
+    overflow: hidden;
+
+    border-radius: 16px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    background: #0b0f14;
+}
+
+/* Суреттер бірінің үстіне бірі тұрады, тек біреуі көрінеді */
+.gallery-slide {
+    position: absolute;
+    inset: 0;
+
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    border: 0;
+    background: none;
+
+    cursor: zoom-in;
+
+    opacity: 0;
+    visibility: hidden;
+    transform: scale(1.04);
+
+    transition:
+        opacity .9s ease,
+        transform 6s linear,
+        visibility .9s;
+}
+
+.gallery-slide.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: scale(1);
+}
+
+.gallery-slide img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* Атауы — тінтуір тигенде */
+.gallery-caption {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 28px 16px 14px;
+
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .82));
+
+    color: #fff;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .06em;
+    text-align: left;
+    text-transform: uppercase;
+
+    opacity: 0;
+    transform: translateY(6px);
+    transition: opacity .25s ease, transform .25s ease;
+}
+
+.gallery-slot:hover .gallery-caption,
+.gallery-slide:focus-visible .gallery-caption {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Қай суретте тұрғанын көрсететін нүктелер */
+.gallery-dots {
+    position: absolute;
+    right: 12px;
+    bottom: 12px;
+    z-index: 2;
+
+    display: flex;
+    gap: 5px;
+}
+
+.gallery-dot {
+    width: 6px;
+    height: 6px;
+
+    border-radius: 50%;
+    background: rgba(255, 255, 255, .35);
+
+    transition: background .3s ease, width .3s ease;
+}
+
+.gallery-dot.is-active {
+    width: 16px;
+    border-radius: 3px;
+    background: #FF5A00;
+}
+
+/* ---------- ЛАЙТБОКС ---------- */
+
+.lightbox {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 40px;
+
+    background: rgba(5, 7, 10, .94);
+    backdrop-filter: blur(10px);
+
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.lightbox[hidden] { display: none; }
+.lightbox.is-open { opacity: 1; }
+
+.lightbox-figure {
+    margin: 0;
+    max-width: min(1100px, 100%);
+    max-height: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+
+    transform: scale(.97);
+    transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+.lightbox.is-open .lightbox-figure { transform: scale(1); }
+
+.lightbox-figure img {
+    max-width: 100%;
+    max-height: calc(100vh - 140px);
+
+    border-radius: 14px;
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .6);
+}
+
+.lightbox-figure figcaption {
+    color: #9aa2ad;
+    font-size: 12px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+}
+
+/* ---------- түймелер ---------- */
+
+.lightbox-close,
+.lightbox-nav {
+    position: absolute;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .45);
+
+    color: #fff;
+    cursor: pointer;
+
+    transition: background .2s ease, transform .15s ease;
+}
+
+.lightbox-close {
+    top: 22px;
+    right: 22px;
+    width: 44px;
+    height: 44px;
+    font-size: 22px;
+    line-height: 1;
+}
+
+.lightbox-nav {
+    top: 50%;
+    width: 52px;
+    height: 52px;
+    margin-top: -26px;
+    font-size: 30px;
+    line-height: 1;
+}
+
+.lightbox-prev { left: 22px; }
+.lightbox-next { right: 22px; }
+
+.lightbox-close:hover,
+.lightbox-nav:hover {
+    background: #FF5A00;
+    border-color: #FF5A00;
+}
+
+.lightbox-close:active,
+.lightbox-nav:active { transform: scale(.94); }
+
+/* ---------- БЕЙІМДЕЛУ ---------- */
+
+@media (max-width: 900px) {
+    .gallery {
+        grid-template-columns: 1fr;
+        grid-template-rows: repeat(3, 220px);
+    }
+
+    .gallery-slot-1 { grid-row: span 1; }
+}
+
+@media (max-width: 650px) {
+    .lightbox { padding: 16px; }
+    .lightbox-nav { width: 44px; height: 44px; margin-top: -22px; font-size: 26px; }
+    .lightbox-prev { left: 10px; }
+    .lightbox-next { right: 10px; }
+    .lightbox-close { top: 14px; right: 14px; width: 38px; height: 38px; }
+
+    /* Телефонда атауы әрқашан көрінеді — hover жоқ */
+    .gallery-caption { opacity: 1; transform: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .gallery-item img,
+    .gallery-caption,
+    .lightbox,
+    .lightbox-figure {
+        transition: none;
+    }
+
+    .gallery-item:hover img { transform: none; }
+}
+/* ===========================================================================
+   СКРОЛЛДА ШЫҒУ — СТИЛЬДЕР
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+
+   .reveal-ready класын JS қояды. Сондықтан JS істемесе,
+   төмендегі ережелер мүлдем қолданылмайды да, бәрі көрініп тұрады.
+=========================================================================== */
+
+.reveal-ready .reveal {
+    opacity: 0;
+    transform: translateY(22px);
+
+    transition:
+        opacity .65s cubic-bezier(.32, .72, 0, 1),
+        transform .65s cubic-bezier(.32, .72, 0, 1);
+
+    transition-delay: var(--reveal-delay, 0ms);
+
+    /* Анимация кезінде браузер кадрларды алдын ала дайындайды */
+    will-change: opacity, transform;
+}
+
+.reveal-ready .reveal.is-visible {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+}
+
+/* Карточкалардың бұрыннан бар hover әсері бұзылмасын:
+   көрінген соң transform-ды transition тізімінен шығарамыз */
+.reveal-ready .tour-card.is-visible,
+.reveal-ready .benefit.is-visible {
+    transition:
+        opacity .65s cubic-bezier(.32, .72, 0, 1),
+        transform .25s cubic-bezier(.32, .72, 0, 1),
+        border-color .25s ease,
+        box-shadow .25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .reveal-ready .reveal {
+        opacity: 1 !important;
+        transform: none !important;
+        transition: none !important;
+    }
+}
+/* ===========================================================================
+   ХЕДЕР — ҚАЛҚЫМА ЖҰМСАҚ ЖАҚТАУ + HERO ЖАЗУЫ
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+/* ---------- 1. HERO ҮСТІНДЕГІ ЖАЗУ ---------- */
+
+.hero .eyebrow,
+.hero-content .eyebrow {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+
+    margin-bottom: 20px;
+
+    color: #FF5A00 !important;
+
+    font-size: 10px !important;
+    font-weight: 800;
+    letter-spacing: .22em;
+    text-transform: uppercase;
+}
+
+.hero .eyebrow span {
+    width: 5px;
+    height: 5px;
+    margin: 0;
+
+    border-radius: 50%;
+    background: #FF5A00;
+    box-shadow: 0 0 12px rgba(255, 90, 0, .8);
+}
+
+/* ---------- 2. ҚАЛҚЫМА ХЕДЕР ---------- */
+
+.header {
+    /* Беттің шетіне жабыспай, ортасында қалқып тұрады */
+    top: 14px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    width: min(1320px, calc(100% - 28px));
+    height: 66px;
+
+    padding: 0 12px 0 18px;
+
+    border: 1px solid rgba(255, 255, 255, .10);
+    border-radius: 18px;
+
+    background: rgba(10, 13, 17, .72);
+    backdrop-filter: blur(20px) saturate(140%);
+    -webkit-backdrop-filter: blur(20px) saturate(140%);
+
+    box-shadow:
+        0 18px 45px rgba(0, 0, 0, .38),
+        inset 0 1px 0 rgba(255, 255, 255, .06);
+}
+
+/* Мәзірдегі сілтемелер сәл ықшам */
+.header .nav a {
+    font-size: 12px;
+    letter-spacing: .06em;
+}
+
+/* Брондау түймесі жақтауға сыйып тұрсын */
+.header .btn,
+.header .header-book {
+    min-height: 40px;
+    padding: 0 18px;
+    border-radius: 12px;
+    font-size: 11px;
+}
+
+.header .language-btn {
+    border-radius: 11px;
+    padding: 8px 11px;
+}
+
+/* Мобиль мәзір хедердің астынан, сол пішінде шығады */
+@media (max-width: 900px) {
+    .header {
+        top: 10px;
+        height: 60px;
+        width: calc(100% - 20px);
+        padding: 0 10px 0 14px;
+        border-radius: 16px;
+    }
+
+    .header .nav {
+        top: calc(100% + 8px);
+        left: 0;
+        width: 100%;
+
+        padding: 10px 14px 14px;
+
+        border: 1px solid rgba(255, 255, 255, .10);
+        border-radius: 16px;
+
+        background: rgba(10, 13, 17, .96);
+        backdrop-filter: blur(20px);
+        box-shadow: 0 18px 45px rgba(0, 0, 0, .45);
+    }
+}
+
+/* ---------- 3. БЕТТЕРДІҢ ЖОҒАРҒЫ ШЕГІНІСІ ---------- */
+/* Хедер енді қалқымалы болғандықтан, шегіністі сәл ұлғайтамыз */
+
+.booking-page { padding-top: 92px; }
+.tour-detail  { padding-top: 118px; }
+
+@media (max-width: 900px) {
+    .booking-page { padding-top: 82px; }
+    .tour-detail  { padding-top: 96px; }
+}
+/* ===========================================================================
+   ХЕДЕР ЖАҚТАУЫН КЕҢЕЙТУ
+   site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+.header {
+    width: min(1620px, calc(100% - 20px));
+    padding: 0 14px 0 22px;
+}
+
+@media (max-width: 900px) {
+    .header {
+        width: calc(100% - 16px);
+    }
+}
+/* ===========================================================================
+   ФУТЕР — БРЕНД ЖАЗУЫ МЕН ЖЕЛІЛЕР
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+/* Атауы мен желілер қатар, сипаттамасы астында тұрады */
+.footer-brand {
+    display: grid;
+    grid-template-columns: auto auto;
+    grid-template-areas:
+        "title social"
+        "sub   sub";
+
+    justify-content: start;
+    align-items: center;
+
+    column-gap: 16px;
+    row-gap: 6px;
+}
+
+.footer-brand strong {
+    grid-area: title;
+
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: #FF5C03;                     /* логотиптегі қызғылт сары */
+    font-size: 26px;
+    font-weight: 900;
+    letter-spacing: -.02em;
+    text-transform: uppercase;
+}
+
+.footer-brand span {
+    grid-area: sub;
+
+    font-family: "Nunito", "Segoe UI", system-ui, sans-serif;
+    color: #FFD207;                     /* логотиптегі сары */
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+/* ---------- ЖЕЛІ ТҮЙМЕЛЕРІ ---------- */
+
+.footer-social {
+    grid-area: social;
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin: 0;
+}
+
+/* Иконка + мәтін болатын сопақ (pill) түйме */
+.footer-social .social-btn {
+    height: 38px;
+    padding: 0 16px;
+
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .05);
+
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+
+    transition:
+        background .2s ease,
+        border-color .2s ease,
+        box-shadow .2s ease,
+        transform .15s ease;
+}
+
+.footer-social .social-btn svg {
+    width: 18px;
+    height: 18px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.footer-social .social-btn:active {
+    transform: translateY(0);
+}
+
+/* WhatsApp — бренд жасылы */
+.footer-social .social-btn:has(.icon-wa):hover {
+    background: #25D366;
+    border-color: #25D366;
+    color: #0b0f14;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(37, 211, 102, .30);
+}
+
+/* Instagram — бренд градиенті */
+.footer-social .social-btn:has(.icon-ig):hover {
+    background: linear-gradient(45deg, #F58529, #DD2A7B 50%, #8134AF 90%);
+    border-color: transparent;
+    color: #fff;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(221, 42, 123, .30);
+}
+
+/* Телефон нөмірі — атаудың астында, бөлек жолда */
+.footer-phone {
+    grid-area: sub;
+    justify-self: start;
+    display: none;                      /* керек болса, display: block қой */
+}
+
+@media (max-width: 560px) {
+    .footer-brand strong { font-size: 22px; }
+    .footer-social { gap: 8px; }
+    .footer-social .social-btn {
+        height: 36px;
+        padding: 0 13px;
+        font-size: 12px;
+    }
+}

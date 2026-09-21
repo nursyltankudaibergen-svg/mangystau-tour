@@ -1,0 +1,106 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Отзывы{% endblock %}
+{% block heading %}Отзывы{% endblock %}
+
+{% block subheading %}
+    <p>Всего {{ counts.all }} · на сайте {{ counts.active }}{% if average %} · средняя оценка {{ average }}{% endif %}</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn" href="{{ url_for('admin.new_review') }}">+ Добавить отзыв</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================== ФИЛЬТР ===================== -->
+<section class="filters">
+    <div class="filter-chips">
+        <a class="chip{% if not show %} is-active{% endif %}"
+           href="{{ url_for('admin.reviews') }}">Все <em>{{ counts.all }}</em></a>
+
+        <a class="chip chip-подтверждена{% if show == 'active' %} is-active{% endif %}"
+           href="{{ url_for('admin.reviews', show='active') }}">На сайте <em>{{ counts.active }}</em></a>
+
+        <a class="chip chip-отменена{% if show == 'hidden' %} is-active{% endif %}"
+           href="{{ url_for('admin.reviews', show='hidden') }}">Скрытые <em>{{ counts.hidden }}</em></a>
+    </div>
+</section>
+
+
+{% if items %}
+
+<div class="review-grid">
+    {% for r in items %}
+    {% set stars = (r.rating or 5) | int %}
+
+    <article class="admin-card review-item{% if not r.active %} is-off{% endif %}">
+
+        <div class="review-item-head">
+
+            {% if r.photo %}
+            <img class="review-item-photo" src="{{ media_url(r.photo) }}" alt="">
+            {% else %}
+            <span class="review-item-photo is-empty">{{ (r.name or '?')[:1] | upper }}</span>
+            {% endif %}
+
+            <span class="review-item-who">
+                <strong>{{ r.name }}</strong>
+                <small>
+                    {{ r.country or '—' }}
+                    {% if r.tour %} · {{ r.tour }}{% endif %}
+                </small>
+            </span>
+
+            <span class="review-item-stars" aria-label="{{ stars }} / 5">
+                {{ "★" * stars }}<span>{{ "★" * (5 - stars) }}</span>
+            </span>
+
+        </div>
+
+        <p class="review-item-text">{{ r.text }}</p>
+
+        <div class="review-item-foot">
+
+            <small class="review-item-date">
+                {{ r.created_at.strftime('%d.%m.%Y') if r.created_at else '' }}
+            </small>
+
+            <form method="POST" action="{{ url_for('admin.toggle_review', id=r.id) }}">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="toggle-pill{% if r.active %} is-on{% endif %}"
+                        title="{{ 'Скрыть с сайта' if r.active else 'Показать на сайте' }}">
+                    <span class="toggle-dot"></span>
+                    {{ 'На сайте' if r.active else 'Скрыт' }}
+                </button>
+            </form>
+
+            <a class="admin-link" href="{{ url_for('admin.edit_review', id=r.id) }}">Изменить</a>
+
+            <form method="POST" action="{{ url_for('admin.delete_review', id=r.id) }}"
+                  onsubmit="return confirm('Удалить отзыв?');">
+                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                <button type="submit" class="admin-btn-danger">Удалить</button>
+            </form>
+
+        </div>
+
+    </article>
+    {% endfor %}
+</div>
+
+{% else %}
+
+<section class="admin-card">
+    <p class="admin-empty">
+        {% if show %}
+            В этом разделе отзывов нет.
+        {% else %}
+            Отзывов пока нет. Пока база пустая, на сайте показываются три встроенных отзыва.
+        {% endif %}
+    </p>
+</section>
+
+{% endif %}
+
+{% endblock %}

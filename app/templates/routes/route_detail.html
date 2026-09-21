@@ -1,0 +1,945 @@
+```html
+<!doctype html>
+<html lang="{{ language }}">
+
+<head>
+    <meta charset="utf-8">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>
+        {{ route.title }} — {{ settings.brand_name }}
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='site.css') }}"
+    >
+
+    <style>
+        /* ================================
+           ROUTE DETAIL
+        ================================= */
+
+        .route-detail {
+            padding: 120px 0 80px;
+        }
+
+        .route-detail-container {
+            width: min(1120px, calc(100% - 40px));
+            margin: 0 auto;
+        }
+
+        /* BACK */
+
+        .route-back {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+
+            margin-bottom: 22px;
+
+            color: #89919d;
+            text-decoration: none;
+
+            font-size: 13px;
+            font-weight: 700;
+
+            transition: .2s ease;
+        }
+
+        .route-back:hover {
+            color: #ff5a00;
+        }
+
+        /* HERO */
+
+        .route-hero {
+            position: relative;
+
+            min-height: 520px;
+
+            border-radius: 24px;
+            overflow: hidden;
+
+            background-size: cover;
+            background-position: center;
+
+            display: flex;
+            align-items: flex-end;
+
+            padding: 45px;
+        }
+
+        .route-hero::after {
+            content: "";
+
+            position: absolute;
+            inset: 0;
+
+            background:
+                linear-gradient(
+                    90deg,
+                    rgba(0,0,0,.78),
+                    rgba(0,0,0,.15)
+                );
+        }
+
+        .route-hero-content {
+            position: relative;
+            z-index: 2;
+
+            max-width: 800px;
+        }
+
+        .route-label {
+            margin-bottom: 12px;
+
+            color: #ff5a00;
+
+            font-size: 11px;
+            font-weight: 800;
+
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .route-hero h1 {
+            margin: 0;
+
+            color: #fff;
+
+            font-size: clamp(42px, 6vw, 72px);
+            line-height: .95;
+
+            letter-spacing: -.045em;
+        }
+
+        .route-hero-description {
+            margin-top: 18px;
+
+            max-width: 650px;
+
+            color: rgba(255,255,255,.75);
+
+            font-size: 15px;
+            line-height: 1.7;
+        }
+
+        /* MAIN */
+
+        .route-main {
+            display: grid;
+
+            grid-template-columns:
+                minmax(0, 1.35fr)
+                minmax(280px, .65fr);
+
+            gap: 35px;
+
+            margin-top: 35px;
+        }
+
+        /* CONTENT */
+
+        .route-content {
+            min-width: 0;
+        }
+
+        .route-section {
+            margin-bottom: 45px;
+        }
+
+        .route-section-label {
+            margin-bottom: 9px;
+
+            color: #ff5a00;
+
+            font-size: 10px;
+            font-weight: 800;
+
+            letter-spacing: .15em;
+            text-transform: uppercase;
+        }
+
+        .route-section h2 {
+            margin: 0 0 14px;
+
+            color: #fff;
+
+            font-size: 32px;
+            line-height: 1;
+
+            letter-spacing: -.03em;
+        }
+
+        .route-section p {
+            margin: 0;
+
+            color: #89919d;
+
+            font-size: 14px;
+            line-height: 1.8;
+        }
+
+        /* POINTS */
+
+        .route-points {
+            display: grid;
+
+            grid-template-columns: 1fr 1fr;
+
+            gap: 12px;
+
+            margin-top: 25px;
+        }
+
+        .route-point {
+            padding: 22px;
+
+            border-radius: 16px;
+
+            background: #0b0f14;
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+        }
+
+        .route-point-label {
+            margin-bottom: 9px;
+
+            color: #68717c;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+
+        .route-point-name {
+            color: #fff;
+
+            font-size: 17px;
+            font-weight: 700;
+        }
+
+        .route-point-icon {
+            margin-bottom: 12px;
+
+            color: #ff5a00;
+
+            font-size: 22px;
+        }
+
+        /* INFO */
+
+        .route-info-grid {
+            display: grid;
+
+            grid-template-columns:
+                repeat(3, 1fr);
+
+            gap: 10px;
+
+            margin-top: 25px;
+        }
+
+        .route-info-item {
+            padding: 18px;
+
+            border-radius: 14px;
+
+            background: #0b0f14;
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+        }
+
+        .route-info-label {
+            display: block;
+
+            margin-bottom: 8px;
+
+            color: #68717c;
+
+            font-size: 8px;
+            font-weight: 800;
+
+            letter-spacing: .12em;
+            text-transform: uppercase;
+        }
+
+        .route-info-value {
+            color: #fff;
+
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        /* SIDEBAR */
+
+        .route-booking {
+            align-self: start;
+
+            position: sticky;
+            top: 110px;
+
+            padding: 26px;
+
+            border-radius: 20px;
+
+            background: #0b0f14;
+
+            border:
+                1px solid
+                rgba(255,255,255,.08);
+        }
+
+        .route-booking-label {
+            margin-bottom: 8px;
+
+            color: #68717c;
+
+            font-size: 9px;
+            font-weight: 800;
+
+            letter-spacing: .13em;
+            text-transform: uppercase;
+        }
+
+        .route-booking h3 {
+            margin: 0;
+
+            color: #fff;
+
+            font-size: 25px;
+            line-height: 1.15;
+        }
+
+        .route-price {
+            margin-top: 24px;
+
+            color: #ff5a00;
+
+            font-size: 34px;
+            font-weight: 800;
+
+            letter-spacing: -.03em;
+        }
+
+        .route-price-note {
+            margin-top: 5px;
+
+            color: #68717c;
+
+            font-size: 11px;
+        }
+
+        .route-booking-text {
+            margin-top: 20px;
+
+            color: #89919d;
+
+            font-size: 13px;
+            line-height: 1.7;
+        }
+
+        .route-booking .btn {
+            width: 100%;
+
+            min-height: 52px;
+
+            margin-top: 22px;
+
+            justify-content: center;
+
+            border-radius: 11px;
+        }
+
+        /* MAP */
+
+        .route-map {
+            position: relative;
+
+            min-height: 260px;
+
+            margin-top: 25px;
+
+            padding: 30px;
+
+            border-radius: 18px;
+
+            background:
+                radial-gradient(
+                    circle at 30% 40%,
+                    rgba(255,90,0,.15),
+                    transparent 35%
+                ),
+                #0b0f14;
+
+            border:
+                1px solid
+                rgba(255,255,255,.07);
+        }
+
+        .route-line {
+            position: absolute;
+
+            left: 80px;
+            right: 80px;
+
+            top: 50%;
+
+            height: 2px;
+
+            background: rgba(255,90,0,.45);
+        }
+
+        .map-point {
+            position: absolute;
+
+            top: calc(50% - 35px);
+
+            width: 70px;
+
+            text-align: center;
+        }
+
+        .map-point-a {
+            left: 35px;
+        }
+
+        .map-point-b {
+            right: 35px;
+        }
+
+        .map-dot {
+            width: 18px;
+            height: 18px;
+
+            margin: 0 auto 10px;
+
+            border-radius: 50%;
+
+            background: #ff5a00;
+
+            box-shadow:
+                0 0 0 7px
+                rgba(255,90,0,.12);
+        }
+
+        .map-point strong {
+            display: block;
+
+            color: #fff;
+
+            font-size: 11px;
+        }
+
+        .map-point span {
+            display: block;
+
+            margin-top: 4px;
+
+            color: #68717c;
+
+            font-size: 9px;
+        }
+
+        /* MOBILE */
+
+        @media (max-width: 850px) {
+
+            .route-main {
+                grid-template-columns: 1fr;
+            }
+
+            .route-booking {
+                position: static;
+            }
+        }
+
+        @media (max-width: 650px) {
+
+            .route-detail {
+                padding: 90px 0 50px;
+            }
+
+            .route-detail-container {
+                width: calc(100% - 24px);
+            }
+
+            .route-hero {
+                min-height: 400px;
+
+                padding: 25px;
+
+                border-radius: 18px;
+            }
+
+            .route-hero h1 {
+                font-size: 42px;
+            }
+
+            .route-points {
+                grid-template-columns: 1fr;
+            }
+
+            .route-info-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .route-section h2 {
+                font-size: 28px;
+            }
+        }
+
+        @media (max-width: 430px) {
+
+            .route-info-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .route-hero h1 {
+                font-size: 36px;
+            }
+
+            .route-hero {
+                min-height: 350px;
+            }
+        }
+    </style>
+</head>
+
+
+<body>
+
+<!-- HEADER -->
+
+<header class="header">
+
+    <a
+        class="logo"
+        href="/"
+    >
+
+        <img
+            src="{{ url_for('static', filename='logo.jpg') }}"
+            alt="{{ settings.brand_name }}"
+            class="logo-image"
+        >
+
+        <span class="logo-text">
+
+            <strong>
+                {{ settings.brand_name }}
+            </strong>
+
+            <small>
+                {{ settings.brand_subtitle }}
+            </small>
+
+        </span>
+
+    </a>
+
+
+    <nav class="nav">
+
+        <a href="/#tours">
+            {{ tr.tours }}
+        </a>
+
+        <a href="/#about">
+            {{ tr.about }}
+        </a>
+
+        <a href="/#gallery">
+            {{ tr.gallery }}
+        </a>
+
+        <a href="/#reviews">
+            {{ tr.reviews }}
+        </a>
+
+        <a href="/#booking">
+            {{ tr.booking }}
+        </a>
+
+    </nav>
+
+
+    <div class="header-actions">
+
+        <div class="language-switcher">
+
+            <button
+                type="button"
+                class="language-btn"
+            >
+
+                {% if language == 'zh' %}
+                    中文
+                {% else %}
+                    {{ language|upper }}
+                {% endif %}
+
+            </button>
+
+
+            <div class="language-menu">
+
+                <a
+                    href="{{ url_for(
+                        'site.set_language',
+                        lang='kz',
+                        next=request.path
+                    ) }}"
+                >
+                    KZ
+                </a>
+
+                <a
+                    href="{{ url_for(
+                        'site.set_language',
+                        lang='ru',
+                        next=request.path
+                    ) }}"
+                >
+                    RU
+                </a>
+
+                <a
+                    href="{{ url_for(
+                        'site.set_language',
+                        lang='en',
+                        next=request.path
+                    ) }}"
+                >
+                    EN
+                </a>
+
+                <a
+                    href="{{ url_for(
+                        'site.set_language',
+                        lang='zh',
+                        next=request.path
+                    ) }}"
+                >
+                    中文
+                </a>
+
+            </div>
+
+        </div>
+
+
+        <a
+            class="btn btn-outline"
+            href="/#booking"
+        >
+
+            {{ tr.book }}
+
+            <span>
+                ↗
+            </span>
+
+        </a>
+
+    </div>
+
+</header>
+
+
+<!-- ROUTE DETAIL -->
+
+<main class="route-detail">
+
+    <div class="route-detail-container">
+
+
+        <!-- BACK -->
+
+        <a
+            class="route-back"
+            href="javascript:history.back()"
+        >
+            ← {{ tr.itinerary }}
+        </a>
+
+
+        <!-- HERO -->
+
+        <section
+            class="route-hero"
+            style="
+                background-image:
+                url('{{ route.image }}');
+            "
+        >
+
+            <div class="route-hero-content">
+
+                <div class="route-label">
+                    {{ route.day }}
+                </div>
+
+                <h1>
+                    {{ route.title }}
+                </h1>
+
+                {% if route.description %}
+
+                <div class="route-hero-description">
+                    {{ route.description }}
+                </div>
+
+                {% endif %}
+
+            </div>
+
+        </section>
+
+
+        <!-- MAIN -->
+
+        <section class="route-main">
+
+
+            <!-- LEFT -->
+
+            <div class="route-content">
+
+
+                <!-- INFORMATION -->
+
+                <section class="route-section">
+
+                    <div class="route-section-label">
+                        MANGYSTAU TOUR
+                    </div>
+
+                    <h2>
+                        Route information
+                    </h2>
+
+                    <p>
+                        {{ route.info }}
+                    </p>
+
+
+                    <!-- POINT A / B -->
+
+                    <div class="route-points">
+
+
+                        <div class="route-point">
+
+                            <div class="route-point-icon">
+                                ●
+                            </div>
+
+                            <div class="route-point-label">
+                                Point A
+                            </div>
+
+                            <div class="route-point-name">
+                                {{ route.point_a }}
+                            </div>
+
+                        </div>
+
+
+                        <div class="route-point">
+
+                            <div class="route-point-icon">
+                                ●
+                            </div>
+
+                            <div class="route-point-label">
+                                Point B
+                            </div>
+
+                            <div class="route-point-name">
+                                {{ route.point_b }}
+                            </div>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <!-- MAP -->
+
+                    <div class="route-map">
+
+                        <div class="route-line"></div>
+
+
+                        <div class="map-point map-point-a">
+
+                            <div class="map-dot"></div>
+
+                            <strong>
+                                {{ route.point_a }}
+                            </strong>
+
+                            <span>
+                                POINT A
+                            </span>
+
+                        </div>
+
+
+                        <div class="map-point map-point-b">
+
+                            <div class="map-dot"></div>
+
+                            <strong>
+                                {{ route.point_b }}
+                            </strong>
+
+                            <span>
+                                POINT B
+                            </span>
+
+                        </div>
+
+                    </div>
+
+                </section>
+
+
+                <!-- DETAILS -->
+
+                <section class="route-section">
+
+                    <div class="route-section-label">
+                        DETAILS
+                    </div>
+
+                    <h2>
+                        Journey
+                    </h2>
+
+                    <p>
+                        {{ route.details }}
+                    </p>
+
+                </section>
+
+
+                <!-- INFO GRID -->
+
+                <section class="route-section">
+
+                    <div class="route-info-grid">
+
+
+                        <div class="route-info-item">
+
+                            <span class="route-info-label">
+                                Duration
+                            </span>
+
+                            <span class="route-info-value">
+                                {{ route.duration }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="route-info-item">
+
+                            <span class="route-info-label">
+                                Vehicle
+                            </span>
+
+                            <span class="route-info-value">
+                                4x4 Jeep
+                            </span>
+
+                        </div>
+
+
+                        <div class="route-info-item">
+
+                            <span class="route-info-label">
+                                Guests
+                            </span>
+
+                            <span class="route-info-value">
+                                1–4
+                            </span>
+
+                        </div>
+
+
+                    </div>
+
+                </section>
+
+
+            </div>
+
+
+            <!-- BOOKING -->
+
+            <aside class="route-booking">
+
+                <div class="route-booking-label">
+                    {{ tr.booking }}
+                </div>
+
+                <h3>
+                    {{ route.title }}
+                </h3>
+
+
+                <div class="route-price">
+                    {{ route.price }} ₸
+                </div>
+
+                <div class="route-price-note">
+                    {{ tr.per_tour }}
+                </div>
+
+
+                <div class="route-booking-text">
+
+                    {{ tr.booking_text }}
+
+                </div>
+
+
+                <a
+                    class="btn btn-primary"
+                    href="/#booking"
+                >
+
+                    {{ tr.book }}
+
+                    <span>
+                        ↗
+                    </span>
+
+                </a>
+
+            </aside>
+
+
+        </section>
+
+    </div>
+
+</main>
+
+</body>
+
+</html>
+```

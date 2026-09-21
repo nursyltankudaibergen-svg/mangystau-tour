@@ -1,0 +1,1848 @@
+/* ===========================================================================
+   BOOKING PAGE
+   Бұрын бұл стильдер booking.html ішінде <style> болып тұрған (~800 жол):
+   кэштелмейтін, әр жүктегенде қайта тиелетін. Енді бөлек файл.
+   Хедер стильдері мұнда ЖОҚ — олар site.css-те (ортақ хедер).
+=========================================================================== */
+
+.booking-page {
+    min-height: 100vh;
+    padding-top: 76px;
+    background:
+        radial-gradient(circle at 10% 50%, rgba(255,90,0,.045), transparent 30%),
+        #080a0d;
+}
+
+.booking-wrapper {
+    width: 100%;
+    max-width: 1500px;
+    min-height: calc(100vh - 76px);
+    margin: 0 auto;
+    padding: 45px 5% 55px;
+    display: grid;
+    /* 50 / 50 — сол жақ мәтін мен форма тең бөлінеді */
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 35px;
+}
+
+/* ---------- LEFT ---------- */
+
+.booking-left {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    padding: 20px 20px 20px 0;
+}
+
+.premium-content { width: 100%; }
+
+.premium-line {
+    width: 45px;
+    height: 1px;
+    margin-bottom: 28px;
+    background: #FF5A00;
+}
+
+.premium-content h1 {
+    max-width: 470px;
+    margin: 0;
+    color: #fff;
+    font-size: clamp(44px, 5vw, 78px);
+    line-height: .95;
+    letter-spacing: -.06em;
+    font-weight: 800;
+}
+
+.premium-content h1 span { color: #FF5A00; }
+
+.premium-description {
+    max-width: 400px;
+    margin-top: 30px;
+    color: #777f8a;
+    font-size: 14px;
+    line-height: 1.75;
+}
+
+.premium-info {
+    margin: 45px 0 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.premium-info-item {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    color: #9aa1aa;
+    font-size: 12px;
+}
+
+.info-dot {
+    width: 7px;
+    height: 7px;
+    flex: 0 0 7px;
+    border-radius: 50%;
+    background: #FF5A00;
+    box-shadow: 0 0 12px rgba(255,90,0,.45);
+}
+
+.premium-location {
+    margin-top: 55px;
+    color: #4f5660;
+    font-size: 10px;
+    letter-spacing: .12em;
+}
+
+/* ---------- RIGHT ---------- */
+
+.booking-right {
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.booking-card {
+    width: 100%;
+    max-width: 780px;
+    padding: 42px;
+    background: rgba(255,255,255,.025);
+    border: 1px solid rgba(255,255,255,.085);
+    border-radius: 24px;
+    box-shadow: 0 25px 80px rgba(0,0,0,.28);
+}
+
+/* ---------- FLASH ---------- */
+
+.flash-container { margin-bottom: 20px; }
+
+.flash {
+    margin: 0 0 7px;
+    padding: 11px 13px;
+    border-radius: 8px;
+    font-size: 13px;
+}
+
+.flash.success {
+    color: #8ee0a1;
+    background: rgba(60,180,90,.08);
+    border: 1px solid rgba(60,180,90,.2);
+}
+
+.flash.error {
+    color: #ff9b9b;
+    background: rgba(220,70,70,.08);
+    border: 1px solid rgba(220,70,70,.2);
+}
+
+/* ---------- BACK / HEADING ---------- */
+
+.booking-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 30px;
+    color: #686f79;
+    font-size: 12px;
+    text-decoration: none;
+    transition: color .2s, transform .2s;
+}
+
+.booking-back:hover { color: #FF5A00; transform: translateX(-3px); }
+
+.booking-heading { margin-bottom: 30px; }
+
+.booking-kicker {
+    margin: 0 0 9px;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.booking-heading h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(32px, 3vw, 46px);
+    line-height: 1;
+    letter-spacing: -.05em;
+    font-weight: 800;
+}
+
+.booking-heading p {
+    margin: 13px 0 0;
+    color: #666e79;
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+/* ---------- FORM ---------- */
+
+.booking-form { width: 100%; }
+
+.booking-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.booking-field { margin-bottom: 16px; min-width: 0; }
+
+.booking-field label,
+.package-field legend {
+    display: block;
+    margin-bottom: 7px;
+    padding: 0;
+    color: #8a929c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.required { color: #FF5A00; }
+
+.required-note {
+    margin: 4px 0 14px;
+    color: #5a616b;
+    font-size: 11px;
+}
+
+/* Honeypot: экраннан жасырылған, бірақ ботқа көрінеді */
+.hp-field {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+}
+
+.booking-field input,
+.booking-field select,
+.booking-field textarea {
+    width: 100%;
+    padding: 13px 14px;
+    border: 1px solid rgba(255,255,255,.085);
+    border-radius: 9px;
+    outline: none;
+    color: #fff;
+    background: #0c0f13;
+    font-size: 14px;
+    transition: border-color .2s, background .2s, box-shadow .2s;
+}
+
+.booking-field input,
+.booking-field select { height: 46px; }
+
+.booking-field input::placeholder { color: #4e555e; }
+
+.booking-field input:focus-visible,
+.booking-field select:focus-visible,
+.booking-field textarea:focus-visible {
+    border-color: rgba(255,90,0,.7);
+    background: #0e1116;
+    box-shadow: 0 0 0 3px rgba(255,90,0,.12);
+}
+
+.booking-field select option { background: #0c0f13; color: #fff; }
+
+.booking-field select.has-selected-tour {
+    border-color: rgba(255,90,0,.75);
+    box-shadow: 0 0 0 3px rgba(255,90,0,.08);
+}
+
+.booking-field input[type="date"] { color-scheme: dark; cursor: pointer; }
+
+.booking-field input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+    opacity: .65;
+    cursor: pointer;
+}
+
+.booking-field input[type="number"] {
+    appearance: textfield;
+    -moz-appearance: textfield;
+}
+
+.guest-note {
+    margin: 5px 0 0;
+    color: #5a616b;
+    font-size: 11px;
+}
+
+/* ---------- PHONE ---------- */
+
+.phone-simple { display: flex; gap: 7px; width: 100%; }
+.phone-simple input { flex: 1; min-width: 0; }
+
+.country-picker { position: relative; width: 86px; flex: 0 0 86px; }
+
+.country-button {
+    width: 100%;
+    height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 10px;
+    border: 1px solid rgba(255,255,255,.085);
+    border-radius: 9px;
+    background: #0c0f13;
+    color: #fff;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.country-button:hover { border-color: rgba(255,90,0,.6); }
+
+.country-menu {
+    position: absolute;
+    left: 0;
+    top: calc(100% + 7px);
+    width: 240px;
+    max-height: 260px;
+    overflow-y: auto;
+    padding: 5px;
+    background: #0d1014;
+    border: 1px solid rgba(255,255,255,.1);
+    border-radius: 10px;
+    box-shadow: 0 20px 50px rgba(0,0,0,.45);
+    display: none;
+    z-index: 900;
+}
+
+.country-menu.open { display: block; }
+
+.country-menu button {
+    width: 100%;
+    padding: 9px 11px;
+    border: 0;
+    border-radius: 7px;
+    background: transparent;
+    color: #fff;
+    text-align: left;
+    font: inherit;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.country-menu button:hover,
+.country-menu button:focus-visible { background: #FF5A00; }
+
+/* ---------- PACKAGES: BASIC / PLUS / DELUXE ---------- */
+
+.package-field {
+    margin: 0 0 18px;
+    padding: 0;
+    border: 0;
+}
+
+.package-options {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 9px;
+}
+
+.package-option { display: block; cursor: pointer; }
+
+/* Радио түймені жасырамыз, бірақ клавиатурадан қолжетімді қалады */
+.package-option input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.package-option-box {
+    display: block;
+    height: 100%;
+    padding: 14px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 12px;
+    background: #0c0f13;
+    transition: border-color .2s, background .2s;
+}
+
+.package-option input:checked + .package-option-box {
+    border-color: #FF5A00;
+    background: rgba(255,90,0,.07);
+}
+
+.package-option input:focus-visible + .package-option-box {
+    box-shadow: 0 0 0 3px rgba(255,90,0,.25);
+}
+
+.package-option-name {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+}
+
+.package-option-flag {
+    padding: 2px 6px;
+    border-radius: 5px;
+    background: rgba(255,90,0,.16);
+    color: #FF5A00;
+    font-size: 9px;
+    font-style: normal;
+    white-space: nowrap;
+}
+
+.package-option-text {
+    display: block;
+    margin-top: 6px;
+    color: #79818c;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* ---------- PRICE ---------- */
+
+.booking-price-box {
+    width: 100%;
+    min-height: 46px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 14px;
+    background: rgba(255,90,0,.045);
+    border: 1px solid rgba(255,90,0,.14);
+    border-radius: 9px;
+}
+
+.booking-price-info span {
+    display: block;
+    color: #8a929c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.booking-price-info small {
+    display: block;
+    margin-top: 2px;
+    color: #505762;
+    font-size: 10px;
+}
+
+.booking-price-box strong {
+    color: #FF5A00;
+    font-size: 19px;
+    font-weight: 800;
+    white-space: nowrap;
+}
+
+/* ---------- SUBMIT ---------- */
+
+.booking-submit {
+    width: 100%;
+    height: 55px;
+    margin-top: 7px;
+    border: 0;
+    border-radius: 9px;
+    background: #FF5A00;
+    color: #fff;
+    font: inherit;
+    font-size: 14px;
+    font-weight: 800;
+    cursor: pointer;
+    transition: background .2s, transform .2s, box-shadow .2s;
+}
+
+.booking-submit:hover {
+    background: #e95000;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 35px rgba(255,90,0,.18);
+}
+
+.booking-footer {
+    max-width: 1500px;
+    margin: 0 auto;
+    padding: 0 5% 25px;
+    color: #414750;
+    font-size: 11px;
+    text-align: center;
+}
+
+/* ---------- ADAPTIVE ---------- */
+
+@media (max-width: 1050px) {
+    .booking-wrapper { grid-template-columns: 1fr; gap: 20px; }
+    .booking-left { padding: 20px 0; min-height: 280px; }
+    .booking-right { align-items: stretch; }
+    .booking-card { max-width: none; }
+    .premium-content h1 { max-width: 700px; }
+    .premium-info { flex-direction: row; flex-wrap: wrap; gap: 18px; }
+}
+
+@media (max-width: 700px) {
+    .booking-page { padding-top: 68px; }
+    .booking-wrapper { min-height: auto; padding: 30px 15px 45px; gap: 15px; }
+    .booking-left { min-height: 240px; padding: 10px 0; }
+    .premium-content h1 { font-size: 46px; }
+    .booking-card { padding: 25px 20px; border-radius: 18px; }
+    .booking-row { grid-template-columns: 1fr; gap: 0; }
+    .package-options { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 430px) {
+    .premium-content h1 { font-size: 38px; }
+    .booking-card { padding: 22px 16px; }
+    .country-picker { width: 78px; flex-basis: 78px; }
+    .booking-price-box strong { font-size: 17px; }
+}
+
+/* ===========================================================================
+   ҚОСЫМША ҚЫЗМЕТТЕР ЖӘНЕ БАҒА ЕСЕБІ
+=========================================================================== */
+
+.services-field {
+    margin: 0 0 18px;
+    padding: 0;
+    border: 0;
+}
+
+.services-field legend {
+    display: block;
+    margin-bottom: 6px;
+    padding: 0;
+    color: #8a929c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.services-intro {
+    margin: 0 0 10px;
+    color: #5f6771;
+    font-size: 11px;
+    line-height: 1.6;
+}
+
+.services-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.service-option { display: block; cursor: pointer; }
+
+.service-option input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.service-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    height: 100%;
+    padding: 12px 13px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 11px;
+    background: #0c0f13;
+    transition: border-color .2s, background .2s;
+}
+
+.service-option input:checked + .service-box {
+    border-color: #FF5A00;
+    background: rgba(255,90,0,.07);
+}
+
+.service-option input:focus-visible + .service-box {
+    box-shadow: 0 0 0 3px rgba(255,90,0,.25);
+}
+
+.service-name {
+    color: #dfe4ea;
+    font-size: 12px;
+    line-height: 1.4;
+}
+
+.service-price {
+    color: #FF5A00;
+    font-size: 12px;
+    font-weight: 800;
+    white-space: nowrap;
+    text-align: right;
+}
+
+.service-price small {
+    display: block;
+    color: #5f6771;
+    font-size: 9px;
+    font-weight: 400;
+}
+
+/* ---------- БАҒА ЕСЕБІ ---------- */
+
+.price-summary {
+    margin: 0 0 18px;
+    padding: 14px 16px;
+    border: 1px solid rgba(255,255,255,.09);
+    border-radius: 12px;
+    background: #0c0f13;
+}
+
+.price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 6px 0;
+    color: #8a929c;
+    font-size: 12px;
+}
+
+.price-row strong { color: #dfe4ea; font-weight: 700; }
+
+.price-row em {
+    color: #5f6771;
+    font-style: normal;
+    font-size: 11px;
+}
+
+.price-row-total {
+    margin-top: 6px;
+    padding-top: 12px;
+    border-top: 1px solid rgba(255,255,255,.08);
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.price-row-total strong {
+    color: #FF5A00;
+    font-size: 20px;
+    font-weight: 800;
+}
+
+@media (max-width: 700px) {
+    .services-grid { grid-template-columns: 1fr; }
+}
+
+
+/* ===========================================================================
+   50/50 МАКЕТ ЖӘНЕ ҚЫСҚАРТЫЛҒАН ФОРМА
+=========================================================================== */
+
+.booking-card {
+    max-width: none;
+}
+
+/* Топ таңдау мен баға — қатар тұрғанда тең көрінсін */
+#groups {
+    width: 100%;
+}
+
+.booking-price-info span {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0;
+    text-transform: none;
+}
+
+.booking-price-info small {
+    text-transform: uppercase;
+    letter-spacing: .08em;
+}
+
+.booking-price-box strong {
+    font-size: 20px;
+}
+
+/* Сол жақтағы тізім ұзарғандықтан, аралығын азайтамыз */
+.premium-info {
+    margin-top: 34px;
+    gap: 12px;
+}
+
+.premium-info-item {
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+.premium-info-item .info-dot {
+    margin-top: 6px;
+}
+
+@media (max-width: 1050px) {
+    .booking-wrapper {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+
+
+/* ===========================================================================
+   БІР ЭКРАНҒА СЫЯТЫН БРОНДАУ: ФОРМА + ВИДЕО
+   Сол жақта ықшам форма, оң жақта видео. Рамкалары бірдей.
+=========================================================================== */
+
+.booking-page {
+    display: flex;
+    align-items: center;
+    min-height: 100vh;
+    padding-top: 76px;
+}
+
+.booking-wrapper {
+    width: 100%;
+    max-width: 1320px;
+    min-height: 0;
+
+    margin: 0 auto;
+    padding: 24px 5% 32px;
+
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: stretch;
+}
+
+/* ---------- ортақ рамка ---------- */
+
+.booking-panel,
+.booking-video {
+    position: relative;
+    overflow: hidden;
+
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 22px;
+
+    box-shadow: 0 30px 80px rgba(0, 0, 0, .35);
+}
+
+/* ---------- сол жақ: форма ---------- */
+
+.booking-panel {
+    padding: 26px 28px 28px;
+
+    background: linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .015));
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+}
+
+.panel-head {
+    margin-bottom: 18px;
+}
+
+.panel-kicker {
+    display: block;
+    margin-bottom: 6px;
+    color: #FF5A00;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.panel-head h1 {
+    margin: 0;
+    color: #fff;
+    font-size: clamp(24px, 2.4vw, 34px);
+    line-height: 1;
+    letter-spacing: -.04em;
+    font-weight: 800;
+}
+
+.booking-field {
+    margin-bottom: 12px;
+}
+
+.booking-row {
+    gap: 12px;
+}
+
+.booking-field label,
+.package-field legend {
+    margin-bottom: 5px;
+    font-size: 10px;
+}
+
+.booking-field input,
+.booking-field select {
+    height: 42px;
+    padding: 10px 12px;
+    font-size: 13px;
+}
+
+/* ---------- пакет: сегмент түймелер ---------- */
+
+.package-field {
+    margin: 2px 0 14px;
+    padding: 0;
+    border: 0;
+}
+
+.package-field[hidden] {
+    display: none;
+}
+
+.package-pills {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+
+    padding: 4px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    background: #0b0f14;
+}
+
+.package-pill {
+    cursor: pointer;
+}
+
+.package-pill input {
+    position: absolute;
+    opacity: 0;
+    width: 1px;
+    height: 1px;
+}
+
+.package-pill span {
+    display: block;
+    padding: 10px 4px;
+
+    border-radius: 9px;
+
+    color: #79818c;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-align: center;
+
+    transition: background .25s cubic-bezier(.32, .72, 0, 1), color .25s;
+}
+
+.package-pill input:checked + span {
+    background: #FF5A00;
+    color: #fff;
+    box-shadow: 0 6px 16px rgba(255, 90, 0, .28);
+}
+
+.package-pill input:focus-visible + span {
+    box-shadow: 0 0 0 3px rgba(255, 90, 0, .28);
+}
+
+/* ---------- баға мен түйме ---------- */
+
+.booking-price-box {
+    margin-bottom: 12px;
+    padding: 12px 15px;
+}
+
+.booking-price-box strong {
+    font-size: 22px;
+}
+
+.booking-submit {
+    height: 50px;
+    margin-top: 0;
+    font-size: 13px;
+}
+
+.panel-note {
+    margin: 12px 0 0;
+    color: #5f6771;
+    font-size: 11px;
+    text-align: center;
+}
+
+.flash-container {
+    margin-bottom: 14px;
+}
+
+/* ---------- оң жақ: видео ---------- */
+
+.booking-video {
+    min-height: 420px;
+    background: #0b0f14;
+}
+
+.booking-video video {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.booking-video-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(8, 10, 13, .10) 35%, rgba(8, 10, 13, .88));
+}
+
+.booking-video-text {
+    position: absolute;
+    left: 28px;
+    right: 28px;
+    bottom: 26px;
+    z-index: 2;
+}
+
+.booking-video-text span {
+    display: block;
+    margin-bottom: 8px;
+    color: #FF5A00;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .18em;
+    text-transform: uppercase;
+}
+
+.booking-video-text p {
+    margin: 0;
+    max-width: 30ch;
+    color: #fff;
+    font-size: 15px;
+    line-height: 1.5;
+    letter-spacing: -.01em;
+}
+
+/* ---------- бейімделу ---------- */
+
+@media (max-width: 1050px) {
+    .booking-page {
+        display: block;
+        min-height: auto;
+    }
+
+    .booking-wrapper {
+        grid-template-columns: 1fr;
+        padding: 20px 16px 36px;
+    }
+
+    .booking-video {
+        min-height: 240px;
+        order: -1;
+    }
+}
+
+@media (max-width: 700px) {
+    .booking-page {
+        padding-top: 68px;
+    }
+
+    .booking-panel {
+        padding: 22px 18px 24px;
+    }
+
+    .booking-row {
+        grid-template-columns: 1fr;
+        gap: 0;
+    }
+}
+
+/* Аласа экранда форма ішінде айналдырылады, бет "секірмейді" */
+@media (min-width: 1051px) and (max-height: 860px) {
+    .booking-panel {
+        max-height: calc(100vh - 130px);
+        overflow-y: auto;
+    }
+}
+
+
+/* ===========================================================================
+   БАҒЫТ ТҮЙМЕЛЕРІ (бір күндік тур) + ЖҰМСАҚ АУЫСУ
+=========================================================================== */
+
+.route-pills {
+    position: relative;
+    isolation: isolate;
+
+    display: grid;
+    grid-template-columns: repeat(var(--route-count, 5), minmax(0, 1fr));
+    gap: 4px;
+
+    padding: 4px;
+
+    border: 1px solid rgba(255, 255, 255, .09);
+    border-radius: 12px;
+    background: #0c0f13;
+}
+
+.route-pill {
+    position: relative;
+    z-index: 1;
+
+    padding: 10px 4px;
+
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+
+    color: #79818c;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+
+    cursor: pointer;
+    transition: color .25s ease, transform .12s ease;
+}
+
+.route-pill:hover {
+    color: #fff;
+}
+
+.route-pill.is-active {
+    color: #fff;
+}
+
+.route-pill:active {
+    transform: scale(.95);
+}
+
+/* Артында сырғып жүретін қызғылт таблетка */
+.route-pill-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    z-index: 0;
+
+    width: 0;
+    border-radius: 9px;
+    background: #FF5A00;
+    box-shadow: 0 6px 18px rgba(255, 90, 0, .28);
+
+    opacity: 0;
+
+    /* Apple-дің қисығы: жылдам басталып, жұмсақ тоқтайды */
+    transition:
+        transform .45s cubic-bezier(.32, .72, 0, 1),
+        width .45s cubic-bezier(.32, .72, 0, 1),
+        opacity .2s ease;
+}
+
+.route-pill-indicator.is-ready {
+    opacity: 1;
+}
+
+/* Таңдалған бағыттың атауы — түймелердің астында */
+.route-pill-title {
+    margin: 8px 0 0;
+    min-height: 17px;
+
+    color: #9aa2ad;
+    font-size: 12px;
+    line-height: 1.4;
+
+    animation: route-title-in .35s ease-out;
+}
+
+@keyframes route-title-in {
+    from { opacity: 0; transform: translateY(4px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+/* ---------- баға саны ---------- */
+
+.booking-price-box strong {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+    transition: color .2s ease;
+}
+
+/* ---------- пакет түймелерінің жұмсақ ауысуы ---------- */
+
+.package-pill span,
+.package-pill .package-option-box {
+    transition:
+        background .3s cubic-bezier(.32, .72, 0, 1),
+        border-color .3s cubic-bezier(.32, .72, 0, 1),
+        color .25s ease;
+}
+
+.package-pill:active span {
+    transform: scale(.97);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .route-pill-indicator,
+    .route-pill,
+    .package-pill span {
+        transition: none;
+    }
+
+    .route-pill-title {
+        animation: none;
+    }
+}
+
+
+/* ===========================================================================
+   ПАКЕТ ТҮЙМЕЛЕРІ — БАҒЫТ ТҮЙМЕЛЕРІМЕН БІРДЕЙ ЖҰМСАҚ АУЫСУ
+=========================================================================== */
+
+.package-pills {
+    position: relative;
+    isolation: isolate;
+}
+
+.package-pill-indicator {
+    position: absolute;
+    top: 4px;
+    bottom: 4px;
+    left: 0;
+    z-index: 0;
+
+    width: 0;
+    border-radius: 9px;
+    background: #FF5A00;
+    box-shadow: 0 6px 18px rgba(255, 90, 0, .28);
+
+    opacity: 0;
+
+    transition:
+        transform .45s cubic-bezier(.32, .72, 0, 1),
+        width .45s cubic-bezier(.32, .72, 0, 1),
+        opacity .2s ease;
+}
+
+.package-pill-indicator.is-ready {
+    opacity: 1;
+}
+
+/* Түйменің өз фоны алынды — фон енді индикаторда */
+.package-pill {
+    position: relative;
+    z-index: 1;
+}
+
+.package-pill span {
+    background: transparent !important;
+    border-color: transparent !important;
+    transition: color .25s ease, transform .12s ease;
+}
+
+.package-pill input:checked + span {
+    color: #fff;
+}
+
+.package-pill:hover span {
+    color: #dfe4ea;
+}
+
+.package-pill:active span {
+    transform: scale(.95);
+}
+
+/* Топ тізімі де жұмсақ жауап берсін */
+#groups,
+.booking-field select,
+.booking-field input {
+    transition:
+        border-color .25s cubic-bezier(.32, .72, 0, 1),
+        background .25s ease,
+        box-shadow .25s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .package-pill-indicator,
+    .package-pill span {
+        transition: none;
+    }
+}
+/* ===========================================================================
+   БРОНДАУ: ТУР ТАҢДАҒЫШ, ҚОНАҚ САНЫ, ЖІБЕРУ АНИМАЦИЯСЫ
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+/* ---------- ТУР ТАҢДАҒЫШ ---------- */
+
+.tour-picker { position: relative; }
+
+.tour-picker-button {
+    width: 100%;
+    min-height: 58px;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 10px 14px;
+
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 12px;
+    background: #0c0f13;
+
+    color: #fff;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+    transition: border-color .25s cubic-bezier(.32, .72, 0, 1), background .25s ease;
+}
+
+.tour-picker-button:hover { border-color: rgba(255, 90, 0, .45); }
+
+.tour-picker.is-open .tour-picker-button {
+    border-color: #FF5A00;
+    background: #0e1116;
+}
+
+.tour-picker-current {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+}
+
+.tour-picker-current strong {
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    letter-spacing: .01em;
+    text-transform: uppercase;
+
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.tour-picker-current small {
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+.tour-picker-arrow {
+    flex-shrink: 0;
+    color: #79818c;
+    font-size: 13px;
+    transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+.tour-picker.is-open .tour-picker-arrow {
+    transform: rotate(180deg);
+    color: #FF5A00;
+}
+
+/* --- ашылатын тізім --- */
+
+.tour-picker-list {
+    position: absolute;
+    top: calc(100% + 8px);
+    left: 0;
+    right: 0;
+    z-index: 60;
+
+    max-height: 320px;
+    overflow-y: auto;
+
+    padding: 6px;
+
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 14px;
+    background: #0d1116;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, .55);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-6px);
+
+    transition: opacity .22s ease, transform .28s cubic-bezier(.32, .72, 0, 1), visibility .22s;
+}
+
+.tour-picker.is-open .tour-picker-list {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.tour-picker-item {
+    width: 100%;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+
+    padding: 12px 13px;
+
+    border: 0;
+    border-radius: 10px;
+    background: transparent;
+
+    color: #9aa2ad;
+    font: inherit;
+    text-align: left;
+
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+}
+
+.tour-picker-item:hover { background: rgba(255, 255, 255, .05); color: #fff; }
+
+.tour-picker-item.is-active {
+    background: rgba(255, 90, 0, .12);
+    color: #fff;
+}
+
+.tour-picker-name {
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.tour-picker-days {
+    flex-shrink: 0;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+/* ---------- ЖІБЕРУ ТҮЙМЕСІ + ГАЛОЧКА ---------- */
+
+.booking-submit {
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-label {
+    display: inline-block;
+    transition: opacity .2s ease, transform .35s cubic-bezier(.32, .72, 0, 1);
+}
+
+.submit-check {
+    position: absolute;
+    inset: 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    opacity: 0;
+    transform: scale(.6);
+    transition: opacity .2s ease, transform .4s cubic-bezier(.32, .72, 0, 1);
+}
+
+.submit-check svg {
+    width: 30px;
+    height: 30px;
+    fill: none;
+    stroke: #fff;
+    stroke-width: 2.6;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Сақина мен галочка сызылып шығады */
+.submit-check-ring {
+    stroke-dasharray: 88;
+    stroke-dashoffset: 88;
+}
+
+.submit-check-mark {
+    stroke-dasharray: 26;
+    stroke-dashoffset: 26;
+}
+
+.booking-submit.is-sending {
+    background: #FF5A00;
+    pointer-events: none;
+}
+
+.booking-submit.is-sending .submit-label {
+    opacity: 0;
+    transform: translateY(-10px);
+}
+
+.booking-submit.is-sending .submit-check {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.booking-submit.is-sending .submit-check-ring {
+    animation: draw-ring .5s cubic-bezier(.32, .72, 0, 1) forwards;
+}
+
+.booking-submit.is-sending .submit-check-mark {
+    animation: draw-mark .35s cubic-bezier(.32, .72, 0, 1) .35s forwards;
+}
+
+@keyframes draw-ring {
+    to { stroke-dashoffset: 0; }
+}
+
+@keyframes draw-mark {
+    to { stroke-dashoffset: 0; }
+}
+
+/* ---------- ҚОНАҚ САНЫ ---------- */
+
+#guests option[hidden] { display: none; }
+
+@media (prefers-reduced-motion: reduce) {
+    .tour-picker-list,
+    .tour-picker-arrow,
+    .submit-label,
+    .submit-check { transition: none; }
+
+    .booking-submit.is-sending .submit-check-ring,
+    .booking-submit.is-sending .submit-check-mark {
+        animation: none;
+        stroke-dashoffset: 0;
+    }
+}
+/* ===========================================================================
+   БРОНДАУ: БАРЛЫҚ ӨРІС БІР СТИЛЬДЕ + ҚОНАҚ БАРАБАНЫ
+   Осы блокты site.css-тің ЕҢ СОҢЫНА қой.
+=========================================================================== */
+
+/* ---------- 1. БАРЛЫҚ ӨРІС ТУР ТАҢДАҒЫШТАЙ ---------- */
+
+.booking-field input,
+.booking-field select,
+.booking-field textarea,
+.country-button {
+    min-height: 56px !important;
+    height: auto !important;
+
+    padding: 10px 14px !important;
+
+    border: 1px solid rgba(255, 255, 255, .1) !important;
+    border-radius: 12px !important;
+
+    background: #0c0f13 !important;
+    color: #fff !important;
+
+    font-size: 14px !important;
+
+    transition:
+        border-color .25s cubic-bezier(.32, .72, 0, 1),
+        background .25s ease,
+        box-shadow .25s ease !important;
+}
+
+.booking-field input:hover,
+.booking-field select:hover,
+.country-button:hover {
+    border-color: rgba(255, 90, 0, .45) !important;
+}
+
+.booking-field input:focus,
+.booking-field select:focus,
+.booking-field textarea:focus {
+    border-color: #FF5A00 !important;
+    background: #0e1116 !important;
+    box-shadow: 0 0 0 3px rgba(255, 90, 0, .12) !important;
+}
+
+/* Select-тің көрсеткіші тур таңдағыштағыдай */
+.booking-field select {
+    appearance: none;
+    -webkit-appearance: none;
+
+    padding-right: 38px !important;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, #79818c 50%),
+        linear-gradient(135deg, #79818c 50%, transparent 50%) !important;
+    background-position:
+        calc(100% - 19px) calc(50% + 2px),
+        calc(100% - 14px) calc(50% + 2px) !important;
+    background-size: 5px 5px, 5px 5px !important;
+    background-repeat: no-repeat !important;
+    background-color: #0c0f13 !important;
+
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.booking-field select:hover {
+    background-image:
+        linear-gradient(45deg, transparent 50%, #FF5A00 50%),
+        linear-gradient(135deg, #FF5A00 50%, transparent 50%) !important;
+}
+
+/* Ел коды да сол пішінде */
+.country-picker { width: 96px; flex: 0 0 96px; }
+.country-button { font-weight: 700; }
+
+/* Пакет түймелері де биіктігі бірдей */
+.package-pills { padding: 5px; border-radius: 14px; }
+.package-pill span { min-height: 44px; display: flex; align-items: center; justify-content: center; }
+.package-pill-indicator { top: 5px; bottom: 5px; border-radius: 10px; }
+
+/* Бағыт түймелері */
+.route-pills { padding: 5px; border-radius: 14px; }
+.route-pill { padding: 13px 4px; }
+.route-pill-indicator { top: 5px; bottom: 5px; border-radius: 10px; }
+
+/* Жіберу түймесі */
+.booking-submit { border-radius: 12px !important; min-height: 58px; }
+
+/* ---------- 2. ҚОНАҚ БАРАБАНЫ ---------- */
+
+.stepper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+
+    min-height: 56px;
+    padding: 6px;
+
+    border: 1px solid rgba(255, 255, 255, .1);
+    border-radius: 12px;
+    background: #0c0f13;
+
+    transition: border-color .25s cubic-bezier(.32, .72, 0, 1);
+}
+
+.stepper:hover { border-color: rgba(255, 90, 0, .45); }
+
+.stepper-btn {
+    flex-shrink: 0;
+
+    width: 40px;
+    height: 40px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 9px;
+    background: rgba(255, 255, 255, .05);
+
+    color: #fff;
+    font: inherit;
+    font-size: 19px;
+    font-weight: 700;
+    line-height: 1;
+
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease, transform .12s ease;
+}
+
+.stepper-btn:hover:not(:disabled) { background: #FF5A00; }
+.stepper-btn:active:not(:disabled) { transform: scale(.92); }
+
+.stepper-btn:disabled {
+    opacity: .3;
+    cursor: default;
+}
+
+.stepper-value {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1px;
+
+    min-width: 0;
+    text-align: center;
+}
+
+.stepper-value output {
+    color: #fff;
+    font-size: 19px;
+    font-weight: 800;
+    font-variant-numeric: tabular-nums;
+    line-height: 1.1;
+}
+
+/* Сан ауысқанда жеңіл секіру */
+.stepper-value output.is-bumped {
+    animation: stepper-bump .28s cubic-bezier(.32, .72, 0, 1);
+}
+
+@keyframes stepper-bump {
+    0%   { transform: scale(.8); opacity: .5; }
+    100% { transform: scale(1);  opacity: 1; }
+}
+
+.stepper-value small {
+    color: #68717c;
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .stepper-value output.is-bumped { animation: none; }
+}
+/* ===========================================================================
+   БРОНДАУ ФОРМАСЫН ЫҚШАМДАУ
+   Осы блокты booking.css-тің соңына қой (site.css-ке ЕМЕС).
+   Мақсат: форма бір экранға сыюы керек.
+=========================================================================== */
+
+/* ---------- жалпы шегіністер ---------- */
+
+.booking-panel,
+.booking-card {
+    padding: 24px 22px !important;
+}
+
+.booking-heading { margin-bottom: 18px; }
+
+.booking-heading h1,
+.booking-heading h2 {
+    font-size: clamp(26px, 2.4vw, 34px) !important;
+}
+
+.booking-kicker { margin-bottom: 6px; font-size: 10px; }
+
+/* ---------- өрістер ---------- */
+
+.booking-field { margin-bottom: 12px; }
+
+.booking-row { gap: 12px; }
+
+.booking-field label {
+    margin-bottom: 5px;
+    font-size: 10px;
+    letter-spacing: .1em;
+}
+
+.booking-field input,
+.booking-field select,
+.country-button {
+    min-height: 46px !important;
+    padding: 8px 13px !important;
+    font-size: 13px !important;
+}
+
+/* ---------- тур таңдағыш ---------- */
+
+.tour-picker-button {
+    min-height: 50px;
+    padding: 8px 13px;
+}
+
+.tour-picker-current strong { font-size: 13px; }
+.tour-picker-current small { font-size: 10px; }
+
+.tour-picker-item { padding: 10px 12px; }
+.tour-picker-name { font-size: 12px; }
+.tour-picker-days { font-size: 10px; }
+
+/* ---------- барабан ---------- */
+
+.stepper {
+    min-height: 46px;
+    padding: 4px;
+}
+
+.stepper-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+}
+
+.stepper-value output { font-size: 17px; }
+.stepper-value small { font-size: 8px; }
+
+/* ---------- пакет пен бағыт ---------- */
+
+.package-pills,
+.route-pills {
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.package-pill span { min-height: 38px; font-size: 12px; }
+.route-pill { padding: 11px 4px; font-size: 11px; }
+
+.package-pill-indicator,
+.route-pill-indicator {
+    top: 4px;
+    bottom: 4px;
+}
+
+.route-pill-title { margin-top: 6px; font-size: 11px; }
+
+/* ---------- баға мен түйме ---------- */
+
+.booking-price-box {
+    min-height: 46px;
+    padding: 8px 13px;
+    margin-bottom: 4px;
+}
+
+.booking-price-box strong { font-size: 18px; }
+.booking-price-info span { font-size: 12px; }
+.booking-price-info small { font-size: 9px; }
+
+.currency-switch { padding: 2px; }
+.currency-switch button { padding: 4px 0; font-size: 12px; }
+
+.booking-submit {
+    min-height: 50px !important;
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+.required-note { display: none; }
+
+/* ---------- беттің өзі ---------- */
+
+.booking-wrapper {
+    padding: 18px 4% 24px !important;
+    gap: 20px !important;
+}
+
+@media (max-height: 900px) {
+    .booking-field { margin-bottom: 10px; }
+    .booking-panel,
+    .booking-card { padding: 20px 18px !important; }
+}
+/* ===========================================================================
+   БРОНДАУ ФОРМАСЫН ЫҚШАМДАУ
+   Осы блокты booking.css-тің соңына қой (site.css-ке ЕМЕС).
+   Мақсат: форма бір экранға сыюы керек.
+=========================================================================== */
+
+/* ---------- жалпы шегіністер ---------- */
+
+.booking-panel,
+.booking-card {
+    padding: 24px 22px !important;
+}
+
+.booking-heading { margin-bottom: 18px; }
+
+.booking-heading h1,
+.booking-heading h2 {
+    font-size: clamp(26px, 2.4vw, 34px) !important;
+}
+
+.booking-kicker { margin-bottom: 6px; font-size: 10px; }
+
+/* ---------- өрістер ---------- */
+
+.booking-field { margin-bottom: 12px; }
+
+.booking-row { gap: 12px; }
+
+.booking-field label {
+    margin-bottom: 5px;
+    font-size: 10px;
+    letter-spacing: .1em;
+}
+
+.booking-field input,
+.booking-field select,
+.country-button {
+    min-height: 46px !important;
+    padding: 8px 13px !important;
+    font-size: 13px !important;
+}
+
+/* ---------- тур таңдағыш ---------- */
+
+.tour-picker-button {
+    min-height: 50px;
+    padding: 8px 13px;
+}
+
+.tour-picker-current strong { font-size: 13px; }
+.tour-picker-current small { font-size: 10px; }
+
+.tour-picker-item { padding: 10px 12px; }
+.tour-picker-name { font-size: 12px; }
+.tour-picker-days { font-size: 10px; }
+
+/* ---------- барабан ---------- */
+
+.stepper {
+    min-height: 46px;
+    padding: 4px;
+}
+
+.stepper-btn {
+    width: 36px;
+    height: 36px;
+    font-size: 17px;
+}
+
+.stepper-value output { font-size: 17px; }
+.stepper-value small { font-size: 8px; }
+
+/* ---------- пакет пен бағыт ---------- */
+
+.package-pills,
+.route-pills {
+    padding: 4px;
+    border-radius: 12px;
+}
+
+.package-pill span { min-height: 38px; font-size: 12px; }
+.route-pill { padding: 11px 4px; font-size: 11px; }
+
+.package-pill-indicator,
+.route-pill-indicator {
+    top: 4px;
+    bottom: 4px;
+}
+
+.route-pill-title { margin-top: 6px; font-size: 11px; }
+
+/* ---------- баға мен түйме ---------- */
+
+.booking-price-box {
+    min-height: 46px;
+    padding: 8px 13px;
+    margin-bottom: 4px;
+}
+
+.booking-price-box strong { font-size: 18px; }
+.booking-price-info span { font-size: 12px; }
+.booking-price-info small { font-size: 9px; }
+
+.currency-switch { padding: 2px; }
+.currency-switch button { padding: 4px 0; font-size: 12px; }
+
+.booking-submit {
+    min-height: 50px !important;
+    margin-top: 4px;
+    font-size: 13px;
+}
+
+.required-note { display: none; }
+
+/* ---------- беттің өзі ---------- */
+
+.booking-wrapper {
+    padding: 18px 4% 24px !important;
+    gap: 20px !important;
+}
+
+@media (max-height: 900px) {
+    .booking-field { margin-bottom: 10px; }
+    .booking-panel,
+    .booking-card { padding: 20px 18px !important; }
+}
+
+/* ---------- Select-тердің қара үшбұрышын алып тастаймыз ----------
+   Тур мен топ саны енді карточка-таңдағыш арқылы таңдалады,
+   сондықтан кәдімгі select көрсеткішінің қажеті жоқ. */
+
+.booking-field select {
+    background-image: none !important;
+    padding-right: 13px !important;
+}
+
+/* Күн өрісінің күнтізбе белгішесі қалады */
+.booking-field input[type="date"] {
+    padding-right: 13px !important;
+}

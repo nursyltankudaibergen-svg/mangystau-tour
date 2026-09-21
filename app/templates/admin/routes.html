@@ -1,0 +1,124 @@
+{% extends "admin/base.html" %}
+
+{% block title %}Маршруты{% endblock %}
+{% block heading %}Маршруты{% endblock %}
+
+{% block subheading %}
+    <p>Всего {{ total }} маршрутов</p>
+{% endblock %}
+
+{% block actions %}
+    <a class="admin-btn" href="{{ url_for('admin.new_route') }}">+ Добавить маршрут</a>
+{% endblock %}
+
+{% block content %}
+
+<!-- ===================== ТУР БОЙЫНША СҮЗГІ ===================== -->
+<section class="filters">
+    <div class="filter-chips">
+        <a
+            class="chip{% if not current_tour %} is-active{% endif %}"
+            href="{{ url_for('admin.routes_page') }}"
+        >Все <em>{{ total }}</em></a>
+
+        {% for t in tours %}
+        <a
+            class="chip{% if current_tour == t.id | string %} is-active{% endif %}"
+            href="{{ url_for('admin.routes_page', tour=t.id) }}"
+        >{{ t.title }} <em>{{ counts.get(t.id, 0) }}</em></a>
+        {% endfor %}
+    </div>
+</section>
+
+
+{% for group in groups %}
+
+<section class="admin-card">
+
+    <div class="admin-card-head">
+        <h2>
+            {{ group.tour.title }}
+            <em class="count">{{ group.routes | length }}</em>
+        </h2>
+
+        <a href="{{ url_for('admin.new_route') }}?tour={{ group.tour.id }}">+ Добавить</a>
+    </div>
+
+    {% if group.routes %}
+
+    <div class="route-rows">
+        {% for r in group.routes %}
+
+        <div class="route-row{% if not r.active %} is-off{% endif %}">
+
+            <span class="route-day">
+                <strong>{{ "%02d" | format(r.day_number or 1) }}</strong>
+                <small>день</small>
+            </span>
+
+            {% if r.image %}
+            <span
+                class="route-thumb-admin"
+                style="background-image: url('{{ media_url(r.image) }}');"
+                aria-hidden="true"
+            ></span>
+            {% else %}
+            <span class="route-thumb-admin is-empty" aria-hidden="true">—</span>
+            {% endif %}
+
+            <span class="route-main">
+                <strong>{{ r.title }}</strong>
+
+                {% if r.description %}
+                <small>{{ r.description[:120] }}{% if r.description | length > 120 %}…{% endif %}</small>
+                {% endif %}
+
+                <span class="route-flags">
+                    {% if r.note %}<em class="flag flag-note">{{ r.note[:40] }}</em>{% endif %}
+                    {% if r.price %}<em class="flag flag-price">{{ r.price }} ₸</em>{% endif %}
+                    {% if r.km %}<em class="flag">{{ r.km }} км</em>{% endif %}
+                    {% if not r.active %}<em class="flag flag-off">Скрыт</em>{% endif %}
+                </span>
+            </span>
+
+            <span class="route-tools">
+                <form method="POST" action="{{ url_for('admin.move_route', id=r.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="dir" value="up">
+                    <button type="submit" title="Вверх">↑</button>
+                </form>
+
+                <form method="POST" action="{{ url_for('admin.move_route', id=r.id) }}">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="hidden" name="dir" value="down">
+                    <button type="submit" title="Вниз">↓</button>
+                </form>
+
+                <a class="admin-link" href="{{ url_for('admin.edit_route', id=r.id) }}">Изменить</a>
+
+                <form
+                    method="POST"
+                    action="{{ url_for('admin.delete_route', id=r.id) }}"
+                    onsubmit="return confirm('Удалить маршрут?');"
+                >
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <button type="submit" class="admin-btn-danger">Удалить</button>
+                </form>
+            </span>
+
+        </div>
+
+        {% endfor %}
+    </div>
+
+    {% else %}
+    <p class="admin-empty">
+        У этого тура нет маршрутов. На сайте показывается встроенный вариант.
+    </p>
+    {% endif %}
+
+</section>
+
+{% endfor %}
+
+{% endblock %}

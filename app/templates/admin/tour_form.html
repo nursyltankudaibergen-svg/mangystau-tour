@@ -1,0 +1,159 @@
+{% extends "admin/base.html" %}
+
+{% block title %}{{ 'Редактировать тур' if tour else 'Новый тур' }}{% endblock %}
+{% block heading %}{{ 'Редактировать тур' if tour else 'Новый тур' }}{% endblock %}
+
+{% block subheading %}
+    <p>{{ tour.title if tour else 'Тур появится в списке на главной' }}</p>
+{% endblock %}
+
+{% block actions %}
+    {% if tour %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('site.tour_detail', id=tour.id) }}" target="_blank" rel="noopener">
+        Открыть на сайте ↗
+    </a>
+    {% endif %}
+    <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.tours_page') }}">← Назад</a>
+{% endblock %}
+
+{% block content %}
+
+<form method="POST" enctype="multipart/form-data"
+      action="{{ url_for('admin.edit_tour', id=tour.id) if tour else url_for('admin.new_tour') }}">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+    <div class="form-columns">
+
+        <!-- ===================== ОСНОВНОЕ ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Основное</h2></div>
+
+            <label class="form-field">
+                <span>Название <em>*</em></span>
+                <input type="text" name="title" value="{{ tour.title if tour else '' }}"
+                       placeholder="TWO DAY ULTIMATE" required>
+            </label>
+
+            <div class="form-row">
+                <label class="form-field">
+                    <span>Длительность</span>
+                    <input type="text" name="duration" value="{{ tour.duration if tour else '' }}"
+                           placeholder="2/1 ночь">
+                    <small>Цифра в начале = число дней. От неё зависят маршруты и цены</small>
+                </label>
+
+                <label class="form-field">
+                    <span>Метка на карточке</span>
+                    <input type="text" name="badge" value="{{ tour.badge if tour else '' }}"
+                           placeholder="ХИТ">
+                    <small>Необязательно</small>
+                </label>
+            </div>
+
+            <label class="form-field">
+                <span>Описание</span>
+                <textarea name="description" rows="5"
+                          placeholder="Коротко о туре">{{ tour.description if tour else '' }}</textarea>
+            </label>
+
+            <div class="form-field">
+                <span>Фото</span>
+
+                {% if tour and tour.image %}
+                <div class="image-preview">
+                    <img src="{{ media_url(tour.image) }}" alt="">
+                    <small>{{ tour.image }}</small>
+                </div>
+                {% endif %}
+
+                <input type="file" name="image_file" accept="image/*" class="file-input">
+
+                <input type="text" name="image" value="{{ tour.image if tour else '' }}"
+                       placeholder="tours/two-day.jpg" class="mt">
+                <small>Главное фото тура — на карточке и вверху страницы тура</small>
+            </div>
+
+        </section>
+
+        <!-- ===================== ЦЕНЫ ===================== -->
+        <section class="admin-card">
+
+            <div class="admin-card-head"><h2>Цены</h2></div>
+
+            <label class="form-field">
+                <span>Базовая цена</span>
+                <input type="text" name="price" value="{{ tour.price if tour else '' }}"
+                       placeholder="165000" inputmode="numeric">
+                <small>Для однодневного тура — основная цена. У каждого маршрута
+                       можно поставить свою в разделе «Маршруты»</small>
+            </label>
+
+            <div class="package-prices">
+                <p class="package-prices-title">Пакеты · для туров от 2 дней</p>
+
+                {% for p in packages %}
+                {% set field = 'price_' ~ p.code %}
+                {% set current = tour[field] if tour and tour[field] else '' %}
+
+                <label class="form-field package-price-field">
+                    <span>{{ p.name }}</span>
+                    <input type="text" name="{{ field }}" value="{{ current }}"
+                           placeholder="{{ defaults.get(p.code, '') }}" inputmode="numeric">
+                </label>
+                {% endfor %}
+
+                <small class="package-note">
+                    Пустое поле = цена из кода
+                    {% if defaults %}(сейчас показана серым){% endif %}.
+                    Впишите число, чтобы поменять цену на сайте.
+                </small>
+            </div>
+
+        </section>
+
+    </div>
+
+    <!-- ===================== СЛУЖЕБНОЕ ===================== -->
+    <section class="admin-card">
+
+        <div class="admin-card-head"><h2>Служебное</h2></div>
+
+        <div class="form-row form-row-3">
+            <label class="form-field">
+                <span>Код маршрутов</span>
+                <input type="text" name="code" value="{{ tour.code if tour and tour.code else '' }}"
+                       placeholder="day2">
+                <small>Связывает тур со встроенными маршрутами. Лучше не менять</small>
+            </label>
+
+            <label class="form-field">
+                <span>Порядок</span>
+                <input type="number" name="sort_order" value="{{ tour.sort_order if tour else 0 }}">
+                <small>Меньше — выше. Удобнее менять стрелками в списке</small>
+            </label>
+
+            <label class="form-check form-check-inline">
+                <input type="checkbox" name="active" {% if not tour or tour.active %}checked{% endif %}>
+                <span>Показывать на сайте</span>
+            </label>
+        </div>
+
+    </section>
+
+    <div class="form-actions">
+        <button type="submit" class="admin-btn">{{ 'Сохранить' if tour else 'Добавить' }}</button>
+        <a class="admin-btn admin-btn-ghost" href="{{ url_for('admin.tours_page') }}">Отмена</a>
+    </div>
+
+</form>
+
+{% if tour %}
+<form method="POST" action="{{ url_for('admin.delete_tour', id=tour.id) }}" class="danger-zone"
+      onsubmit="return confirm('Удалить тур? Вместе с ним удалятся все его маршруты. Это действие необратимо.');">
+    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+    <button type="submit" class="admin-btn-danger">Удалить тур</button>
+</form>
+{% endif %}
+
+{% endblock %}

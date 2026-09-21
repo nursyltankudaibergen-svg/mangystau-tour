@@ -1,0 +1,663 @@
+<!doctype html>
+<html lang="{{ html_lang(language) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ settings.brand_name }} — {{ settings.brand_subtitle }}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <meta name="theme-color" content="#0b0f14">
+
+    {# SEO: бұрын мұнда 4 тілдік if-elif болатын да, IT/FR/PL/JA таңдағанда
+       description БОС шығатын. Енді аударма сөздігінен келеді (EN — фолбэк). #}
+    <meta name="description" content="{{ tr.discover_text }}">
+    <link rel="canonical" href="{{ request.base_url }}">
+
+    <meta property="og:title" content="{{ settings.brand_name }} — {{ settings.brand_subtitle }}">
+    <meta property="og:description" content="{{ tr.discover_text }}">
+    <meta property="og:image" content="{{ media_url(settings.hero_image) }}">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ request.base_url }}">
+    <meta name="twitter:card" content="summary_large_image">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('site.css') }}">
+
+    {# Leaflet CSS-ті тек карта бар бетте жүктейміз #}
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+    <link rel="stylesheet" href="{{ asset('depth.css') }}">
+    <link rel="stylesheet" href="{{ asset('mobile.css') }}">
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" defer></script>
+</head>
+
+<body>
+
+{% include 'partials/header.html' %}
+
+<main id="main">
+
+<!-- =========================================================
+     HERO
+========================================================= -->
+<section class="hero">
+
+    {# preload — 'auto' бүкіл видеоны мобиль трафикпен жүктейтін.
+       metadata + poster — бірінші экран әлдеқайда тез ашылады. #}
+    {% set hero_video = media_url(settings.hero_video, 'IMG_3077.MP4') %}
+    {% set hero_poster = media_url(settings.hero_poster) %}
+
+    {# Видео autoplay үшін muted + playsinline МІНДЕТТІ —
+       браузерлер дыбысы бар видеоны өздігінен жібермейді. #}
+    <video
+        class="hero-video"
+        autoplay
+        muted
+        loop
+        playsinline
+        preload="metadata"
+        {% if hero_poster %}poster="{{ hero_poster }}"{% endif %}
+        aria-hidden="true"
+    >
+        <source src="{{ hero_video }}" type="video/mp4">
+    </video>
+
+    <div class="hero-overlay"></div>
+
+    <div class="hero-content">
+
+        <p class="eyebrow"><span></span>{{ tr.hero_eyebrow }}</p>
+
+        {# |safe орнына |nl2br: HTML экранданады, тек \n ғана <br> болады #}
+        <h1>{{ tr.discover_title|nl2br }}</h1>
+
+        <p>{{ tr.discover_text }}</p>
+
+        <div class="hero-buttons">
+            <a href="#tours" class="btn hero-btn">{{ tr.tours }}</a>
+            {# бұрын href — '#booking' тұрған, ал бетте id — 'booking' элемент жоқ еді #}
+            <a href="#gallery" class="btn btn-outline hero-book-btn">
+                {{ tr.gallery }}
+            </a>
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TOURS
+========================================================= -->
+<section class="section tours-section" id="tours">
+
+    <h2 class="visually-hidden">{{ tr.tours }}</h2>
+
+    <div class="cards">
+
+        {% for t in tours %}
+
+        {# Бұрын карточка тінтуірмен ғана ашылатын, клавиатурадан мүмкін емес еді.
+           Енді бүкіл карточка — нағыз сілтеме. #}
+        <article class="tour-card">
+
+            <a class="tour-card-link" href="{{ url_for('site.tour_detail', id=t.id) }}">
+                <span class="visually-hidden">{{ t.title }}</span>
+            </a>
+
+            <div
+                class="tour-image"
+                style="background-image: url('{{ t.image }}');"
+                role="img"
+                aria-label="{{ t.title }}"
+            >
+                <div class="tour-overlay"></div>
+
+                <span class="tour-badge">
+                    {%- if t.badge -%}{{ t.badge }}
+                    {%- else -%}{{ translate_duration(t.duration, language) }}
+                    {%- endif -%}
+                </span>
+            </div>
+
+            <div class="tour-content">
+
+                <h3>{{ t.title }}</h3>
+
+                {% if t.description %}<p>{{ t.description }}</p>{% endif %}
+
+                <span class="tour-link" aria-hidden="true">
+                    {{ tr.view_tour }}<span></span>
+                </span>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     TICKER
+========================================================= -->
+<section class="tour-ticker" aria-hidden="true">
+    <div class="ticker-track">
+        {% set ticker = [
+            'Adventures in a 4×4 jeep',
+            'Explore the wild Mangystau',
+            'Unforgettable desert adventures',
+            'Discover the land of mysteries'
+        ] %}
+        {% for line in ticker + ticker %}
+        <div class="ticker-item">
+            <span class="ticker-star">★</span>
+            <strong>{{ settings.brand_name }}</strong>
+            <span>{{ line }}</span>
+        </div>
+        {% endfor %}
+    </div>
+</section>
+
+
+<!-- =========================================================
+     WHY
+========================================================= -->
+<section class="benefits-section" id="about">
+
+    <h2 class="section-label">{{ tr.why }}</h2>
+
+    <div class="benefits-grid">
+        {% for i in [1, 2, 3, 4] %}
+        <div class="benefit">
+            <span class="benefit-icon" aria-hidden="true">{{ "%02d"|format(i) }}</span>
+            <div>
+                <h3>{{ tr['benefit_%d_title'|format(i)] }}</h3>
+                <p>{{ tr['benefit_%d_text'|format(i)] }}</p>
+            </div>
+        </div>
+        {% endfor %}
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     MAP
+========================================================= -->
+<section class="section map-section" id="map">
+
+    <div class="section-top">
+        <div>
+            <p class="section-label">{{ tr.map_label }}</p>
+            <h2>{{ tr.map_title|nl2br }}</h2>
+        </div>
+        <p>{{ tr.map_text }}</p>
+    </div>
+
+<div class="map-container">
+        <div id="mangystau-map"></div>
+    </div>
+
+</section>
+
+
+<!-- =========================================================
+     GALLERY
+========================================================= -->
+<section class="section gallery-section" id="gallery">
+
+    <div class="section-top">
+        <div>
+            <p class="section-label">{{ tr.moments_label }}</p>
+            <h2>{{ tr.moments_title|nl2br }}</h2>
+        </div>
+        <p>{{ tr.moments_text }}</p>
+    </div>
+
+    {# Үш блок. Суреттер үшеуіне кезекпен бөлінеді де,
+       әр блок өз ішіндегілерді автоматты алмастырып тұрады. #}
+    {% if gallery_slots and (gallery_slots[0] or gallery_slots[1] or gallery_slots[2]) %}
+    <div class="gallery">
+
+        {% for slot in [0, 1, 2] %}
+        {# Әр блоктың өз суреттері бар: static/gallery/1, /2, /3.
+           Суреттер бір-біріне араласпайды — админкадан бөлек жүктеледі. #}
+        {% set items = gallery_slots[slot] if gallery_slots else [] %}
+        {% if items %}
+        <div class="gallery-slot gallery-slot-{{ slot + 1 }}" data-slot="{{ slot }}">
+
+            {% for item in items %}
+            <button
+                type="button"
+                class="gallery-slide{{ ' is-active' if loop.first }}"
+                data-gallery-src="{{ item.url }}"
+                data-gallery-label="{{ item.label }}"
+                aria-label="{{ item.label }}"
+                {% if not loop.first %}tabindex="-1"{% endif %}
+            >
+                <img
+                    src="{{ item.url }}"
+                    alt="{{ item.label }}, Mangystau"
+                    loading="lazy" decoding="async"
+                >
+                <span class="gallery-caption">{{ item.label }}</span>
+            </button>
+            {% endfor %}
+
+            {% if items|length > 1 %}
+            <div class="gallery-dots" aria-hidden="true">
+                {% for item in items %}
+                <span class="gallery-dot{{ ' is-active' if loop.first }}"></span>
+                {% endfor %}
+            </div>
+            {% endif %}
+
+        </div>
+        {% endif %}
+        {% endfor %}
+
+    </div>
+
+    <!-- ЛАЙТБОКС -->
+    <div class="lightbox" id="lightbox" hidden>
+        <button type="button" class="lightbox-close" data-lightbox-close aria-label="&times;">&times;</button>
+        <button type="button" class="lightbox-nav lightbox-prev" data-lightbox-step="-1" aria-label="&larr;">&#8249;</button>
+
+        <figure class="lightbox-figure">
+            <img id="lightboxImage" src="" alt="">
+            <figcaption id="lightboxCaption"></figcaption>
+        </figure>
+
+        <button type="button" class="lightbox-nav lightbox-next" data-lightbox-step="1" aria-label="&rarr;">&#8250;</button>
+    </div>
+    {% endif %}
+
+</section>
+
+
+<!-- =========================================================
+     REVIEWS
+========================================================= -->
+<section class="section reviews-section" id="reviews">
+
+    <div class="section-top">
+        <div>
+            <p class="section-label">{{ tr.reviews }}</p>
+            <h2>{{ tr.reviews_title|nl2br }}</h2>
+        </div>
+        <p>{{ tr.reviews_text }}</p>
+    </div>
+
+    {% set review_items = [
+        {
+            "text": {
+                "kz": "Маңғыстау керемет болды. Ландшафттар, гид және 4×4 сапары ұмытылмас әсер қалдырды.",
+                "ru": "Мангистау был невероятен. Пейзажи, гид и поездка на 4×4 подарили незабываемые впечатления.",
+                "en": "Mangystau was incredible. The landscapes, guide and 4×4 journey were unforgettable.",
+                "zh": "曼吉斯套令人惊叹，风景、向导和四驱之旅都令人难忘。"
+            },
+            "author": "Aigerim", "country": "Kazakhstan"
+        },
+        {
+            "text": {
+                "kz": "Мен барған ең әдемі орындардың бірі. Қатты ұсынамын.",
+                "ru": "Одно из самых красивых мест, которые я когда-либо посещал. Очень рекомендую.",
+                "en": "One of the most beautiful places I have ever visited. Highly recommended.",
+                "zh": "这是我去过的最美丽的地方之一，强烈推荐。"
+            },
+            "author": "Alex", "country": "United Kingdom"
+        },
+        {
+            "text": {
+                "kz": "Керемет шөл ландшафттары, жақсы қызмет және өте кәсіби жергілікті гид.",
+                "ru": "Потрясающие пейзажи пустыни, отличный сервис и очень профессиональный местный гид.",
+                "en": "Amazing desert landscapes, great service and a very professional local guide.",
+                "zh": "壮观的沙漠景观、优质的服务以及非常专业的当地向导。"
+            },
+            "author": "Li Wei", "country": "China"
+        }
+    ] %}
+
+    {# Админкадан қосылған пікірлер болса — солар, әйтпесе жоғарыдағы үшеуі #}
+    {% if db_reviews %}
+        {% set shown = [] %}
+        {% for r in db_reviews %}
+            {% set _ = shown.append({
+                "text": r.text,
+                "author": r.name,
+                "country": r.country or "",
+                "rating": r.rating or 5,
+                "photo": r.photo or ""
+            }) %}
+        {% endfor %}
+    {% else %}
+        {% set shown = review_items %}
+    {% endif %}
+
+    <div class="reviews-marquee">
+        <div class="reviews-track">
+            {% for item in shown + shown %}
+            {% set stars = (item.rating or 5) | int %}
+            <figure class="review-card">
+                <div class="review-stars" aria-label="{{ stars }} / 5">
+                    {{ "★" * stars }}<span class="review-stars-off">{{ "★" * (5 - stars) }}</span>
+                </div>
+
+                <blockquote><p>{{ L(item.text, language) }}</p></blockquote>
+
+                <figcaption class="review-author">
+                    {% if item.photo %}
+                    <img class="review-photo" src="{{ media_url(item.photo) }}" alt="" loading="lazy">
+                    {% endif %}
+                    <span class="review-author-text">
+                        <strong>{{ item.author }}</strong>
+                        {% if item.country %}<span>{{ item.country }}</span>{% endif %}
+                    </span>
+                </figcaption>
+            </figure>
+            {% endfor %}
+        </div>
+    </div>
+
+</section>
+
+</main>
+
+
+{% include 'partials/footer.html' %}
+
+
+<script type="application/json" id="mapData">
+{{
+    {
+        "language": language,
+        "stopWord": tr.stop,
+        "points":   map_data.points,
+        "tours":    map_data.tours
+    }|tojson
+}}
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+
+    var mapElement = document.getElementById("mangystau-map");
+    if (!mapElement || typeof L === "undefined") return;
+
+    var MAP_DATA = {};
+
+    try {
+        MAP_DATA = JSON.parse(document.getElementById("mapData").textContent);
+    } catch (error) {
+        MAP_DATA = {};
+    }
+
+    var points = MAP_DATA.points || [];
+    var tours = MAP_DATA.tours || [];
+    var stopWord = MAP_DATA.stopWord || "Stop";
+
+    var map = L.map("mangystau-map", {
+        scrollWheelZoom: false,     /* бет айналғанда карта ұстап қалмасын */
+        zoomControl: false,         /* + − түймелері алынды */
+        doubleClickZoom: true,      /* екі рет басып үлкейтуге болады */
+        touchZoom: true             /* телефонда екі саусақпен */
+    }).setView([43.75, 52.8], 8);
+
+    /* "Leaflet" сөзін алып тастаймыз — оның лицензиясы талап етпейді.
+       Ал спутник суреттерінің авторлық белгісі (Esri) қалады —
+       ол лицензия бойынша міндетті. */
+    map.attributionControl.setPrefix(false);
+
+    /* Спутник суреті — шөл дала, каньондар мен жартастар көрінеді.
+       Esri World Imagery, кілтсіз жұмыс істейді, атрибуция міндетті. */
+    L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        {
+            attribution: "Tiles &copy; Esri, Maxar, Earthstar Geographics",
+            maxZoom: 18
+        }
+    ).addTo(map);
+
+    /* Жер атаулары мен жолдар — спутниктің үстіне жұқа қабат */
+    L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}",
+        { maxZoom: 18, opacity: .85 }
+    ).addTo(map);
+
+    function escapeHtml(value) {
+        return String(value).replace(/[&<>"']/g, function (c) {
+            return { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c];
+        });
+    }
+
+    /* ---------- нөмірленген маркерлер ---------- */
+
+    var markers = {};
+
+    points.forEach(function (place) {
+        var marker = L.marker([place.lat, place.lng], {
+            icon: L.divIcon({
+                className: "map-pin",
+                html: '<span class="map-pin-dot"></span>',
+                iconSize: [30, 30],
+                iconAnchor: [15, 15]
+            })
+        });
+
+        var photo = place.image
+            ? '<img class="map-popup-photo" src="' + escapeHtml(place.image) +
+              '" alt="' + escapeHtml(place.name) + '" loading="lazy">'
+            : "";
+
+        marker.bindPopup(
+            '<div class="map-popup' + (photo ? " has-photo" : "") + '">' +
+                photo +
+                '<div class="map-popup-body">' +
+                    '<h3>' + escapeHtml(place.name) + '</h3>' +
+                    '<p>' + escapeHtml(place.text) + '</p>' +
+                '</div>' +
+            '</div>',
+            { maxWidth: 280, minWidth: 240 }
+        );
+
+        markers[place.key] = marker;
+        marker.addTo(map);
+    });
+
+    map.fitBounds(
+        L.latLngBounds(points.map(function (p) { return [p.lat, p.lng]; })),
+        { padding: [50, 50] }
+    );
+
+    setTimeout(function () { map.invalidateSize(); }, 300);
+    window.addEventListener("resize", function () { map.invalidateSize(); });
+});
+</script>
+
+<script>
+/* Кейбір браузер (әсіресе қуат үнемдеу режимінде) autoplay-ды бұғаттайды.
+   Сол кезде видеоны қолмен қосып көреміз. */
+(function () {
+    var video = document.querySelector(".hero-video");
+    if (!video) return;
+
+    function play() {
+        var attempt = video.play();
+        if (attempt && attempt.catch) attempt.catch(function () {});
+    }
+
+    play();
+    document.addEventListener("visibilitychange", function () {
+        if (!document.hidden) play();
+    });
+    document.addEventListener("click", play, { once: true });
+})();
+</script>
+
+<script>
+/* ГАЛЕРЕЯ
+   Үш блоктың әрқайсысы өз суреттерін автоматты алмастырады.
+   Блоктар бір мезгілде алмаспауы үшін бастау уақыты жылжытылған. */
+(function () {
+
+    var slots = document.querySelectorAll(".gallery-slot");
+    var lightbox = document.getElementById("lightbox");
+
+    /* ---------- автоматты алмасу ---------- */
+
+    var INTERVAL = 5000;
+    var timers = [];
+
+    function rotate(slot) {
+        var slides = slot.querySelectorAll(".gallery-slide");
+        var dots = slot.querySelectorAll(".gallery-dot");
+        if (slides.length < 2) return;
+
+        var index = 0;
+
+        for (var i = 0; i < slides.length; i++) {
+            if (slides[i].classList.contains("is-active")) index = i;
+        }
+
+        var next = (index + 1) % slides.length;
+
+        slides[index].classList.remove("is-active");
+        slides[index].tabIndex = -1;
+
+        slides[next].classList.add("is-active");
+        slides[next].tabIndex = 0;
+
+        if (dots.length) {
+            for (var j = 0; j < dots.length; j++) {
+                dots[j].classList.toggle("is-active", j === next);
+            }
+        }
+    }
+
+    function start() {
+        stop();
+
+        for (var i = 0; i < slots.length; i++) {
+            (function (slot, order) {
+                /* Әр блок 1,2 секундқа кешігіп бастайды */
+                var delay = order * 1200;
+
+                timers.push(window.setTimeout(function () {
+                    timers.push(window.setInterval(function () {
+                        rotate(slot);
+                    }, INTERVAL));
+                }, delay));
+            })(slots[i], i);
+        }
+    }
+
+    function stop() {
+        for (var i = 0; i < timers.length; i++) {
+            window.clearTimeout(timers[i]);
+            window.clearInterval(timers[i]);
+        }
+        timers = [];
+    }
+
+    var reduced = window.matchMedia
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    if (!reduced) {
+        start();
+
+        /* Бет көрінбей тұрғанда таймерді тоқтатамыз — батареяны үнемдейді */
+        document.addEventListener("visibilitychange", function () {
+            if (document.hidden) { stop(); } else { start(); }
+        });
+    }
+
+    /* ---------- лайтбокс ---------- */
+
+    if (!lightbox) return;
+
+    var image = document.getElementById("lightboxImage");
+    var caption = document.getElementById("lightboxCaption");
+    /* Лайтбокс: үш блоктың барлық суреті бір тізімде.
+       Енді блоктар бөлек суреттермен толады, сондықтан бәрін аламыз. */
+    var all = document.querySelectorAll(".gallery-slide");
+    var current = 0;
+
+    function open(index) {
+        var slide = all[index];
+        if (!slide) return;
+
+        current = index;
+
+        image.src = slide.getAttribute("data-gallery-src");
+        image.alt = slide.getAttribute("data-gallery-label") || "";
+        caption.textContent = slide.getAttribute("data-gallery-label") || "";
+
+        lightbox.hidden = false;
+        requestAnimationFrame(function () { lightbox.classList.add("is-open"); });
+        document.body.style.overflow = "hidden";
+        stop();
+    }
+
+    function close() {
+        lightbox.classList.remove("is-open");
+        document.body.style.overflow = "";
+        window.setTimeout(function () { lightbox.hidden = true; }, 250);
+        if (!reduced) start();
+    }
+
+    function step(direction) {
+        open((current + direction + all.length) % all.length);
+    }
+
+    document.addEventListener("click", function (event) {
+        var slide = event.target.closest(".gallery-slide");
+
+        if (slide && slide.classList.contains("is-active")) {
+            var source = slide.getAttribute("data-gallery-src");
+
+            for (var i = 0; i < all.length; i++) {
+                if (all[i].getAttribute("data-gallery-src") === source) {
+                    open(i);
+                    return;
+                }
+            }
+
+            open(0);
+            return;
+        }
+
+        var nav = event.target.closest("[data-lightbox-step]");
+        if (nav) {
+            step(parseInt(nav.getAttribute("data-lightbox-step"), 10));
+            return;
+        }
+
+        if (event.target.closest("[data-lightbox-close]") || event.target === lightbox) {
+            close();
+        }
+    });
+
+    document.addEventListener("keydown", function (event) {
+        if (lightbox.hidden) return;
+
+        if (event.key === "Escape") close();
+        if (event.key === "ArrowLeft") step(-1);
+        if (event.key === "ArrowRight") step(1);
+    });
+})();
+</script>
+
+<script src="{{ asset('reveal.js') }}" defer></script>
+
+</body>
+</html>

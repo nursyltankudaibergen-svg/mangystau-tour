@@ -1,0 +1,1484 @@
+/* ===========================================================================
+   TOUR DETAIL
+   tour_detail.html ішіндегі inline <style> осында көшірілді
+   + BASIC / PLUS / DELUXE карточкалары қосылды.
+=========================================================================== */
+
+.tour-detail { padding: 110px 0 80px; }
+
+.tour-detail-container {
+    width: min(1120px, calc(100% - 40px));
+    margin: 0 auto;
+}
+
+.tour-back {
+    display: inline-flex;
+    align-items: center;
+    margin-bottom: 22px;
+    color: #68717c;
+    font-size: 13px;
+    text-decoration: none;
+    transition: color .2s;
+}
+
+.tour-back:hover { color: #FF5A00; }
+
+/* ---------- HERO ---------- */
+
+.tour-detail-hero {
+    position: relative;
+    min-height: 430px;
+    padding: 42px;
+    display: flex;
+    align-items: flex-end;
+    border-radius: 22px;
+    overflow: hidden;
+    background-size: cover;
+    background-position: center;
+}
+
+.tour-detail-hero h1 {
+    margin: 0;
+    max-width: 850px;
+    color: #fff;
+    font-size: clamp(40px, 6vw, 66px);
+    line-height: .95;
+    letter-spacing: -.045em;
+}
+
+.tour-detail-hero-meta {
+    margin: 18px 0 0;
+    color: rgba(255,255,255,.75);
+    font-size: 13px;
+    font-weight: 700;
+}
+
+/* ---------- LAYOUT ---------- */
+
+.tour-detail-body {
+    display: grid;
+    grid-template-columns: minmax(0, 1.45fr) minmax(300px, .55fr);
+    gap: 45px;
+    margin-top: 45px;
+    align-items: start;
+}
+
+.tour-detail-content { min-width: 0; }
+
+.tour-detail-content h2 {
+    margin: 0 0 14px;
+    color: #fff;
+    font-size: 34px;
+    line-height: 1;
+    letter-spacing: -.035em;
+}
+
+.tour-description {
+    max-width: 66ch;
+    margin: 0;
+    color: #89919d;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+/* ---------- ROUTES ---------- */
+
+.routes-section { margin-top: 40px; }
+
+.routes-header {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 14px;
+}
+
+.routes-title {
+    margin: 0;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -.025em;
+}
+
+.routes-count { color: #68717c; font-size: 12px; }
+
+.routes-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 9px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+/* Маршрут карточкасы енді <button> — клавиатурадан да ашылады */
+.route-card {
+    width: 100%;
+    min-height: 78px;
+    display: flex;
+    align-items: center;
+    padding: 12px 14px;
+    border: 1px solid rgba(255,255,255,.07);
+    border-radius: 13px;
+    background: #0b0f14;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: transform .2s, border-color .2s, background .2s;
+}
+
+.route-card:hover {
+    transform: translateY(-2px);
+    background: #0e1319;
+    border-color: rgba(255,90,0,.45);
+}
+
+.route-number {
+    flex-shrink: 0;
+    width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 12px;
+    border-radius: 10px;
+    background: rgba(255,90,0,.08);
+    color: #FF5A00;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.route-info { min-width: 0; }
+
+.tour-day-label {
+    display: block;
+    margin-bottom: 4px;
+    color: #68717c;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.route-title {
+    display: block;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.4;
+}
+
+.route-note {
+    display: block;
+    margin-top: 5px;
+    color: #68717c;
+    font-size: 11px;
+    line-height: 1.5;
+}
+
+/* ---------- PACKAGES ---------- */
+
+.packages-section { margin-top: 48px; }
+
+.packages-intro {
+    max-width: 60ch;
+    margin: 0 0 18px;
+    color: #89919d;
+    font-size: 14px;
+    line-height: 1.7;
+}
+
+.packages-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+}
+
+.package-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    padding: 22px 20px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 16px;
+    background: #0b0f14;
+}
+
+.package-card.is-active {
+    border-color: rgba(255,90,0,.55);
+    background: linear-gradient(180deg, rgba(255,90,0,.07), rgba(255,90,0,0) 60%), #0b0f14;
+}
+
+.package-flag {
+    position: absolute;
+    top: -9px;
+    left: 20px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    background: #FF5A00;
+    color: #fff;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.package-name {
+    margin: 0;
+    color: #fff;
+    font-size: 20px;
+    font-weight: 800;
+    letter-spacing: .02em;
+}
+
+.package-tagline {
+    margin: 8px 0 0;
+    color: #79818c;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+.package-price {
+    margin: 18px 0 16px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid rgba(255,255,255,.07);
+}
+
+.package-price strong {
+    color: #FF5A00;
+    font-size: 24px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.package-price small {
+    display: block;
+    margin-top: 3px;
+    color: #5f6771;
+    font-size: 11px;
+}
+
+.package-includes-label {
+    margin: 0 0 8px;
+    color: #68717c;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.package-features {
+    flex: 1;
+    margin: 0 0 20px;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 8px;
+}
+
+.package-features li {
+    position: relative;
+    padding-left: 18px;
+    color: #9aa2ad;
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.package-features li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .55em;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255,90,0,.75);
+}
+
+.package-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    border-radius: 10px;
+    border: 1px solid rgba(255,90,0,.4);
+    color: #FF5A00;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    transition: background .2s, color .2s;
+}
+
+.package-button:hover,
+.package-button.is-current {
+    background: #FF5A00;
+    color: #fff;
+}
+
+/* ---------- BOOKING CARD ---------- */
+
+.tour-detail-card {
+    position: sticky;
+    top: 110px;
+    padding: 28px;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 18px;
+    background: #0b0f14;
+    box-shadow: 0 20px 60px rgba(0,0,0,.20);
+}
+
+.tour-detail-card-title {
+    margin: 0 0 12px;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+}
+
+.tour-detail-card p {
+    margin: 0;
+    color: #89919d;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.booking-divider {
+    height: 1px;
+    margin: 22px 0;
+    background: rgba(255,255,255,.07);
+}
+
+.booking-tour-name {
+    margin: 0 0 16px;
+    color: #fff !important;
+    font-size: 14px;
+    font-weight: 700;
+}
+
+.booking-tour-name span {
+    display: block;
+    margin-bottom: 5px;
+    color: #68717c;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.booking-price {
+    margin: 18px 0;
+    padding: 14px 15px;
+    border: 1px solid rgba(255,90,0,.22);
+    border-radius: 12px;
+    background: rgba(255,90,0,.08);
+}
+
+.booking-price-label {
+    display: block;
+    margin-bottom: 5px;
+    color: #89919d;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.booking-price-value {
+    margin: 0 !important;
+    color: #FF5A00 !important;
+    font-size: 23px;
+    font-weight: 800;
+    letter-spacing: -.03em;
+}
+
+.booking-price-value small { font-size: 12px; font-weight: 700; }
+
+.booking-price-hint {
+    margin: 8px 0 0 !important;
+    color: #6d757f !important;
+    font-size: 11px !important;
+}
+
+.booking-price-hint a { color: #FF5A00; }
+
+.booking-button {
+    width: 100%;
+    min-height: 52px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    background: #FF5A00;
+    color: #fff;
+    text-decoration: none;
+    font-size: 13px;
+    font-weight: 800;
+    transition: background .2s, transform .2s;
+}
+
+.booking-button:hover { background: #ff701f; transform: translateY(-2px); }
+
+/* ---------- MODAL ---------- */
+
+.route-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(0,0,0,.82);
+    backdrop-filter: blur(12px);
+    opacity: 0;
+    transition: opacity .25s ease;
+}
+
+.route-modal[hidden] { display: none; }
+.route-modal.active { opacity: 1; }
+
+.route-modal-box {
+    position: relative;
+    width: min(820px, 100%);
+    max-height: 90vh;
+    overflow-y: auto;
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 20px;
+    background: #0b0f14;
+    box-shadow: 0 30px 90px rgba(0,0,0,.55);
+    transform: translateY(20px);
+    transition: transform .3s ease;
+}
+
+.route-modal.active .route-modal-box { transform: translateY(0); }
+
+.route-modal-image {
+    display: block;
+    width: 100%;
+    height: 340px;
+    object-fit: cover;
+}
+
+.route-modal-content { padding: 30px; }
+
+.route-modal-label {
+    margin: 0 0 8px;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.route-modal-content h2 {
+    margin: 0 0 18px;
+    color: #fff;
+    font-size: 30px;
+    line-height: 1.05;
+    letter-spacing: -.03em;
+}
+
+.route-description {
+    max-width: 66ch;
+    margin: 0;
+    color: #89919d;
+    font-size: 15px;
+    line-height: 1.85;
+}
+
+.route-modal-note {
+    margin: 14px 0 0;
+    padding: 10px 12px;
+    border-left: 2px solid rgba(255,90,0,.6);
+    color: #b6bdc6;
+    font-size: 13px;
+    background: rgba(255,90,0,.06);
+}
+
+.route-modal-book {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 15px;
+    margin-top: 25px;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,.07);
+}
+
+.route-modal-book-text { color: #68717c; font-size: 12px; }
+
+.route-modal-book-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0 20px;
+    border-radius: 9px;
+    background: #FF5A00;
+    color: #fff;
+    text-decoration: none;
+    font-size: 12px;
+    font-weight: 800;
+    transition: background .2s;
+}
+
+.route-modal-book-button:hover { background: #ff701f; }
+
+.route-close {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    z-index: 3;
+    width: 38px;
+    height: 38px;
+    border: 1px solid rgba(255,255,255,.15);
+    border-radius: 50%;
+    background: rgba(0,0,0,.60);
+    color: #fff;
+    font-size: 20px;
+    cursor: pointer;
+    transition: background .2s, transform .2s;
+}
+
+.route-close:hover { background: #FF5A00; transform: rotate(90deg); }
+
+/* ---------- ADAPTIVE ---------- */
+
+@media (max-width: 980px) {
+    .packages-grid { grid-template-columns: 1fr; }
+}
+
+@media (max-width: 850px) {
+    .tour-detail-body { grid-template-columns: 1fr; gap: 35px; }
+    .tour-detail-card { position: static; }
+}
+
+@media (max-width: 650px) {
+    .tour-detail { padding: 90px 0 50px; }
+    .tour-detail-container { width: calc(100% - 24px); }
+    .tour-detail-hero { min-height: 340px; padding: 25px; border-radius: 18px; }
+    .tour-detail-hero h1 { font-size: 40px; }
+    .routes-list { grid-template-columns: 1fr; }
+    .tour-detail-card { padding: 23px; }
+    .route-modal { padding: 12px; }
+    .route-modal-image { height: 220px; }
+    .route-modal-content { padding: 22px; }
+    .route-modal-content h2 { font-size: 25px; }
+    .route-modal-book { flex-direction: column; align-items: stretch; }
+    .route-modal-book-button { width: 100%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .route-card:hover,
+    .booking-button:hover { transform: none; }
+    .route-modal,
+    .route-modal-box { transition: none; }
+}
+
+/* ===========================================================================
+   ҚАШЫҚТЫҚ, ЕСКЕРТУЛЕР (жаңбыр / мешіт)
+=========================================================================== */
+
+.route-km {
+    display: inline-block;
+    margin-top: 5px;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.route-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 7px;
+}
+
+.tag {
+    padding: 3px 7px;
+    border-radius: 5px;
+    font-size: 9px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.tag-rain {
+    background: rgba(70,140,255,.12);
+    color: #7fb0ff;
+}
+
+.tag-dress {
+    background: rgba(255,180,60,.12);
+    color: #ffc46b;
+}
+
+.rules-section {
+    display: grid;
+    gap: 10px;
+    margin-top: 32px;
+}
+
+.notice {
+    margin: 0;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border-left: 3px solid;
+    color: #a6aeb9;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.notice strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.notice-rain {
+    border-color: #4f8bff;
+    background: rgba(70,140,255,.07);
+}
+
+.notice-dress {
+    border-color: #ffb43c;
+    background: rgba(255,180,60,.07);
+}
+
+.route-modal-distance {
+    margin: 0 0 14px;
+    color: #FF5A00;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.route-modal-distance small {
+    color: #68717c;
+    font-weight: 400;
+}
+
+.route-modal-content .notice {
+    margin-top: 12px;
+}
+
+.booking-group-note {
+    margin: 10px 0 0 !important;
+    color: #79818c !important;
+    font-size: 11px !important;
+    line-height: 1.6;
+}
+
+
+/* Маршрут ескертулері (жаңбыр / киім тәртібі) */
+
+.route-flags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    margin-top: 7px;
+}
+
+.route-flag {
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.route-flag-rain {
+    background: rgba(90, 150, 255, .12);
+    color: #7fb0ff;
+}
+
+.route-flag-dress {
+    background: rgba(255, 190, 80, .12);
+    color: #ffc266;
+}
+
+.route-km {
+    display: inline-block;
+    margin-top: 6px;
+    color: #68717c;
+    font-size: 11px;
+}
+
+/* Жалпы ескерту блоктары */
+
+.tour-notices {
+    display: grid;
+    gap: 10px;
+    margin-top: 34px;
+}
+
+.tour-notice {
+    display: flex;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, .07);
+    background: #0b0f14;
+}
+
+.tour-notice strong {
+    display: block;
+    margin-bottom: 4px;
+    color: #fff;
+    font-size: 13px;
+}
+
+.tour-notice p {
+    margin: 0;
+    color: #89919d;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+
+/* ===========================================================================
+   ПАКЕТТЕР — ОҢ ЖАҚТА, ҚОСҚЫШПЕН
+   Үш карточканың орнына бір карточка + BASIC / PLUS / DELUXE қосқышы.
+=========================================================================== */
+
+.packages-aside {
+    position: sticky;
+    top: 110px;
+    min-width: 0;
+}
+
+.packages-aside-title {
+    margin: 0 0 8px;
+    color: #fff;
+    font-size: 24px;
+    line-height: 1;
+    letter-spacing: -.025em;
+}
+
+.packages-aside .packages-intro {
+    margin-bottom: 16px;
+    font-size: 13px;
+}
+
+/* --- қосқыш --- */
+
+.package-tabs {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 4px;
+    padding: 4px;
+    margin-bottom: 12px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px;
+    background: #0b0f14;
+}
+
+.package-tab {
+    padding: 10px 6px;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: #79818c;
+    font: inherit;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: background .2s, color .2s;
+}
+
+.package-tab:hover { color: #fff; }
+
+.package-tab.is-active {
+    /* Фон енді индикаторда — түйменің өзі мөлдір қалады */
+    background: transparent;
+    color: #fff;
+}
+
+/* --- карточка --- */
+
+.packages-aside .package-card[hidden] { display: none; }
+
+.packages-aside .package-card {
+    padding: 24px 22px;
+}
+
+.packages-aside .package-price {
+    margin-top: 0;
+}
+
+/* Тар экранда оң жақ баған астына түседі */
+@media (max-width: 850px) {
+    .packages-aside {
+        position: static;
+    }
+}
+
+
+/* ===========================================================================
+   ПАКЕТ АУЫСҚАНДАҒЫ АНИМАЦИЯ
+   Баға саны JS-те санап шығады, ал карточка мазмұны жеңіл жылжып шығады.
+=========================================================================== */
+
+.packages-aside .package-card.is-switching {
+    /* Карточканың өзі тек айқындалады, жылжымайды —
+       жылжуды ішіндегі элементтер істейді (төменде). */
+    animation: package-fade .25s ease-out;
+}
+
+@keyframes package-fade {
+    from { opacity: .4; }
+    to   { opacity: 1; }
+}
+
+@keyframes package-in {
+    from {
+        opacity: 0;
+        transform: translateY(6px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Баға саны ауысқанда «секірмеуі» үшін ені тұрақты цифрлар */
+.package-price strong {
+    display: inline-block;
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: "tnum";
+}
+
+.package-price [data-price-value] {
+    display: inline-block;
+    min-width: 3ch;
+}
+
+/* Қосқыш түймесіне жеңіл кері байланыс */
+.package-tab:active {
+    transform: scale(.97);
+}
+
+.package-tab {
+    transition: background .2s, color .2s, transform .1s;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .packages-aside .package-card.is-switching {
+        animation: none;
+    }
+    .package-tab:active {
+        transform: none;
+    }
+}
+
+
+/* ===========================================================================
+   APPLE ҮЛГІСІНДЕГІ ҚОСҚЫШ
+   Фон түймеден түймеге сырғып барады, мәтін оның үстінде қалады.
+=========================================================================== */
+
+.package-tabs {
+    position: relative;
+    isolation: isolate;
+}
+
+.package-tab-indicator {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    bottom: 4px;
+    z-index: 0;
+
+    /* ӘДЕПКІ ОРНЫ CSS-те: JS істемей қалса да, бірінші түйменің
+       астында тұрады. JS жүктелген соң дәл орнына жылжиды. */
+    width: calc((100% - 8px) / 3);
+
+    border-radius: 9px;
+    background: #FF5A00;
+    box-shadow: 0 6px 18px rgba(255, 90, 0, .28);
+
+    opacity: 1;
+
+    /* Apple-дің easing қисығы: жылдам басталып, жұмсақ тоқтайды */
+    transition:
+        transform .45s cubic-bezier(.32, .72, 0, 1),
+        width .45s cubic-bezier(.32, .72, 0, 1),
+        opacity .2s ease;
+}
+
+.package-tab-indicator.is-ready {
+    /* JS орнын дәл есептеді — енді left емес, transform арқылы жылжиды */
+    left: 0;
+}
+
+/* Басып тұрғанда сәл қысылады */
+.package-tab-indicator.is-pressed {
+    transform-origin: center;
+    filter: brightness(.95);
+}
+
+.package-tab {
+    position: relative;
+    z-index: 1;
+    background: transparent !important;
+}
+
+.package-tab:hover:not(.is-active) {
+    color: #cfd5dd;
+}
+
+/* Түйменің өзі басылғанда мәтіні сәл кішірейеді */
+.package-tab:active {
+    transform: scale(.96);
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .package-tab-indicator {
+        transition: opacity .2s ease;
+    }
+}
+
+
+/* ===========================================================================
+   ПАКЕТ АУЫСҚАНДА — МҮМКІНДІКТЕР ТІЗБЕКТЕЛІП ШЫҒАДЫ
+   Тек ауысқанда (.is-switching) істейді. Бет алғаш ашылғанда
+   тізім бірден көрінеді — JS істемесе де ештеңе жасырылмайды.
+=========================================================================== */
+
+.packages-aside .package-card.is-switching .package-tagline,
+.packages-aside .package-card.is-switching .package-price,
+.packages-aside .package-card.is-switching .package-includes-label,
+.packages-aside .package-card.is-switching .package-features li,
+.packages-aside .package-card.is-switching .package-button {
+    animation: feature-in .42s cubic-bezier(.32, .72, 0, 1) both;
+}
+
+/* Әрқайсысы 45мс кідіріспен — жоғарыдан төмен ағын */
+.packages-aside .package-card.is-switching .package-tagline        { animation-delay: .02s; }
+.packages-aside .package-card.is-switching .package-price          { animation-delay: .06s; }
+.packages-aside .package-card.is-switching .package-includes-label { animation-delay: .10s; }
+
+.packages-aside .package-card.is-switching .package-features li:nth-child(1) { animation-delay: .14s; }
+.packages-aside .package-card.is-switching .package-features li:nth-child(2) { animation-delay: .185s; }
+.packages-aside .package-card.is-switching .package-features li:nth-child(3) { animation-delay: .23s; }
+.packages-aside .package-card.is-switching .package-features li:nth-child(4) { animation-delay: .275s; }
+.packages-aside .package-card.is-switching .package-features li:nth-child(5) { animation-delay: .32s; }
+.packages-aside .package-card.is-switching .package-features li:nth-child(6) { animation-delay: .365s; }
+
+.packages-aside .package-card.is-switching .package-button { animation-delay: .40s; }
+
+@keyframes feature-in {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Нүктелер де ілесіп шықсын */
+.packages-aside .package-card.is-switching .package-features li::before {
+    animation: dot-in .3s ease-out both;
+    animation-delay: inherit;
+}
+
+@keyframes dot-in {
+    from { transform: scale(0); }
+    to   { transform: scale(1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .packages-aside .package-card.is-switching .package-tagline,
+    .packages-aside .package-card.is-switching .package-price,
+    .packages-aside .package-card.is-switching .package-includes-label,
+    .packages-aside .package-card.is-switching .package-features li,
+    .packages-aside .package-card.is-switching .package-features li::before,
+    .packages-aside .package-card.is-switching .package-button {
+        animation: none;
+    }
+}
+
+
+/* ===========================================================================
+   МАРШРУТ СУРЕТІ
+   Сурет болса — карточкада кішкентай фото, нөмірі соның үстінде.
+   Сурет жоқ болса — бұрынғыдай тек нөмір көрінеді.
+=========================================================================== */
+
+.route-thumb {
+    position: relative;
+    flex-shrink: 0;
+
+    width: 64px;
+    height: 64px;
+    margin-right: 13px;
+
+    display: block;
+    border-radius: 12px;
+    overflow: hidden;
+
+    background-size: cover;
+    background-position: center;
+
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .10);
+    transition: transform .3s cubic-bezier(.32, .72, 0, 1);
+}
+
+/* Нөмір суреттің үстінде — оқылуы үшін астында қараңғы қабат */
+.route-thumb-number {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+
+    padding: 3px 0 4px;
+
+    color: #fff;
+    font-size: 11px;
+    font-weight: 800;
+    text-align: center;
+
+    background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .78));
+}
+
+.route-card:hover .route-thumb {
+    transform: scale(1.06);
+}
+
+/* Модалдағы үлкен сурет */
+.route-modal-image {
+    background: #0b0f14;
+}
+
+@media (max-width: 650px) {
+    .route-thumb {
+        width: 56px;
+        height: 56px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .route-card:hover .route-thumb {
+        transform: none;
+    }
+}
+
+
+
+
+/* ===========================================================================
+   БІР КҮНДІК ТУР — БАҒЫТ ҚОСҚЫШЫ
+   Пакеттердің қосқышымен бірдей, тек 5 сегмент.
+=========================================================================== */
+
+.package-tabs-routes {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+/* Индикатордың әдепкі ені 5 сегментке лайықталады */
+.package-tabs-routes .package-tab-indicator {
+    width: calc((100% - 8px) / 5);
+}
+
+.package-tabs-routes .package-tab {
+    padding: 10px 2px;
+    font-size: 12px;
+    letter-spacing: .02em;
+}
+
+/* Таңдалған бағыттың мәтіні */
+.route-panel-desc {
+    margin: 0 0 18px;
+    color: #9aa2ad;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+.route-panel-note {
+    margin: 0 0 18px;
+    padding: 10px 12px;
+
+    border-left: 2px solid rgba(255, 90, 0, .6);
+    border-radius: 0 8px 8px 0;
+    background: rgba(255, 90, 0, .06);
+
+    color: #c3cad3;
+    font-size: 12px;
+    line-height: 1.6;
+}
+
+/* Бағыт атауы — тағлайннан ірілеу, тақырып сияқты */
+.packages-aside .package-tagline {
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    line-height: 1.4;
+    letter-spacing: -.01em;
+}
+
+@media (max-width: 420px) {
+    .package-tabs-routes .package-tab {
+        font-size: 11px;
+    }
+}
+
+
+/* ===========================================================================
+   МАРШРУТ КАРТОЧКАЛАРЫ — БӘРІ БІРДЕЙ БИІКТІКТЕ
+   Бұрын әр қатардың биіктігі бөлек есептелетін, сондықтан
+   біреуі биік, біреуі аласа болып тұратын.
+=========================================================================== */
+
+.routes-list {
+    /* Барлық қатар ең биігіне теңеседі */
+    grid-auto-rows: 1fr;
+    align-items: stretch;
+}
+
+.routes-list > li {
+    display: flex;
+}
+
+.route-card {
+    width: 100%;
+    height: 100%;
+    align-items: flex-start;
+}
+
+/* Мазмұны жоғарыдан басталып, белгілер төменде тұрсын */
+.route-card .route-info {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.route-card .route-flags {
+    margin-top: auto;
+    padding-top: 8px;
+}
+
+
+/* ===========================================================================
+   ҮШ БӨЛІМ: OVERVIEW · ITINERARY · INCLUDED
+=========================================================================== */
+
+.tour-section + .tour-section {
+    margin-top: 46px;
+    padding-top: 40px;
+    border-top: 1px solid rgba(255, 255, 255, .07);
+}
+
+.tour-section .section-label {
+    margin-bottom: 10px;
+}
+
+/* ---------- 01 · OVERVIEW ---------- */
+
+.spec-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 1px;
+
+    margin: 26px 0 0;
+    padding: 0;
+
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 14px;
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, .06);
+}
+
+.spec {
+    padding: 16px 18px;
+    background: #0b0f14;
+}
+
+.spec dt {
+    margin-bottom: 6px;
+    color: #68717c;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .13em;
+    text-transform: uppercase;
+}
+
+.spec dd {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.4;
+}
+
+/* ---------- 03 · INCLUDED ---------- */
+
+.included-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 12px;
+}
+
+.included-col {
+    padding: 22px 20px;
+    border: 1px solid rgba(255, 255, 255, .07);
+    border-radius: 16px;
+    background: #0b0f14;
+}
+
+.included-label {
+    margin: 0 0 14px;
+    color: #FF5A00;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .14em;
+    text-transform: uppercase;
+}
+
+.included-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 10px;
+}
+
+.included-list li {
+    position: relative;
+    padding-left: 24px;
+    color: #9aa2ad;
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Кіретіндерге — құсбелгі */
+.included-list li::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: .32em;
+
+    width: 13px;
+    height: 7px;
+
+    border-left: 2px solid #FF5A00;
+    border-bottom: 2px solid #FF5A00;
+    transform: rotate(-45deg);
+}
+
+/* Қосымша қызметтер — атауы мен бағасы қатар */
+.included-list-extra li {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 14px;
+    padding-left: 0;
+}
+
+.included-list-extra li::before {
+    display: none;
+}
+
+.included-list-extra em {
+    flex-shrink: 0;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+}
+
+.included-list-extra em small {
+    display: block;
+    margin-top: 1px;
+    color: #68717c;
+    font-size: 10px;
+    font-weight: 500;
+}
+
+.included-col-extra {
+    background: linear-gradient(180deg, rgba(255, 90, 0, .05), transparent 70%), #0b0f14;
+}
+
+@media (max-width: 650px) {
+    .tour-section + .tour-section {
+        margin-top: 34px;
+        padding-top: 30px;
+    }
+
+    .spec-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+
+/* ===========================================================================
+   МАРШРУТТЫҢ ҮСТІНДЕГІ ҮШ ФАКТ
+=========================================================================== */
+
+.overview-strip {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1px;
+
+    margin: 26px 0 40px;
+
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 16px;
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, .07);
+}
+
+.overview-item {
+    padding: 18px 20px;
+    background: #0b0f14;
+}
+
+.overview-label {
+    display: block;
+    margin-bottom: 8px;
+
+    color: #FF5A00;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .15em;
+    text-transform: uppercase;
+}
+
+.overview-item p {
+    margin: 0;
+    color: #fff;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 1.45;
+    text-transform: uppercase;
+    letter-spacing: -.01em;
+}
+
+/* ===========================================================================
+   МАРШРУТТЫҢ АСТЫНДАҒЫ ЕКІ БЛОК
+=========================================================================== */
+
+.detail-columns {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 12px;
+    margin-top: 42px;
+}
+
+.detail-block {
+    padding: 26px 24px;
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 18px;
+    background: #0b0f14;
+}
+
+.detail-block h3 {
+    margin: 0 0 20px;
+    color: #fff;
+    font-size: 21px;
+    line-height: 1.15;
+    letter-spacing: -.03em;
+    text-transform: uppercase;
+}
+
+/* --- кездесу тізімі --- */
+
+.meeting-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    display: grid;
+    gap: 20px;
+}
+
+.meeting-list li {
+    position: relative;
+    padding-left: 20px;
+}
+
+/* Сол жақта тік сызық — уақыт желісі сияқты */
+.meeting-list li::before {
+    content: "";
+    position: absolute;
+    left: 3px;
+    top: 7px;
+
+    width: 7px;
+    height: 7px;
+
+    border-radius: 50%;
+    background: #FF5A00;
+    box-shadow: 0 0 0 3px rgba(255, 90, 0, .15);
+}
+
+.meeting-list li:not(:last-child)::after {
+    content: "";
+    position: absolute;
+    left: 6px;
+    top: 18px;
+    bottom: -20px;
+    width: 1px;
+    background: rgba(255, 255, 255, .09);
+}
+
+.meeting-head {
+    display: flex;
+    align-items: baseline;
+    gap: 9px;
+    margin-bottom: 6px;
+    flex-wrap: wrap;
+}
+
+.meeting-time {
+    color: #FF5A00;
+    font-size: 13px;
+    font-weight: 800;
+    font-style: normal;
+    font-variant-numeric: tabular-nums;
+}
+
+.meeting-head strong {
+    color: #fff;
+    font-size: 13px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .02em;
+}
+
+.meeting-list p {
+    margin: 0;
+    color: #8b939e;
+    font-size: 13px;
+    line-height: 1.7;
+}
+
+/* --- не кіреді мәтіні --- */
+
+.detail-block-included {
+    background:
+        linear-gradient(180deg, rgba(255, 90, 0, .05), transparent 55%),
+        #0b0f14;
+}
+
+.included-text {
+    display: grid;
+    gap: 14px;
+}
+
+.included-text p {
+    margin: 0;
+    color: #8b939e;
+    font-size: 13px;
+    line-height: 1.75;
+}
+
+/* Бірінші абзац — кіріспе, сондықтан ашығырақ */
+.included-text p:first-child {
+    color: #cfd5dd;
+    font-size: 14px;
+}
+
+@media (max-width: 650px) {
+    .overview-strip {
+        margin: 20px 0 30px;
+    }
+
+    .detail-block {
+        padding: 22px 20px;
+    }
+}

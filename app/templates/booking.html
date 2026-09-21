@@ -1,0 +1,911 @@
+<!doctype html>
+<html lang="{{ html_lang(language) }}">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <title>{{ tr.booking }} — {{ settings.brand_name }}</title>
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" sizes="48x48">
+    <link rel="icon" type="image/png" sizes="32x32" href="{{ url_for('static', filename='favicon-32x32.png') }}">
+    <link rel="icon" type="image/png" sizes="16x16" href="{{ url_for('static', filename='favicon-16x16.png') }}">
+    <link rel="apple-touch-icon" sizes="180x180" href="{{ url_for('static', filename='apple-touch-icon.png') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='site.webmanifest') }}">
+    <meta name="theme-color" content="#0b0f14">
+    <meta name="description" content="{{ tr.booking_hero_text }}">
+    <meta name="robots" content="noindex">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ asset('site.css') }}">
+    <link rel="stylesheet" href="{{ asset('booking.css') }}">
+    <link rel="stylesheet" href="{{ asset('depth.css') }}">
+    <link rel="stylesheet" href="{{ asset('mobile.css') }}">
+</head>
+
+<body class="booking-body">
+
+{% include 'partials/header.html' %}
+
+{% set hero_video = media_url(settings.hero_video, 'IMG_3077.MP4') %}
+{% set hero_poster = media_url(settings.hero_poster) %}
+
+<main class="booking-page" id="main">
+<div class="booking-wrapper">
+
+    <!-- ================= СОЛ ЖАҚ: ФОРМА ================= -->
+    <section class="booking-panel">
+
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            <div class="flash-container" role="status" aria-live="polite">
+                {% for category, message in messages %}
+                <p class="flash {{ category }}">{{ message }}</p>
+                {% endfor %}
+            </div>
+            {% endif %}
+        {% endwith %}
+
+        <div class="panel-head">
+            <span class="panel-kicker">{{ tr.booking_kicker }}</span>
+            <h1>{{ tr.book_your_tour }}</h1>
+        </div>
+
+        <form method="POST" action="{{ url_for('site.booking') }}" class="booking-form" novalidate>
+
+            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+
+            {# Honeypot: адам көрмейді, боттар толтырады #}
+            <div class="hp-field" aria-hidden="true">
+                <label for="website">Website</label>
+                <input type="text" id="website" name="website" tabindex="-1" autocomplete="off">
+            </div>
+
+            <div class="booking-row">
+
+                <div class="booking-field">
+                    <label for="name">{{ tr.name }} <span class="required">*</span></label>
+                    <input type="text" id="name" name="name"
+                           value="{{ form_data.name if form_data else '' }}"
+                           placeholder="{{ tr.name_placeholder }}"
+                           autocomplete="name" required>
+                </div>
+
+                <div class="booking-field">
+                    <label for="email">{{ tr.email }} <span class="required">*</span></label>
+                    <input type="email" id="email" name="email"
+                           value="{{ form_data.email if form_data else '' }}"
+                           placeholder="example@email.com"
+                           autocomplete="email" inputmode="email" required>
+                </div>
+
+            </div>
+
+            <div class="booking-row">
+
+                <div class="booking-field">
+                    <label for="phone">{{ tr.phone }} <span class="required">*</span></label>
+
+                    <div class="phone-simple">
+
+                        <div class="country-picker">
+                            <button type="button" class="country-button" id="countryButton"
+                                    aria-expanded="false" aria-haspopup="listbox"
+                                    aria-label="{{ tr.country_code }}">
+                                <span id="countryCode">+7</span>
+                                <span aria-hidden="true">▾</span>
+                            </button>
+
+                            <div class="country-menu" id="countryMenu" role="listbox">
+
+                                <div class="country-search">
+                                    <input
+                                        type="text"
+                                        id="countrySearch"
+                                        placeholder="{{ tr.search_country }}"
+                                        autocomplete="off"
+                                    >
+                                </div>
+
+                                <div class="country-list" id="countryList">
+                                    {% for code, flag, name in COUNTRY_CODES %}
+                                    <button
+                                        type="button"
+                                        role="option"
+                                        data-code="{{ code }}"
+                                        data-name="{{ name|lower }}"
+                                    >
+                                        <span class="country-flag">{{ flag }}</span>
+                                        <span class="country-name">{{ name }}</span>
+                                        <span class="country-dial">{{ code }}</span>
+                                    </button>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+                        </div>
+
+                        <input type="hidden" name="country_code" id="countryCodeInput" value="+7">
+
+                        <input type="tel" id="phone" name="phone"
+                               value="{{ form_data.phone if form_data else '' }}"
+                               placeholder="{{ tr.phone_placeholder }}"
+                               autocomplete="tel" inputmode="tel" required>
+
+                    </div>
+                </div>
+
+                <div class="booking-field">
+                    <label for="tourDate">{{ tr.tour_date }} <span class="required">*</span></label>
+                    <input type="date" id="tourDate" name="tour_date"
+                           value="{{ form_data.tour_date if form_data else '' }}" required>
+                </div>
+
+            </div>
+
+            <!-- ТУР: карточка түріндегі таңдау -->
+            <div class="booking-field tour-picker-field">
+                <label for="tourSelect">{{ tr.tour_select }} <span class="required">*</span></label>
+
+                {# Нағыз select жасырын тұрады — бүкіл логика сол арқылы жүреді,
+                   ал көрінетіні — төмендегі әдемі карточка. #}
+                <select name="tour" id="tourSelect" class="visually-hidden" required>
+                    <option value="">{{ tr.tour_select }}</option>
+                    {% for t in tours %}
+                    <option
+                        value="{{ t.id }}"
+                        data-price="{{ price_number(t.price) }}"
+                        data-days="{{ duration_days(t.duration) or 1 }}"
+                        data-duration="{{ translate_duration(t.duration, language) }}"
+                        {% if preselected and preselected.id == t.id %}selected{% endif %}
+                    >{{ t.title }}</option>
+                    {% endfor %}
+                </select>
+
+                <div class="tour-picker" id="tourPicker" data-picker-for="tourSelect">
+
+                    <button type="button" class="tour-picker-button" aria-expanded="false">
+                        <span class="tour-picker-current">
+                            <strong data-picker-title>{{ tr.tour_select }}</strong>
+                            <small data-picker-meta>{{ tr.select_tour_hint }}</small>
+                        </span>
+                        <span class="tour-picker-arrow" aria-hidden="true">▾</span>
+                    </button>
+
+                    <div class="tour-picker-list" role="listbox">
+                        {% for t in tours %}
+                        <button
+                            type="button"
+                            class="tour-picker-item{% if preselected and preselected.id == t.id %} is-active{% endif %}"
+                            data-picker-value="{{ t.id }}"
+                            role="option"
+                        >
+                            <span class="tour-picker-name">{{ t.title }}</span>
+                            <span class="tour-picker-days">{{ translate_duration(t.duration, language) }}</span>
+                        </button>
+                        {% endfor %}
+                    </div>
+
+                </div>
+            </div>
+
+            <div class="booking-row">
+
+                <div class="booking-field">
+                    <label for="groups">{{ tr.groups_label }} <span class="required">*</span></label>
+
+                    {# Нағыз select жасырын — көрінетіні тур таңдағыштай карточка #}
+                    <select name="groups" id="groups" class="visually-hidden" required>
+                        {% for n in range(1, MAX_GROUPS + 1) %}
+                        <option
+                            value="{{ n }}"
+                            data-meta="{{ tr.up_to_guests.replace('{n}', (n * MAX_PER_GROUP)|string) }}"
+                            {% if (form_data.groups if form_data else 1)|int == n %}selected{% endif %}
+                        >{{ n }} {{ tr.group_word if n == 1 else tr.groups_word }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <div class="tour-picker" id="groupsPicker" data-picker-for="groups">
+
+                        <button type="button" class="tour-picker-button" aria-expanded="false">
+                            <span class="tour-picker-current">
+                                <strong data-picker-title></strong>
+                                <small data-picker-meta></small>
+                            </span>
+                            <span class="tour-picker-arrow" aria-hidden="true">▾</span>
+                        </button>
+
+                        <div class="tour-picker-list" role="listbox">
+                            {% for n in range(1, MAX_GROUPS + 1) %}
+                            <button
+                                type="button"
+                                class="tour-picker-item"
+                                data-picker-value="{{ n }}"
+                                role="option"
+                            >
+                                <span class="tour-picker-name">{{ n }} {{ tr.group_word if n == 1 else tr.groups_word }}</span>
+                                <span class="tour-picker-days">{{ tr.up_to_guests.replace('{n}', (n * MAX_PER_GROUP)|string) }}</span>
+                            </button>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="booking-field">
+                    <label for="guestsValue">{{ tr.guests_label or tr.guests }} <span class="required">*</span></label>
+
+                    {# Барабан: − мен + арқылы саналады #}
+                    <div class="stepper" id="guestsStepper">
+                        <button type="button" class="stepper-btn" data-step="-1" aria-label="−">−</button>
+
+                        <span class="stepper-value">
+                            <output id="guestsValue">{{ (form_data.guests if form_data else 1)|int }}</output>
+                            <small>{{ tr.guests_hint or tr.guests_note }}</small>
+                        </span>
+
+                        <button type="button" class="stepper-btn" data-step="1" aria-label="+">+</button>
+
+                        <input
+                            type="hidden"
+                            name="guests"
+                            id="guests"
+                            value="{{ (form_data.guests if form_data else 1)|int }}"
+                        >
+                    </div>
+                </div>
+
+            </div>
+
+            {# Бағыт: тек бір күндік турда көрінеді #}
+            <div class="booking-field" id="routeField" hidden>
+                <label>{{ tr.route_label }} <span class="required">*</span></label>
+
+                {# Түймелер JS арқылы толтырылады — әр турдың бағыты әртүрлі #}
+                <div class="route-pills" id="routePills" role="group">
+                    <span class="route-pill-indicator" aria-hidden="true"></span>
+                </div>
+
+                <input type="hidden" name="route" id="routeValue" value="">
+                <p class="route-pill-title" id="routeTitle"></p>
+            </div>
+
+            {# Пакет: сегмент түймелер #}
+            <fieldset class="package-field" id="packageField">
+                <legend>{{ tr.package }} <span class="required">*</span></legend>
+
+                <div class="package-pills" id="packagePills">
+
+                    <span class="package-pill-indicator" aria-hidden="true"></span>
+
+                    {% for package in PACKAGES %}
+                    <label class="package-pill">
+                        <input type="radio" name="package" value="{{ package.code }}"
+                               data-multiplier="{{ package.multiplier }}"
+                               {% if package.code == selected_package %}checked{% endif %} required>
+                        <span>{{ package.name }}</span>
+                    </label>
+                    {% endfor %}
+                </div>
+            </fieldset>
+
+            <div class="booking-price-box">
+
+                <div class="booking-price-info">
+                    <span id="groupsNote">1 {{ tr.group_word }}</span>
+                    <small>{{ tr.per_tour }}</small>
+                </div>
+
+                <div class="price-and-currency">
+                    <strong id="tourPrice" data-kzt="0" aria-live="polite">—</strong>
+
+                    <div class="currency-switch" role="group" aria-label="{{ tr.currency }}">
+                        <span class="currency-indicator" aria-hidden="true"></span>
+                        <button type="button" data-currency="KZT" aria-pressed="true">₸</button>
+                        <button type="button" data-currency="USD" aria-pressed="false">$</button>
+                    </div>
+                </div>
+
+            </div>
+
+            <button type="submit" class="booking-submit" id="submitButton">
+                <span class="submit-label">{{ tr.send }}</span>
+
+                <span class="submit-check" aria-hidden="true">
+                    <svg viewBox="0 0 32 32">
+                        <circle class="submit-check-ring" cx="16" cy="16" r="14"/>
+                        <path class="submit-check-mark" d="M9 16.5l4.5 4.5L23 11.5"/>
+                    </svg>
+                </span>
+            </button>
+
+            <p class="panel-note">{{ tr.confirm_24h }} · {{ tr.pay_after }}</p>
+
+        </form>
+
+    </section>
+
+
+    <!-- ================= ОҢ ЖАҚ: ВИДЕО ================= -->
+    <aside class="booking-video">
+
+        <video
+            autoplay muted loop playsinline
+            preload="metadata"
+            {% if hero_poster %}poster="{{ hero_poster }}"{% endif %}
+            aria-hidden="true"
+        >
+            <source src="{{ hero_video }}" type="video/mp4">
+        </video>
+
+        <div class="booking-video-overlay"></div>
+
+        <div class="booking-video-text">
+            <span>{{ tr.hero_eyebrow }}</span>
+            <p>{{ tr.discover_text }}</p>
+        </div>
+
+    </aside>
+
+</div>
+</main>
+
+<script type="application/json" id="bookingData">
+{{
+    {
+        "tours":         tours_data|default({}),
+        "prices":        PACKAGE_PRICES,
+        "routes":        route_choices|default({}),
+        "selectedRoute": selected_route|default(0),
+        "groupWord":     tr.group_word,
+        "selectRoute":   tr.select_route,
+        "perGroup":      MAX_PER_GROUP
+    }|tojson
+}}
+</script>
+
+<script>
+(function () {
+
+    /* Деректер жоғарыдағы <script type="application/json"> блогынан оқылады.
+       Себебі: Jinja кодын тікелей JS ішіне жазсақ, редактор оны
+       синтаксис қатесі деп есептейді. Мұнда таза JavaScript қана. */
+
+    var DATA = {};
+
+    try {
+        DATA = JSON.parse(document.getElementById("bookingData").textContent);
+    } catch (error) {
+        DATA = {};
+    }
+
+    var TOURS_DATA     = DATA.tours || {};
+    var PACKAGE_PRICES = DATA.prices || {};
+    var ROUTE_CHOICES  = DATA.routes || {};
+    var SELECTED_ROUTE = DATA.selectedRoute || 0;
+    var GROUP_WORD     = DATA.groupWord || "";
+    var SELECT_ROUTE   = DATA.selectRoute || "";
+    var PER_GROUP      = DATA.perGroup || 3;
+
+    var tourSelect   = document.getElementById("tourSelect");
+    var groupsSelect = document.getElementById("groups");
+    var routeField   = document.getElementById("routeField");
+    var routeSelect  = document.getElementById("routeSelect");
+    var packageField = document.getElementById("packageField");
+    var priceBox     = document.getElementById("tourPrice");
+    var groupsNote   = document.getElementById("groupsNote");
+    var packages     = document.querySelectorAll('input[name="package"]');
+
+
+    /* ---------- ЕЛ КОДЫ ---------- */
+
+    var countryButton = document.getElementById("countryButton");
+    var countryMenu   = document.getElementById("countryMenu");
+    var countryCode   = document.getElementById("countryCode");
+    var countryInput  = document.getElementById("countryCodeInput");
+
+    if (countryButton && countryMenu) {
+        countryButton.addEventListener("click", function (e) {
+            e.stopPropagation();
+            var open = countryMenu.classList.toggle("open");
+            countryButton.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        countryMenu.addEventListener("click", function (e) {
+            var option = e.target.closest("button[data-code]");
+            if (!option) return;
+            countryCode.textContent = option.getAttribute("data-code");
+            countryInput.value = option.getAttribute("data-code");
+            countryMenu.classList.remove("open");
+            countryButton.setAttribute("aria-expanded", "false");
+        });
+
+        document.addEventListener("click", function () {
+            countryMenu.classList.remove("open");
+            countryButton.setAttribute("aria-expanded", "false");
+        });
+
+        /* ---------- ел іздеу ---------- */
+
+        var countrySearch = document.getElementById("countrySearch");
+        var countryList = document.getElementById("countryList");
+
+        if (countrySearch && countryList) {
+            var options = countryList.querySelectorAll("button");
+
+            countrySearch.addEventListener("input", function () {
+                var query = this.value.trim().toLowerCase();
+
+                for (var i = 0; i < options.length; i++) {
+                    var name = options[i].getAttribute("data-name") || "";
+                    var code = options[i].getAttribute("data-code") || "";
+
+                    options[i].hidden = query
+                        && name.indexOf(query) === -1
+                        && code.indexOf(query) === -1;
+                }
+            });
+
+            /* Мәзір ашылғанда іздеу өрісі тазарады */
+            countryButton.addEventListener("click", function () {
+                countrySearch.value = "";
+                for (var i = 0; i < options.length; i++) options[i].hidden = false;
+            });
+        }
+    }
+
+
+    /* ---------- БАҒЫТ (бір күндік тур) ---------- */
+
+    var routePills = document.getElementById("routePills");
+    var routeValue = document.getElementById("routeValue");
+    var routeTitle = document.getElementById("routeTitle");
+    var routeIndicator = null;
+
+    function moveRouteIndicator(button) {
+        if (!routeIndicator || !button) return;
+        routeIndicator.style.width = button.offsetWidth + "px";
+        routeIndicator.style.transform = "translateX(" + button.offsetLeft + "px)";
+        routeIndicator.classList.add("is-ready");
+    }
+
+    var routePrice = 0;          /* таңдалған бағыттың бағасы */
+
+    function pickRoute(n, list) {
+        if (!routePills) return;
+
+        var buttons = routePills.querySelectorAll("[data-route]");
+
+        for (var i = 0; i < buttons.length; i++) {
+            var active = buttons[i].getAttribute("data-route") === String(n);
+            buttons[i].classList.toggle("is-active", active);
+            buttons[i].setAttribute("aria-pressed", active ? "true" : "false");
+            if (active) moveRouteIndicator(buttons[i]);
+        }
+
+        if (routeValue) routeValue.value = n;
+
+        var found = null;
+        for (var j = 0; j < list.length; j++) {
+            if (String(list[j].n) === String(n)) found = list[j];
+        }
+
+        routePrice = found && found.price ? found.price : 0;
+
+        if (routeTitle) {
+            routeTitle.textContent = found ? found.title : "";
+        }
+    }
+
+    function syncRoutes() {
+        if (!routeField || !routePills || !tourSelect) return;
+
+        var list = ROUTE_CHOICES[tourSelect.value] || [];
+
+        routePills.innerHTML = '<span class="route-pill-indicator" aria-hidden="true"></span>';
+        routeIndicator = routePills.querySelector(".route-pill-indicator");
+
+        routePrice = 0;
+
+        if (!list.length) {
+            routeField.hidden = true;
+            if (routeValue) routeValue.value = "";
+            if (routeTitle) routeTitle.textContent = "";
+            if (packageField) {
+            packageField.hidden = false;
+            window.setTimeout(movePackageIndicator, 0);
+        }
+            return;
+        }
+
+        routePills.style.setProperty("--route-count", list.length);
+
+        for (var i = 0; i < list.length; i++) {
+            var button = document.createElement("button");
+            button.type = "button";
+            button.className = "route-pill";
+            button.setAttribute("data-route", list[i].n);
+            button.setAttribute("aria-pressed", "false");
+            button.textContent = ("0" + list[i].n).slice(-2);
+            routePills.appendChild(button);
+        }
+
+        routeField.hidden = false;
+
+        /* Бір күндік турда пакет жоқ */
+        if (packageField) packageField.hidden = true;
+
+        var start = SELECTED_ROUTE || list[0].n;
+        pickRoute(start, list);
+
+        routePills.onclick = function (event) {
+            var button = event.target.closest("[data-route]");
+            if (!button) return;
+            pickRoute(button.getAttribute("data-route"), list);
+            updatePrice();
+        };
+
+        window.addEventListener("resize", function () {
+            var active = routePills.querySelector(".route-pill.is-active");
+            if (active) moveRouteIndicator(active);
+        });
+    }
+
+
+    /* ---------- ПАКЕТ ИНДИКАТОРЫ ---------- */
+
+    var packagePills = document.getElementById("packagePills");
+    var packageIndicator = packagePills
+        ? packagePills.querySelector(".package-pill-indicator")
+        : null;
+
+    function movePackageIndicator() {
+        if (!packageIndicator || !packagePills) return;
+
+        var active = packagePills.querySelector('input[name="package"]:checked');
+        if (!active) return;
+
+        var pill = active.closest(".package-pill");
+        if (!pill) return;
+
+        packageIndicator.style.width = pill.offsetWidth + "px";
+        packageIndicator.style.transform = "translateX(" + pill.offsetLeft + "px)";
+        packageIndicator.classList.add("is-ready");
+    }
+
+    if (packagePills) {
+        packagePills.addEventListener("change", movePackageIndicator);
+        window.addEventListener("resize", movePackageIndicator);
+        window.addEventListener("load", movePackageIndicator);
+        movePackageIndicator();
+    }
+
+
+    /* ---------- БАҒА ---------- */
+
+    /* Funding Pips стиліндегі сан анимациясы:
+       ескі мәннен жаңасына дейін домалап өтеді. */
+
+    var reducedMotion = window.matchMedia
+        && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+    var shownPrice = null;
+    var priceFrame = null;
+
+    function formatPrice(value) {
+        return Math.round(value)
+            .toString()
+            .replace(/\B(?=(\d{3})+(?!\d))/g, " ") + " ₸";
+    }
+
+    function animatePrice(to) {
+        if (!priceBox) return;
+
+        var from = shownPrice;
+        shownPrice = to;
+
+        if (reducedMotion || from === null || from === to) {
+            priceBox.textContent = formatPrice(to);
+            return;
+        }
+
+        if (priceFrame) cancelAnimationFrame(priceFrame);
+
+        var duration = 520;
+        var started = null;
+
+        function step(now) {
+            if (started === null) started = now;
+
+            var progress = Math.min((now - started) / duration, 1);
+            var eased = 1 - Math.pow(1 - progress, 3);   /* easeOutCubic */
+
+            priceBox.textContent = formatPrice(from + (to - from) * eased);
+
+            if (progress < 1) {
+                priceFrame = requestAnimationFrame(step);
+            }
+        }
+
+        priceFrame = requestAnimationFrame(step);
+    }
+
+    function packageCode() {
+        for (var i = 0; i < packages.length; i++) {
+            if (packages[i].checked) return packages[i].value;
+        }
+        return "basic";
+    }
+
+    function multiplier() {
+        for (var i = 0; i < packages.length; i++) {
+            if (packages[i].checked) return parseFloat(packages[i].dataset.multiplier) || 1;
+        }
+        return 1;
+    }
+
+    function updatePrice() {
+        if (!tourSelect || !priceBox) return;
+
+        var option = tourSelect.options[tourSelect.selectedIndex];
+        var base   = option ? parseFloat(option.dataset.price) : 0;
+        var days   = option ? parseInt(option.dataset.days, 10) || 1 : 1;
+        var groups = groupsSelect ? parseInt(groupsSelect.value, 10) || 1 : 1;
+
+        if (!base || isNaN(base)) {
+            priceBox.textContent = "—";
+            shownPrice = null;
+            tourSelect.classList.remove("has-selected-tour");
+            return;
+        }
+
+        /* Сервердегі booking_total() ДӘЛ осылай есептейді */
+        /* Алдымен турдың өз бағалары (админкада қойылғаны),
+           болмаса ортақ кесте — сервердегі tour_package_price() сияқты */
+        var tourData = TOURS_DATA[tourSelect.value] || {};
+        var table = tourData.prices
+            || PACKAGE_PRICES[days]
+            || PACKAGE_PRICES[String(days)];
+        var code  = packageCode();
+
+        /* Бір күндік турда бағыттың өз бағасы басым */
+        var oneGroup = routePrice
+            ? Math.round(routePrice / 1000) * 1000
+            : (table && table[code] != null)
+                ? table[code]
+                : Math.round(base * multiplier() / 1000) * 1000;
+
+        /* Барлық есеп теңгемен жүреді, валюта тек көрсету үшін */
+        if (window.Currency) {
+            window.Currency.setValue(priceBox, oneGroup * groups);
+        } else {
+            animatePrice(oneGroup * groups);
+        }
+        tourSelect.classList.add("has-selected-tour");
+
+        if (groupsNote) {
+            groupsNote.textContent = groups > 1
+                ? groups + " × " + oneGroup.toLocaleString("ru-RU") + " ₸"
+                : "1 " + GROUP_WORD;
+        }
+    }
+
+    if (tourSelect)   tourSelect.addEventListener("change", function () { syncRoutes(); updatePrice(); });
+    /* ---------- ТАҢДАҒЫШТАР (тур және топ саны) ----------
+       Екеуі де жасырын <select> арқылы жұмыс істейді, сондықтан
+       қалған логика (баға, бағыттар, пакет) өзгеріссіз қалады. */
+
+    function initPicker(picker) {
+        var select = document.getElementById(picker.getAttribute("data-picker-for"));
+        if (!select) return;
+
+        var button = picker.querySelector(".tour-picker-button");
+        var title = picker.querySelector("[data-picker-title]");
+        var meta = picker.querySelector("[data-picker-meta]");
+
+        function paint() {
+            var option = select.options[select.selectedIndex];
+            if (!option) return;
+
+            if (title) title.textContent = option.textContent.trim();
+
+            if (meta) {
+                meta.textContent =
+                    option.getAttribute("data-meta") ||
+                    option.getAttribute("data-duration") || "";
+            }
+
+            var items = picker.querySelectorAll("[data-picker-value]");
+
+            for (var i = 0; i < items.length; i++) {
+                items[i].classList.toggle(
+                    "is-active",
+                    items[i].getAttribute("data-picker-value") === option.value
+                );
+            }
+        }
+
+        button.addEventListener("click", function (event) {
+            event.stopPropagation();
+
+            /* Басқа ашық таңдағышты жабамыз */
+            var others = document.querySelectorAll(".tour-picker.is-open");
+            for (var i = 0; i < others.length; i++) {
+                if (others[i] !== picker) others[i].classList.remove("is-open");
+            }
+
+            var open = picker.classList.toggle("is-open");
+            button.setAttribute("aria-expanded", open ? "true" : "false");
+        });
+
+        picker.addEventListener("click", function (event) {
+            var item = event.target.closest("[data-picker-value]");
+            if (!item) return;
+
+            select.value = item.getAttribute("data-picker-value");
+            select.dispatchEvent(new Event("change", { bubbles: true }));
+
+            picker.classList.remove("is-open");
+            button.setAttribute("aria-expanded", "false");
+            paint();
+        });
+
+        select.addEventListener("change", paint);
+        paint();
+    }
+
+    var pickers = document.querySelectorAll("[data-picker-for]");
+
+    for (var p = 0; p < pickers.length; p++) {
+        initPicker(pickers[p]);
+    }
+
+    document.addEventListener("click", function () {
+        var open = document.querySelectorAll(".tour-picker.is-open");
+        for (var i = 0; i < open.length; i++) {
+            open[i].classList.remove("is-open");
+            var btn = open[i].querySelector(".tour-picker-button");
+            if (btn) btn.setAttribute("aria-expanded", "false");
+        }
+    });
+
+
+    /* ---------- ҚОНАҚ САНЫ ТОП САНЫНАН АСПАСЫН ---------- */
+
+    var guestsSelect = document.getElementById("guests");
+
+    var guestsOutput = document.getElementById("guestsValue");
+    var stepper = document.getElementById("guestsStepper");
+
+    function guestsMax() {
+        var groups = groupsSelect ? parseInt(groupsSelect.value, 10) || 1 : 1;
+        return groups * PER_GROUP;
+    }
+
+    function setGuests(value) {
+        if (!guestsSelect || !guestsOutput) return;
+
+        var max = guestsMax();
+        value = Math.min(Math.max(value, 1), max);
+
+        guestsSelect.value = value;
+        guestsOutput.textContent = value;
+
+        /* Шекке жеткенде түйме сөнеді */
+        if (stepper) {
+            var minus = stepper.querySelector('[data-step="-1"]');
+            var plus = stepper.querySelector('[data-step="1"]');
+
+            if (minus) minus.disabled = value <= 1;
+            if (plus) plus.disabled = value >= max;
+
+            /* Сан ауысқанда жеңіл секіру */
+            guestsOutput.classList.remove("is-bumped");
+            void guestsOutput.offsetWidth;
+            guestsOutput.classList.add("is-bumped");
+        }
+    }
+
+    if (stepper) {
+        stepper.addEventListener("click", function (event) {
+            var button = event.target.closest("[data-step]");
+            if (!button) return;
+
+            var step = parseInt(button.getAttribute("data-step"), 10);
+            setGuests((parseInt(guestsSelect.value, 10) || 1) + step);
+        });
+    }
+
+    function syncGuests() {
+        setGuests(parseInt(guestsSelect ? guestsSelect.value : 1, 10) || 1);
+    }
+
+    if (groupsSelect) groupsSelect.addEventListener("change", syncGuests);
+    syncGuests();
+
+
+    if (groupsSelect) groupsSelect.addEventListener("change", updatePrice);
+
+    for (var i = 0; i < packages.length; i++) {
+        packages[i].addEventListener("change", updatePrice);
+    }
+
+    syncRoutes();
+    updatePrice();
+
+
+    /* ---------- КҮН ----------
+       Серверде де тексеріледі, бұл тек ыңғайлылық үшін. */
+
+    var dateInput = document.getElementById("tourDate");
+
+    if (dateInput) {
+        var today = new Date();
+        var pad = function (n) { return String(n).padStart(2, "0"); };
+
+        dateInput.min = today.getFullYear() + "-" + pad(today.getMonth() + 1) + "-" + pad(today.getDate());
+
+        var max = new Date(today.getFullYear() + 1, today.getMonth() + 6, today.getDate());
+        dateInput.max = max.getFullYear() + "-" + pad(max.getMonth() + 1) + "-" + pad(max.getDate());
+
+        dateInput.addEventListener("click", function () {
+            if (typeof this.showPicker === "function") this.showPicker();
+        });
+    }
+
+
+    /* ---------- ВИДЕО ---------- */
+
+    var video = document.querySelector(".booking-video video");
+
+    if (video) {
+        var attempt = video.play();
+        if (attempt && attempt.catch) attempt.catch(function () {});
+    }
+
+
+    /* ---------- ЖІБЕРУ АНИМАЦИЯСЫ ---------- */
+
+    var form = document.querySelector(".booking-form");
+    var submitButton = document.getElementById("submitButton");
+
+    if (form && submitButton) {
+        form.addEventListener("submit", function () {
+            /* Браузердің өз тексерісінен өтпесе, анимация қосылмайды */
+            if (typeof form.checkValidity === "function" && !form.checkValidity()) {
+                return;
+            }
+
+            submitButton.classList.add("is-sending");
+
+            /* Екі рет басып жіберуден сақтандыру */
+            window.setTimeout(function () {
+                submitButton.disabled = true;
+            }, 50);
+        });
+    }
+
+})();
+</script>
+
+<script src="{{ asset('currency.js') }}"></script>
+<script type="application/json" id="currencyData">
+{{ {"rate": usd_rate()}|tojson }}
+</script>
+<script>
+(function () {
+    var data = {};
+    try {
+        data = JSON.parse(document.getElementById("currencyData").textContent);
+    } catch (error) {
+        data = {};
+    }
+    window.Currency.init({ rate: data.rate });
+})();
+</script>
+
+<script src="{{ asset('reveal.js') }}" defer></script>
+
+</body>
+</html>
