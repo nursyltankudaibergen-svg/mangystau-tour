@@ -176,17 +176,57 @@ def localize(value, language, fallback="en"):
     return value or ""
 
 
-def _local_file_exists(name):
-    """static/ ішінде мұндай файл бар ма?"""
+def _real_static_name(name):
+    """
+    static/ ішінен файлды ҮЛКЕН-КІШІ ӘРІПКЕ ҚАРАМАЙ табады да,
+    оның нақты атауын қайтарады. Табылмаса — None.
+
+    Не үшін: Windows-та IMG_3077.MP4 пен img_3077.mp4 — бір файл,
+    ал Linux серверде (Render, PythonAnywhere) — екі бөлек файл.
+    Компьютерде жұмыс істеген сайт серверде видеосыз қалатын.
+    """
     try:
         folder = current_app.static_folder
     except RuntimeError:
+        return name
+
+    if not folder or not name:
+        return None
+
+    exact = os.path.join(folder, name.replace("/", os.sep))
+    if os.path.exists(exact):
+        return name
+
+    # әр бөлікті жеке іздейміз: "Gallery/1/IMG.JPG" → "gallery/1/img.jpg"
+    current = folder
+    found_parts = []
+
+    for part in name.replace("\\", "/").split("/"):
+        if not part:
+            continue
+        try:
+            entries = os.listdir(current)
+        except OSError:
+            return None
+
+        match = next((e for e in entries if e.lower() == part.lower()), None)
+        if match is None:
+            return None
+
+        found_parts.append(match)
+        current = os.path.join(current, match)
+
+    return "/".join(found_parts)
+
+
+def _local_file_exists(name):
+    """static/ ішінде мұндай файл бар ма? (үлкен-кіші әріпке қарамайды)"""
+    try:
+        current_app.static_folder
+    except RuntimeError:
         return True          # контекст жоқ — тексере алмаймыз, сеніп өтеміз
 
-    if not folder:
-        return True
-
-    return os.path.exists(os.path.join(folder, name.replace("/", os.sep)))
+    return _real_static_name(name) is not None
 
 
 def asset(filename):
@@ -240,14 +280,17 @@ def media_url(value, default=""):
         if value.startswith("/"):
             return value
 
-        if _local_file_exists(value):
-            return url_for("static", filename=value)
+        real = _real_static_name(value)
+        if real:
+            return url_for("static", filename=real)
 
         # Файл жоқ: әдепкіге түсеміз
         value = ""
 
-    if default and _local_file_exists(default):
-        return url_for("static", filename=default)
+    if default:
+        real = _real_static_name(default)
+        if real:
+            return url_for("static", filename=real)
 
     return ""
 
