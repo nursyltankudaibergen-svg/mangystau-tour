@@ -332,3 +332,47 @@ class Review(db.Model):
         db.String(160),
         default=""
     )
+
+
+class GalleryImage(db.Model):
+    """
+    Басты беттегі галереяның суреті.
+
+    Бұрын суреттер static/gallery/1, /2, /3 бумаларынан оқылатын.
+    Render сервері бумаларды қайта қосылғанда өшіреді — сондықтан
+    енді сурет Cloudinary-де, ал оның сілтемесі осы кестеде тұрады.
+    """
+
+    id = db.Column(
+        db.Integer,
+        primary_key=True
+    )
+
+    # 1 — сол жақтағы үлкен блок, 2 — оң жақ үстіңгі, 3 — оң жақ астыңғы
+    slot = db.Column(
+        db.Integer,
+        default=1,
+        index=True
+    )
+
+    # Суреттің толық сілтемесі (https://res.cloudinary.com/...)
+    url = db.Column(
+        db.String(600),
+        nullable=False
+    )
+
+    # Cloudinary-дегі ID — суретті жойғанда керек
+    public_id = db.Column(
+        db.String(300),
+        default=""
+    )
+
+    sort_order = db.Column(
+        db.Integer,
+        default=0
+    )
+
+    created_at = db.Column(
+        db.DateTime,
+        default=datetime.utcnow
+    )

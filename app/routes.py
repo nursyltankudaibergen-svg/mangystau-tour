@@ -24,6 +24,11 @@ from markupsafe import Markup, escape
 from . import db
 from .models import SiteSetting, Tour, TourRoute, Booking, Review
 
+try:
+    from .models import GalleryImage
+except ImportError:          # ескі models.py — галерея бумалардан оқылады
+    GalleryImage = None
+
 # Telegram хабарламасы. Файл жоқ болса да сайт жұмыс істей береді.
 try:
     from . import telegram_notify
@@ -1562,13 +1567,48 @@ def slot_images(slot):
     ]
 
 
+def db_slot_images(slot):
+    """Базадағы (Cloudinary) суреттер — бір блок."""
+    if GalleryImage is None:
+        return []
+
+    try:
+        rows = (
+            GalleryImage.query
+            .filter_by(slot=slot)
+            .order_by(GalleryImage.sort_order, GalleryImage.id)
+            .all()
+        )
+    except Exception:
+        return []
+
+    return [
+        {"id": r.id, "name": r.public_id or str(r.id), "url": r.url, "label": "Mangystau"}
+        for r in rows
+    ]
+
+
+def gallery_uses_db():
+    """Базада кемінде бір галерея суреті болса — бәрі базадан оқылады."""
+    if GalleryImage is None:
+        return False
+    try:
+        return GalleryImage.query.count() > 0
+    except Exception:
+        return False
+
+
 def gallery_slots():
     """
     [[блок 1 суреттері], [блок 2], [блок 3]]
 
-    Қалталар түгел бос болса — ескі тәсіл: жалпы галереяны
-    үш блокқа ығыстырып береміз, сайт бос қалмасын.
+    1) Базада суреттер болса — солар (Cloudinary, ешқашан жоғалмайды)
+    2) Болмаса — static/gallery/1, /2, /3 бумалары
+    3) Олар да бос болса — жалпы static/gallery/ үшке бөлінеді
     """
+    if gallery_uses_db():
+        return [db_slot_images(i) for i in range(1, GALLERY_SLOTS + 1)]
+
     slots = [slot_images(i) for i in range(1, GALLERY_SLOTS + 1)]
 
     if any(slots):
@@ -5424,6 +5464,100 @@ def _safe_name(name):
     return name.strip("-._") or "file"
 
 
+# ---------------------------------------------------------
+# CLOUDINARY
+# ---------------------------------------------------------
+# .env немесе Render-де CLOUDINARY_URL болса — файлдар бұлтқа
+# жүктеледі және ешқашан жоғалмайды. Болмаса — бұрынғыдай static/.
+
+def _cloudinary():
+    """Бапталған cloudinary модулін қайтарады, болмаса None."""
+    url = (os.environ.get("CLOUDINARY_URL") or "").strip()
+
+    if not url.startswith("cloudinary://"):
+        return None
+
+    try:
+        import cloudinary
+        import cloudinary.uploader
+    except ImportError:
+        current_app.logger.warning("cloudinary кітапханасы орнатылмаған")
+        return None
+
+    # cloudinary://API_KEY:API_SECRET@CLOUD_NAME — өзіміз бөлшектейміз
+    try:
+        creds, cloud_name = url[len("cloudinary://"):].rsplit("@", 1)
+        api_key, api_secret = creds.split(":", 1)
+    except ValueError:
+        current_app.logger.warning("CLOUDINARY_URL пішімі қате")
+        return None
+
+    cloudinary.config(
+        cloud_name=cloud_name.strip(),
+        api_key=api_key.strip(),
+        api_secret=api_secret.strip(),
+        secure=True,
+    )
+
+    return cloudinary
+
+
+def cloud_enabled():
+    return _cloudinary() is not None
+
+
+def _cloud_upload(file_storage, folder, is_video):
+    """
+    Файлды Cloudinary-ге жүктейді.
+    Қайтарады: (сілтеме, public_id) немесе ("", "") қате болса.
+    """
+    cloud = _cloudinary()
+    if cloud is None:
+        return "", ""
+
+    try:
+        result = cloud.uploader.upload(
+            file_storage.stream,
+            folder="mangystau/" + (folder or "uploads").strip("/"),
+            resource_type="video" if is_video else "image",
+            use_filename=True,
+            unique_filename=True,
+            overwrite=False,
+        )
+    except Exception:
+        current_app.logger.exception("Cloudinary-ге жүктеу сәтсіз")
+        flash("Не удалось загрузить файл в облако.", "error")
+        return "", ""
+
+    url = result.get("secure_url", "")
+
+    # Суреттерді браузерге қарай өзі сығып, форматын таңдайды:
+    # WebP/AVIF, сапасы автоматты — бет әлдеқайда жылдам ашылады
+    if url and not is_video and "/upload/" in url:
+        url = url.replace("/upload/", "/upload/f_auto,q_auto/", 1)
+
+    return url, result.get("public_id", "")
+
+
+def cloud_delete(public_id, is_video=False):
+    """Cloudinary-ден жояды. Қате болса — үнсіз өтеді."""
+    cloud = _cloudinary()
+
+    if cloud is None or not public_id:
+        return
+
+    try:
+        cloud.uploader.destroy(
+            public_id,
+            resource_type="video" if is_video else "image",
+        )
+    except Exception:
+        current_app.logger.exception("Cloudinary-ден жою сәтсіз")
+
+
+LAST_PUBLIC_ID = {"value": ""}
+
+
 def save_upload(file_storage, folder="uploads", prefix="", allow_video=False):
     """
     Жүктелген файлды сақтайды.
@@ -5445,6 +5579,18 @@ def save_upload(file_storage, folder="uploads", prefix="", allow_video=False):
     if ext.lower() not in allowed:
         flash("Этот тип файла не поддерживается: {}".format(ext), "error")
         return ""
+
+    # --- Бұлт қосулы болса — сонда жүктейміз ---
+    LAST_PUBLIC_ID["value"] = ""
+
+    if cloud_enabled():
+        url, public_id = _cloud_upload(
+            file_storage,
+            folder=folder,
+            is_video=ext.lower() in VIDEO_EXTENSIONS,
+        )
+        LAST_PUBLIC_ID["value"] = public_id
+        return url
 
     if prefix:
         base = "{}-{}".format(_safe_name(prefix), base)
@@ -5673,61 +5819,81 @@ SLOT_TITLES = {
 @login_required
 def gallery_page():
 
+    use_db = gallery_uses_db()
+
     slots = []
 
     for n in range(1, GALLERY_SLOTS + 1):
         slots.append({
             "n": n,
             "title": SLOT_TITLES.get(n, "Блок {}".format(n)),
-            "images": slot_images(n),
+            "images": db_slot_images(n) if use_db else slot_images(n),
         })
 
-    # Старые фото в общей папке static/gallery/ — можно разложить по блокам
-    legacy = gallery_images(limit=100)
+    # Бумадағы суреттер — бұлтқа көшіруге болады
+    folder_count = sum(len(slot_images(n)) for n in range(1, GALLERY_SLOTS + 1))
 
     return render_template(
         "admin/gallery.html",
         slots=slots,
-        legacy=legacy,
-        using_fallback=not any(s["images"] for s in slots),
+        use_db=use_db,
+        cloud=cloud_enabled(),
+        folder_count=folder_count,
+        legacy=[] if use_db else gallery_images(limit=100),
+        using_fallback=not use_db and not any(s["images"] for s in slots),
     )
 
 
 @admin_bp.post("/gallery/<int:slot>/upload")
 @login_required
 def gallery_upload(slot):
-    """Загрузка сразу нескольких фото в один блок."""
+    """Бір блокқа бірден бірнеше сурет."""
     if slot not in range(1, GALLERY_SLOTS + 1):
         abort(404)
 
-    files = request.files.getlist("photos")
-    saved = 0
+    files = [f for f in request.files.getlist("photos") if f and f.filename]
 
-    # Префикс со временем — фото встают в порядке загрузки
-    import time
-    stamp = time.strftime("%Y%m%d%H%M%S")
+    if not files:
+        flash("Выберите хотя бы одно фото.", "error")
+        return redirect(url_for("admin.gallery_page"))
 
-    for index, file in enumerate(files, start=1):
-        path = save_upload(
-            file,
-            folder="gallery/{}".format(slot),
-            prefix="{}-{:02d}".format(stamp, index),
+    # Бұлт қосулы болса — базаға жазамыз, әйтпесе бұрынғыдай бумаға
+    if cloud_enabled() and GalleryImage is not None:
+        start = (
+            db.session.query(db.func.max(GalleryImage.sort_order))
+            .filter_by(slot=slot).scalar() or 0
         )
-        if path:
-            saved += 1
+        saved = 0
+
+        for index, file in enumerate(files, start=1):
+            url = save_upload(file, folder="gallery/{}".format(slot))
+            if url:
+                db.session.add(GalleryImage(
+                    slot=slot,
+                    url=url,
+                    public_id=LAST_PUBLIC_ID["value"],
+                    sort_order=start + index,
+                ))
+                saved += 1
+
+        db.session.commit()
+    else:
+        import time
+        stamp = time.strftime("%Y%m%d%H%M%S")
+        saved = 0
+        for index, file in enumerate(files, start=1):
+            if save_upload(file, folder="gallery/{}".format(slot),
+                           prefix="{}-{:02d}".format(stamp, index)):
+                saved += 1
 
     if saved:
         flash("Загружено фото: {} — в блок {}.".format(saved, slot), "success")
-    elif files and files[0].filename:
-        flash("Не удалось загрузить фото.", "error")
-    else:
-        flash("Выберите хотя бы одно фото.", "error")
 
     return redirect(url_for("admin.gallery_page") + "#slot-{}".format(slot))
 
 
 def _gallery_file(slot, name):
-    """Безопасный путь к файлу блока — без выхода за пределы папки."""
+    """Бумадағы файлдың қауіпсіз жолы."""
     safe = os.path.basename(name or "")
     if not safe or slot not in range(1, GALLERY_SLOTS + 1):
         return None
@@ -5738,11 +5904,20 @@ def _gallery_file(slot, name):
 @admin_bp.post("/gallery/<int:slot>/delete")
 @login_required
 def gallery_delete(slot):
-    path = _gallery_file(slot, request.form.get("name"))
+    image_id = request.form.get("id")
 
-    if path:
-        os.remove(path)
-        flash("Фото удалено.", "success")
+    if image_id and GalleryImage is not None:
+        row = db.session.get(GalleryImage, int(image_id))
+        if row:
+            cloud_delete(row.public_id)
+            db.session.delete(row)
+            db.session.commit()
+            flash("Фото удалено.", "success")
+    else:
+        path = _gallery_file(slot, request.form.get("name"))
+        if path:
+            os.remove(path)
+            flash("Фото удалено.", "success")
 
     return redirect(url_for("admin.gallery_page") + "#slot-{}".format(slot))
 
@@ -5750,27 +5925,85 @@ def gallery_delete(slot):
 @admin_bp.post("/gallery/<int:slot>/move")
 @login_required
 def gallery_move(slot):
-    """Перенести фото в другой блок."""
-    path = _gallery_file(slot, request.form.get("name"))
-
     try:
         target = int(request.form.get("to") or 0)
     except ValueError:
         target = 0
 
-    if path and target in range(1, GALLERY_SLOTS + 1) and target != slot:
-        folder = _slot_folder(target)
-        os.makedirs(folder, exist_ok=True)
-        os.replace(path, os.path.join(folder, os.path.basename(path)))
-        flash("Фото перенесено в блок {}.".format(target), "success")
+    if target not in range(1, GALLERY_SLOTS + 1) or target == slot:
+        return redirect(url_for("admin.gallery_page"))
 
-    return redirect(url_for("admin.gallery_page") + "#slot-{}".format(target or slot))
+    image_id = request.form.get("id")
+
+    if image_id and GalleryImage is not None:
+        row = db.session.get(GalleryImage, int(image_id))
+        if row:
+            row.slot = target
+            db.session.commit()
+    else:
+        path = _gallery_file(slot, request.form.get("name"))
+        if path:
+            folder = _slot_folder(target)
+            os.makedirs(folder, exist_ok=True)
+            os.replace(path, os.path.join(folder, os.path.basename(path)))
+
+    flash("Фото перенесено в блок {}.".format(target), "success")
+    return redirect(url_for("admin.gallery_page") + "#slot-{}".format(target))
+
+
+@admin_bp.post("/gallery/to-cloud")
+@login_required
+def gallery_to_cloud():
+    """
+    static/gallery/1, /2, /3 бумаларындағы суреттерді Cloudinary-ге
+    көшіреді және базаға жазады. Бір рет басу жеткілікті.
+    """
+    if not cloud_enabled() or GalleryImage is None:
+        flash("Облако не настроено: добавьте CLOUDINARY_URL.", "error")
+        return redirect(url_for("admin.gallery_page"))
+
+    cloud = _cloudinary()
+    moved = 0
+
+    for n in range(1, GALLERY_SLOTS + 1):
+        for index, img in enumerate(slot_images(n), start=1):
+            path = os.path.join(_slot_folder(n), img["name"])
+            try:
+                result = cloud.uploader.upload(
+                    path,
+                    folder="mangystau/gallery/{}".format(n),
+                    resource_type="image",
+                    use_filename=True,
+                    unique_filename=True,
+                )
+            except Exception:
+                current_app.logger.exception("Көшіру сәтсіз: %s", path)
+                continue
+
+            url = result.get("secure_url", "").replace("/upload/", "/upload/f_auto,q_auto/", 1)
+
+            db.session.add(GalleryImage(
+                slot=n,
+                url=url,
+                public_id=result.get("public_id", ""),
+                sort_order=index,
+            ))
+            moved += 1
+
+    db.session.commit()
+
+    if moved:
+        flash("Перенесено в облако: {} фото. Теперь галерея хранится там.".format(moved), "success")
+    else:
+        flash("Нечего переносить.", "error")
+
+    return redirect(url_for("admin.gallery_page"))
 
 
 @admin_bp.post("/gallery/legacy/assign")
 @login_required
 def gallery_assign_legacy():
-    """Разложить старое фото из static/gallery/ в выбранный блок."""
+    """Жалпы static/gallery/ суретін блокқа қосу (тек бума режимінде)."""
     name = os.path.basename(request.form.get("name") or "")
 
     try:

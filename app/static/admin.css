@@ -1990,3 +1990,21 @@ body.admin-login-page {
 }
 
 .login-back:hover { color: var(--text); }
+
+/* Галерея: облако күйі */
+.notice-action {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.notice-action p { flex: 1 1 320px; }
+
+.notice-ok {
+    border-color: rgba(61, 220, 132, .3) !important;
+    background: rgba(61, 220, 132, .06) !important;
+}
+
+.notice-ok strong { color: var(--ok) !important; }

@@ -15,6 +15,33 @@
 
 {% block content %}
 
+{% if not cloud %}
+<section class="admin-card notice-card">
+    <p>
+        <strong>Облако не подключено.</strong>
+        Фото сохраняются на сервер Render и <b>пропадут при перезапуске</b>.
+        Добавьте <code>CLOUDINARY_URL</code> в Render → Environment.
+    </p>
+</section>
+{% elif not use_db and folder_count %}
+<section class="admin-card notice-card notice-action">
+    <p>
+        <strong>Облако подключено ✓</strong>
+        Сейчас галерея берётся из папок ({{ folder_count }} фото). Перенесите их
+        в облако одним нажатием — после этого фото больше не пропадут.
+    </p>
+    <form method="POST" action="{{ url_for('admin.gallery_to_cloud') }}"
+          onsubmit="this.querySelector('button').disabled=true; this.querySelector('button').textContent='Переношу…';">
+        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+        <button type="submit" class="admin-btn">Перенести {{ folder_count }} фото в облако</button>
+    </form>
+</section>
+{% elif use_db %}
+<section class="admin-card notice-card notice-ok">
+    <p><strong>Галерея в облаке ✓</strong> Фото хранятся в Cloudinary и не пропадают при перезапуске.</p>
+</section>
+{% endif %}
+
 {% if using_fallback %}
 <section class="admin-card notice-card">
     <p>
@@ -79,6 +106,7 @@
                     <form method="POST" action="{{ url_for('admin.gallery_move', slot=slot.n) }}">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="name" value="{{ img.name }}">
+                        {% if img.id %}<input type="hidden" name="id" value="{{ img.id }}">{% endif %}
                         <select name="to" onchange="if (this.value) this.form.submit()" title="Перенести">
                             <option value="">↔</option>
                             {% for other in slots if other.n != slot.n %}
@@ -91,6 +119,7 @@
                           onsubmit="return confirm('Удалить фото?');">
                         <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
                         <input type="hidden" name="name" value="{{ img.name }}">
+                        {% if img.id %}<input type="hidden" name="id" value="{{ img.id }}">{% endif %}
                         <button type="submit" class="thumb-delete" title="Удалить">✕</button>
                     </form>
                 </figcaption>
