@@ -18,7 +18,7 @@
     <link rel="canonical" href="{{ request.base_url }}">
     <meta property="og:title" content="{{ tour.title }} — {{ settings.brand_name }}">
     <meta property="og:description" content="{{ tour.description or tr.discover_text }}">
-    <meta property="og:image" content="{{ tour.image }}">
+    <meta property="og:image" content="{{ media_url(tour.image) }}">
     <meta property="og:type" content="article">
     <meta name="twitter:card" content="summary_large_image">
 
@@ -56,7 +56,7 @@
         class="tour-detail-hero"
         style="background-image:
             linear-gradient(90deg, rgba(0,0,0,.75), rgba(0,0,0,.20)),
-            url('{{ tour.image }}');"
+            url('{{ media_url(tour.image) }}');"
     >
         <div>
             <h1>{{ tour.title }}</h1>
